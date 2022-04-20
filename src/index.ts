@@ -1,12 +1,11 @@
-import express from 'express';
-import cors from 'cors';
-import morgan from 'morgan';
-const app = express();
-const port = 4000;
+import "reflect-metadata";
+import app from './app';
+import {AppDataSource} from './db';
 
-//Middlewares
-app.use(cors());
-app.use(morgan('dev'))
+const main = async() => {
+   await AppDataSource.initialize()
+   app.listen(4000);
+   console.log("Server is online")
+}
 
-app.listen(port);
-console.log("Server is online")
+main();
