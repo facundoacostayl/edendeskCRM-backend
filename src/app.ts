@@ -8,7 +8,8 @@ const port = 4000;
 //Middlewares
 app.use(cors());
 app.use(morgan('dev'));
-app.use(userRoutes);
 app.use(express.json());
+app.use(userRoutes);
+
 
 export default app;

@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@types/pg": "^8.6.5",
+    "bcrypt": "^5.0.1",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.6"
