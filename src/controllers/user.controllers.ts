@@ -4,14 +4,16 @@ const bcrypt = require('bcrypt');
 
 export const createUser = async (req: Request, res: Response) => {
     try {
-        const { firstname, lastname, email, password } = req.body;
-        const userRequest = await User.findOneBy({ email: email })
+        const { firstname, lastname, loginemail, password } = req.body;
+        const userRequest = await User.findOneBy({ loginemail: loginemail })
 
-    /*CHECK THIS IF*/    if (userRequest) {
+        
+
+    if (userRequest === null) {
             const user = new User();
             user.firstname = firstname;
             user.lastname = lastname;
-            user.email = email;
+            user.loginemail = loginemail;
 
             const saltRound = 10;
             const salt = await bcrypt.genSalt(saltRound);
