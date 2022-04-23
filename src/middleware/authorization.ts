@@ -3,11 +3,11 @@ import {Request, Response, NextFunction} from 'express';
 const jwtoken = require('jsonwebtoken');
 require('dotenv').config();
 
-interface ReqWithId extends Request {
+interface ReqWithUser extends Request {
     user: number
 }
 
-module.exports = async (req: ReqWithId, res:Response, next: NextFunction) => {
+module.exports = async (req: ReqWithUser, res:Response, next: NextFunction) => {
     try {
 
         const token = req.header("token");
