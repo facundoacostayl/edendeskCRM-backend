@@ -8,7 +8,7 @@ module.exports = function(req: Request, res: Response, next: NextFunction) {
     }
   
     if (req.path === "/registro") {
-      if (![firstname, lastname, loginemail, password].every(Boolean)) {
+      if (![firstname, loginemail, password].every(Boolean)) {
         return res.json("Completa los campos");
       } else if (!validEmail(loginemail)) {
         return res.status(401).json("Email invalido");
