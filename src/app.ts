@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import userRoutes from './routes/user.routes';
-import dashboardRoute from './routes/dashboard';
+import dashboardRoute from './routes/app.routes';
 const app = express();
 const port = 4000;
 

@@ -13,7 +13,7 @@ module.exports = async (req: ReqWithUser, res:Response, next: NextFunction) => {
         const token = req.header("token");
 
         if(!token) {
-            return res.status(403).json("No Autorizado")
+            return res.status(403).json(false)
         }
 
         const payload = jwtoken.verify(token, process.env.jwtSecret)
@@ -24,7 +24,7 @@ module.exports = async (req: ReqWithUser, res:Response, next: NextFunction) => {
     }catch(error) {
         if(error instanceof Error){
         console.error(error.message)
-        return res.status(403).json("No Autorizado")
+        return res.status(403).json(false)
         }
     }
 }
