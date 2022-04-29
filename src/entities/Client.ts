@@ -18,7 +18,7 @@ export class Client extends BaseEntity {
     @Column({
         nullable: true
     })
-    fechaultcarga: Date
+    fechaultcarga: string
     @Column({
         nullable: true
     })
@@ -30,7 +30,7 @@ export class Client extends BaseEntity {
     @Column({
         nullable: true
     })
-    fechaultretiro: Date
+    fechaultretiro: string
     @Column({
         nullable: true
     })
