@@ -1,6 +1,16 @@
 import { Request, Response } from "express";
 import { Client } from "../entities/Client";
 
+export const getClients = async (req: Request, res: Response) => {
+  try {
+    const clientList = await Client.find();
+
+    res.json(clientList);
+  } catch (error) {
+    error instanceof Error && res.status(500).json({ message: error.message });
+  }
+};
+
 export const addClient = async (req: Request, res: Response) => {
   try {
     //Require Body
@@ -17,7 +27,7 @@ export const addClient = async (req: Request, res: Response) => {
 
       await client.save();
 
-      return res.json(client)
+      return res.json(client);
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -27,27 +37,32 @@ export const addClient = async (req: Request, res: Response) => {
   }
 };
 
-export const updateClientBalance = async(req: Request, res: Response) => {
-  try{
-    const {id} = req.params;
-    const {amount} = req.body;
-  
-    const client = await Client.findOneBy({clientid: parseInt(id)});
-  
-    if(!client) return res.sendStatus(403).json({message: "El cliente no existe"});
-    
+export const updateClientBalance = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { amount } = req.body;
+
+    const client = await Client.findOneBy({ clientid: parseInt(id) });
+
+    if (!client)
+      return res.sendStatus(403).json({ message: "El cliente no existe" });
+
     client.saldo += amount;
 
     const today = new Date();
-    const todayDate = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    const todayDate =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
     client.fechaultcarga = todayDate;
     client.montoultcarga = client.saldo;
-  
+
     client.save();
-    
+
     return res.json(client);
-  }catch(e) {
+  } catch (e) {
     e instanceof Error && res.status(500).json("Inernal server error");
   }
-  }
-  
+};
