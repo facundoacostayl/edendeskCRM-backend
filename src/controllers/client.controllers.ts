@@ -37,7 +37,7 @@ export const addClient = async (req: Request, res: Response) => {
   }
 };
 
-export const updateClientBalance = async (req: Request, res: Response) => {
+export const addToClientBalance = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { amount } = req.body;
@@ -45,7 +45,7 @@ export const updateClientBalance = async (req: Request, res: Response) => {
     const client = await Client.findOneBy({ clientid: parseInt(id) });
 
     if (!client)
-      return res.sendStatus(403).json({ message: "El cliente no existe" });
+      return res.sendStatus(403).json({ message: "User doesn't exists" });
 
     client.saldo += amount;
 
@@ -63,6 +63,29 @@ export const updateClientBalance = async (req: Request, res: Response) => {
 
     return res.json(await Client.find());
   } catch (e) {
-    e instanceof Error && res.status(500).json("Inernal server error");
+    e instanceof Error && res.status(500).json("Internal server error");
   }
 };
+
+export const substractFromClientBalance = async (req: Request, res: Response) => {
+  try{
+    const {amount} = req.body;
+    const {id} = req.params;
+  
+    const client = await Client.findOneBy({clientid: parseInt(id)});
+  
+    if(!client) return res.status(403).json("User doesn't exists");
+  
+    client.saldo = client.saldo - amount;
+    client.montoultretiro = amount;
+  
+    const today = new Date();
+    client.fechaultretiro = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+  
+    await client.save();
+  
+    return res.json(await Client.find());
+  }catch(error){
+    error instanceof Error && res.status(500).json("Internal server error");
+  }
+}
