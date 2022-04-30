@@ -59,9 +59,9 @@ export const updateClientBalance = async (req: Request, res: Response) => {
     client.fechaultcarga = todayDate;
     client.montoultcarga = client.saldo;
 
-    client.save();
+    await client.save();
 
-    return res.json(client);
+    return res.json(await Client.find());
   } catch (e) {
     e instanceof Error && res.status(500).json("Inernal server error");
   }
