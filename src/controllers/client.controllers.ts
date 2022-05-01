@@ -101,5 +101,44 @@ export const searchClient = async(req: Request, res: Response) => {
   }catch(error){
     error instanceof Error && res.status(500).json("Server internal error");
   }
+}
 
+export const orderByClientNameAsc = async(req: Request, res: Response) =>{
+  try{
+    const clients = await Client.query("SELECT * FROM clients ORDER BY nombre ASC");
+
+    return res.json(clients);
+  }catch(error){
+    error instanceof Error && res.status(500).json("Server internal error");
+  }
+}
+
+export const orderByClientNameDesc = async(req: Request, res: Response) => {
+  try{
+    const clients = await Client.query("SELECT * FROM clients ORDER BY nombre DESC")
+
+    return res.json(clients);
+  }catch(error){
+    error instanceof Error && res.status(500).json("Server internal error");
+  }
+}
+
+export const orderByClientBalanceAsc = async(req: Request, res: Response) => {
+  try{
+    const clients = await Client.query("SELECT * FROM clients ORDER BY saldo ASC")
+
+    return res.json(clients);
+  }catch(error){
+    error instanceof Error && res.status(500).json("Server internal error");
+  }
+}
+
+export const orderByClientBalanceDesc = async(req: Request, res: Response) => {
+  try{
+    const clients = await Client.query("SELECT * FROM clients ORDER BY saldo DESC");
+
+    return res.json(clients);
+  }catch(error){
+    error instanceof Error && res.status(500).json("Server internal error");
+  }
 }
