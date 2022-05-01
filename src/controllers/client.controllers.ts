@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { json } from "node:stream/consumers";
 import { Client } from "../entities/Client";
 
 export const getClients = async (req: Request, res: Response) => {
@@ -88,4 +89,17 @@ export const substractFromClientBalance = async (req: Request, res: Response) =>
   }catch(error){
     error instanceof Error && res.status(500).json("Internal server error");
   }
+}
+
+export const searchClient = async(req: Request, res: Response) => {
+  try{
+    const {name} = req.query;
+
+    const clients = await Client.query("SELECT * FROM clients WHERE nombre || ' ' || apellido ILIKE $1", [`%${name}%`]);
+
+    return res.json(clients);
+  }catch(error){
+    error instanceof Error && res.status(500).json("Server internal error");
+  }
+
 }
