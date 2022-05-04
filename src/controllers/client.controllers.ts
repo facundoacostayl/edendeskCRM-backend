@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { json } from "node:stream/consumers";
 import { Client } from "../entities/Client";
 
 export const getClients = async (req: Request, res: Response) => {
@@ -11,6 +10,19 @@ export const getClients = async (req: Request, res: Response) => {
     error instanceof Error && res.status(500).json({ message: error.message });
   }
 };
+
+export const getClient = async (req: Request, res: Response) => {
+  try{
+    const {id} = req.params;
+    
+    const client = await Client.findOneBy({clientid: parseInt(id)});
+
+    return res.json(client);
+
+  }catch (error) {
+    error instanceof Error && res.status(500).json({ message: error.message});
+  }
+}
 
 export const addClient = async (req: Request, res: Response) => {
   try {
@@ -51,12 +63,8 @@ export const addToClientBalance = async (req: Request, res: Response) => {
     client.saldo += amount;
 
     const today = new Date();
-    const todayDate =
-      today.getFullYear() +
-      "-" +
-      (today.getMonth() + 1) +
-      "-" +
-      today.getDate();
+      const todayDate =
+      today.getDate() + "-" + (today.getMonth() + 1) + "-" + today.getFullYear(); 
     client.fechaultcarga = todayDate;
     client.montoultcarga = client.saldo;
 
@@ -81,7 +89,9 @@ export const substractFromClientBalance = async (req: Request, res: Response) =>
     client.montoultretiro = amount;
   
     const today = new Date();
-    client.fechaultretiro = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+    const todayDate =
+      today.getDate() + "-" + (today.getMonth() + 1) + "-" + today.getFullYear(); 
+    client.fechaultretiro = todayDate;
   
     await client.save();
   
@@ -141,4 +151,14 @@ export const orderByClientBalanceDesc = async(req: Request, res: Response) => {
   }catch(error){
     error instanceof Error && res.status(500).json("Server internal error");
   }
+}
+
+export const deleteClient = async(req: Request, res: Response) => {
+  const {id} = req.params;
+
+  const client = await Client.delete({clientid: parseInt(id)});
+
+  if (!client) return res.status(403).json({message: "Client not found"});
+
+  return res.status(200).json({message: "Client deleted successfully"});
 }

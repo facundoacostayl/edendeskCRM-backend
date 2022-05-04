@@ -2,7 +2,9 @@ import Router from "express";
 const router = Router();
 import {
   getClients,
+  getClient,
   addClient,
+  deleteClient,
   addToClientBalance,
   substractFromClientBalance,
   searchClient,
@@ -14,7 +16,9 @@ import {
 const authorization = require("../middleware/authorization");
 
 router.get("/clientes", getClients);
+router.get("/cliente/:id", getClient)
 router.post("/nuevo-cliente", addClient);
+router.delete("/cliente/:id", deleteClient);
 router.put("/cliente/:id/agregar-saldo", addToClientBalance);
 router.put("/cliente/:id/descontar-saldo", substractFromClientBalance);
 router.get("/cliente", searchClient);
