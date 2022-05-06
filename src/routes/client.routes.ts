@@ -5,6 +5,7 @@ import {
   getClient,
   addClient,
   deleteClient,
+  updateClient,
   addToClientBalance,
   substractFromClientBalance,
   searchClient,
@@ -19,6 +20,7 @@ router.get("/clientes", getClients);
 router.get("/cliente/:id", getClient)
 router.post("/nuevo-cliente", addClient);
 router.delete("/cliente/:id", deleteClient);
+router.patch("/cliente/:id", updateClient);
 router.put("/cliente/:id/agregar-saldo", addToClientBalance);
 router.put("/cliente/:id/descontar-saldo", substractFromClientBalance);
 router.get("/cliente", searchClient);

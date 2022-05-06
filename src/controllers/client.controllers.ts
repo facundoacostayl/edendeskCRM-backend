@@ -12,17 +12,16 @@ export const getClients = async (req: Request, res: Response) => {
 };
 
 export const getClient = async (req: Request, res: Response) => {
-  try{
-    const {id} = req.params;
-    
-    const client = await Client.findOneBy({clientid: parseInt(id)});
+  try {
+    const { id } = req.params;
+
+    const client = await Client.findOneBy({ clientid: parseInt(id) });
 
     return res.json(client);
-
-  }catch (error) {
-    error instanceof Error && res.status(500).json({ message: error.message});
+  } catch (error) {
+    error instanceof Error && res.status(500).json({ message: error.message });
   }
-}
+};
 
 export const addClient = async (req: Request, res: Response) => {
   try {
@@ -37,6 +36,7 @@ export const addClient = async (req: Request, res: Response) => {
       client.nombre = nombre;
       client.apellido = apellido;
       client.telefono = telefono;
+      client.saldo = 0;
 
       await client.save();
 
@@ -63,8 +63,12 @@ export const addToClientBalance = async (req: Request, res: Response) => {
     client.saldo += amount;
 
     const today = new Date();
-      const todayDate =
-      today.getDate() + "-" + (today.getMonth() + 1) + "-" + today.getFullYear(); 
+    const todayDate =
+      today.getDate() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getFullYear();
     client.fechaultcarga = todayDate;
     client.montoultcarga = client.saldo;
 
@@ -76,89 +80,136 @@ export const addToClientBalance = async (req: Request, res: Response) => {
   }
 };
 
-export const substractFromClientBalance = async (req: Request, res: Response) => {
-  try{
-    const {amount} = req.body;
-    const {id} = req.params;
-  
-    const client = await Client.findOneBy({clientid: parseInt(id)});
-  
-    if(!client) return res.status(403).json("User doesn't exists");
-  
+export const substractFromClientBalance = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { amount } = req.body;
+    const { id } = req.params;
+
+    const client = await Client.findOneBy({ clientid: parseInt(id) });
+
+    if (!client) return res.status(403).json("User doesn't exists");
+
     client.saldo = client.saldo - amount;
     client.montoultretiro = amount;
-  
+
     const today = new Date();
     const todayDate =
-      today.getDate() + "-" + (today.getMonth() + 1) + "-" + today.getFullYear(); 
+      today.getDate() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getFullYear();
     client.fechaultretiro = todayDate;
-  
+
     await client.save();
-  
+
     return res.json(await Client.find());
-  }catch(error){
+  } catch (error) {
     error instanceof Error && res.status(500).json("Internal server error");
   }
-}
+};
 
-export const searchClient = async(req: Request, res: Response) => {
-  try{
-    const {name} = req.query;
+export const searchClient = async (req: Request, res: Response) => {
+  try {
+    const { name } = req.query;
 
-    const clients = await Client.query("SELECT * FROM clients WHERE nombre || ' ' || apellido ILIKE $1", [`%${name}%`]);
-
-    return res.json(clients);
-  }catch(error){
-    error instanceof Error && res.status(500).json("Server internal error");
-  }
-}
-
-export const orderByClientNameAsc = async(req: Request, res: Response) =>{
-  try{
-    const clients = await Client.query("SELECT * FROM clients ORDER BY nombre ASC");
+    const clients = await Client.query(
+      "SELECT * FROM clients WHERE nombre || ' ' || apellido ILIKE $1",
+      [`%${name}%`]
+    );
 
     return res.json(clients);
-  }catch(error){
+  } catch (error) {
     error instanceof Error && res.status(500).json("Server internal error");
   }
-}
+};
 
-export const orderByClientNameDesc = async(req: Request, res: Response) => {
-  try{
-    const clients = await Client.query("SELECT * FROM clients ORDER BY nombre DESC")
+export const orderByClientNameAsc = async (req: Request, res: Response) => {
+  try {
+    const clients = await Client.query(
+      "SELECT * FROM clients ORDER BY nombre ASC"
+    );
 
     return res.json(clients);
-  }catch(error){
+  } catch (error) {
     error instanceof Error && res.status(500).json("Server internal error");
   }
-}
+};
 
-export const orderByClientBalanceAsc = async(req: Request, res: Response) => {
-  try{
-    const clients = await Client.query("SELECT * FROM clients ORDER BY saldo ASC")
+export const orderByClientNameDesc = async (req: Request, res: Response) => {
+  try {
+    const clients = await Client.query(
+      "SELECT * FROM clients ORDER BY nombre DESC"
+    );
 
     return res.json(clients);
-  }catch(error){
+  } catch (error) {
     error instanceof Error && res.status(500).json("Server internal error");
   }
-}
+};
 
-export const orderByClientBalanceDesc = async(req: Request, res: Response) => {
-  try{
-    const clients = await Client.query("SELECT * FROM clients ORDER BY saldo DESC");
+export const orderByClientBalanceAsc = async (req: Request, res: Response) => {
+  try {
+    const clients = await Client.query(
+      "SELECT * FROM clients ORDER BY saldo ASC"
+    );
 
     return res.json(clients);
-  }catch(error){
+  } catch (error) {
     error instanceof Error && res.status(500).json("Server internal error");
   }
-}
+};
 
-export const deleteClient = async(req: Request, res: Response) => {
-  const {id} = req.params;
+export const orderByClientBalanceDesc = async (req: Request, res: Response) => {
+  try {
+    const clients = await Client.query(
+      "SELECT * FROM clients ORDER BY saldo DESC"
+    );
 
-  const client = await Client.delete({clientid: parseInt(id)});
+    return res.json(clients);
+  } catch (error) {
+    error instanceof Error && res.status(500).json("Server internal error");
+  }
+};
 
-  if (!client) return res.status(403).json({message: "Client not found"});
+export const deleteClient = async (req: Request, res: Response) => {
+  const { id } = req.params;
 
-  return res.status(200).json({message: "Client deleted successfully"});
-}
+  const client = await Client.delete({ clientid: parseInt(id) });
+
+  if (!client) return res.status(403).json({ message: "Client not found" });
+
+  return res.status(200).json({ message: "Client deleted successfully" });
+};
+
+export const updateClient = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { body } = req;
+
+    const queryBuilder = () => {
+      if (Object.keys(body).length === 0) return null;
+      let query = `UPDATE clients SET `;
+      query += Object.keys(body)
+        .map((key) => {
+          const valueToSet =
+            typeof body[key] === "string" ? `'${body[key]}'` : body[key];
+          return `${key}=${valueToSet}`;
+        })
+        .join(", ");
+      return query + ` WHERE clientid=${id};`;
+    };
+
+    await Client.query(queryBuilder()!)
+
+    const client = await Client.findOneBy({clientid: parseInt(id)})
+
+    return res.json(client);
+  
+  } catch (error) {
+    error instanceof Error && res.status(500).json();
+  }
+};
