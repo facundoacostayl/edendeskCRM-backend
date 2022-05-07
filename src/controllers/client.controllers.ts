@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import { Client } from "../entities/Client";
 
 export const getClients = async (req: Request, res: Response) => {
@@ -210,6 +210,21 @@ export const updateClient = async (req: Request, res: Response) => {
     return res.json(client);
   
   } catch (error) {
-    error instanceof Error && res.status(500).json();
+    error instanceof Error && res.status(500).json("Internal server error");
   }
 };
+
+export const getFullClientBalance = async(req: Request, res: Response) => {
+  try {
+    const client = await Client.find();
+    let totalBalance: number = 0;
+    client.forEach(client => {
+      totalBalance += client.saldo
+    })
+  
+    return res.json(totalBalance!);
+  }catch (error) {
+    error instanceof Error && res.status(500).json("Internal server error")
+  }
+  
+}
