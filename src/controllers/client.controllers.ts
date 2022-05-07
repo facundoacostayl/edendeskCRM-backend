@@ -196,7 +196,7 @@ export const updateClient = async (req: Request, res: Response) => {
       query += Object.keys(body)
         .map((key) => {
           const valueToSet =
-            typeof body[key] === "string" ? `'${body[key]}'` : body[key];
+            typeof body[key] === "string" ? `'${body[key]}'` : parseInt(body[key]);
           return `${key}=${valueToSet}`;
         })
         .join(", ");
@@ -205,7 +205,7 @@ export const updateClient = async (req: Request, res: Response) => {
 
     await Client.query(queryBuilder()!)
 
-    const client = await Client.findOneBy({clientid: parseInt(id)})
+    const client = await Client.findOneBy({clientid: parseInt(id)});
 
     return res.json(client);
   
