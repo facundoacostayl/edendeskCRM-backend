@@ -64,7 +64,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
     const token = jwtGenerator(userRequest.id);
 
-    res.json( token );
+    res.json( {token: token} );
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json(error.message);
