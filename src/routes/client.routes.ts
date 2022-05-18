@@ -17,7 +17,7 @@ import {
 } from "../controllers/client.controllers";
 const authorization = require("../middleware/authorization");
 
-router.get("/clientes", getClients);
+router.get("/user:id/clientes", getClients);
 router.get("/cliente/:id", getClient)
 router.post("/nuevo-cliente", addClient);
 router.delete("/cliente/:id", deleteClient);
@@ -29,6 +29,6 @@ router.get("/cliente/ordenar-por-nombre-asc", orderByClientNameAsc);
 router.get("/cliente/ordenar-por-nombre-desc", orderByClientNameDesc);
 router.get("/cliente/ordenar-por-saldo-asc", orderByClientBalanceAsc);
 router.get("/cliente/ordenar-por-saldo-desc", orderByClientBalanceDesc);
-router.get("/clientes/saldo-total", getFullClientBalance);
+router.get("/user:id/clientes/saldo-total", getFullClientBalance);
 
 export default router;

@@ -3,7 +3,8 @@ import { Client } from "../entities/Client";
 
 export const getClients = async (req: Request, res: Response) => {
   try {
-    const clientList = await Client.find();
+    const userId = req.params.id;
+    const clientList = await Client.findBy({user: parseInt(userId)});
 
     res.json(clientList);
   } catch (error) {
@@ -26,7 +27,7 @@ export const getClient = async (req: Request, res: Response) => {
 export const addClient = async (req: Request, res: Response) => {
   try {
     //Require Body
-    const { nombre, apellido, telefono } = req.body;
+    const { nombre, apellido, telefono, userId } = req.body;
 
     //Check if client has already been added
     const clientRequest = await Client.findOneBy({ telefono: telefono });
@@ -37,6 +38,7 @@ export const addClient = async (req: Request, res: Response) => {
       client.apellido = apellido;
       client.telefono = telefono;
       client.saldo = 0;
+      client.user = userId;
 
       await client.save();
 
@@ -196,35 +198,36 @@ export const updateClient = async (req: Request, res: Response) => {
       query += Object.keys(body)
         .map((key) => {
           const valueToSet =
-            typeof body[key] === "string" ? `'${body[key]}'` : parseInt(body[key]);
+            typeof body[key] === "string"
+              ? `'${body[key]}'`
+              : parseInt(body[key]);
           return `${key}=${valueToSet}`;
         })
         .join(", ");
       return query + ` WHERE clientid=${id};`;
     };
 
-    await Client.query(queryBuilder()!)
+    await Client.query(queryBuilder()!);
 
-    const client = await Client.findOneBy({clientid: parseInt(id)});
+    const client = await Client.findOneBy({ clientid: parseInt(id) });
 
     return res.json(client);
-  
   } catch (error) {
     error instanceof Error && res.status(500).json("Internal server error");
   }
 };
 
-export const getFullClientBalance = async(req: Request, res: Response) => {
+export const getFullClientBalance = async (req: Request, res: Response) => {
   try {
-    const client = await Client.find();
+    const userId = req.params.id;
+    const client = await Client.findBy({user: parseInt(userId)});
     let totalBalance: number = 0;
-    client.forEach(client => {
-      totalBalance += client.saldo
-    })
-  
-    return res.json(totalBalance!);
-  }catch (error) {
-    error instanceof Error && res.status(500).json("Internal server error")
+    client.forEach((client) => {
+      totalBalance += client.saldo;
+    });
+
+    return res.json({total: totalBalance});
+  } catch (error) {
+    error instanceof Error && res.status(500).json("Internal server error");
   }
-  
-}
+};

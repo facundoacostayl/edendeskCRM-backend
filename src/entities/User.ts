@@ -1,4 +1,5 @@
-import {BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn} from 'typeorm';
+import {BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, OneToMany} from 'typeorm';
+import { Client } from './Client';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -11,12 +12,12 @@ export class User extends BaseEntity {
     loginemail: string
     @Column()
     firstname: string
-    @Column({
-        nullable: true
-    })
-    lastname: string
     @Column()
     password: string
     @CreateDateColumn()
     createdAt: Date
+    @OneToMany(() => Client, client => client.user, {
+        cascade: true
+    })
+    clients: Client[];
 }
