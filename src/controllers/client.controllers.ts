@@ -3,10 +3,10 @@ import { Client } from "../entities/Client";
 
 export const getClients = async (req: Request, res: Response) => {
   try {
-    const userId = req.params.id;
-    const clientList = await Client.findBy({user: parseInt(userId)});
+    const {id} = req.params;
+    const clientList = await Client.findBy({user: parseInt(id)});
 
-    res.json(clientList);
+    return res.json(clientList);
   } catch (error) {
     error instanceof Error && res.status(500).json({ message: error.message });
   }
@@ -38,6 +38,12 @@ export const addClient = async (req: Request, res: Response) => {
       client.apellido = apellido;
       client.telefono = telefono;
       client.saldo = 0;
+      client.fechaultcarga = "No especificado";
+      client.montoultcarga = 0;
+      client.fechaultretiro = "No especificado";
+      client.montoultretiro = 0;
+      client.tipodecarga = "No especificado";
+      client.sucursal = "No especificado"
       client.user = userId;
 
       await client.save();
