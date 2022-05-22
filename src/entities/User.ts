@@ -16,8 +16,4 @@ export class User extends BaseEntity {
     password: string
     @CreateDateColumn()
     createdAt: Date
-    @OneToMany(() => Client, client => client.user, {
-        cascade: true
-    })
-    clients: Client[];
 }

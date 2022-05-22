@@ -1,10 +1,10 @@
-import { Request, response, Response } from "express";
+import { Request, Response } from "express";
 import { Client } from "../entities/Client";
 
 export const getClients = async (req: Request, res: Response) => {
   try {
-    const {id} = req.params;
-    const clientList = await Client.findBy({user: parseInt(id)});
+    const { id } = req.params;
+    const clientList = await Client.findBy({ userId: parseInt(id) });
 
     return res.json(clientList);
   } catch (error) {
@@ -43,8 +43,8 @@ export const addClient = async (req: Request, res: Response) => {
       client.fechaultretiro = "No especificado";
       client.montoultretiro = 0;
       client.tipodecarga = "No especificado";
-      client.sucursal = "No especificado"
-      client.user = userId;
+      client.sucursal = "No especificado";
+      client.userId = userId;
 
       await client.save();
 
@@ -122,11 +122,12 @@ export const substractFromClientBalance = async (
 
 export const searchClient = async (req: Request, res: Response) => {
   try {
+    const { id } = req.params;
     const { name } = req.query;
 
     const clients = await Client.query(
-      "SELECT * FROM clients WHERE nombre || ' ' || apellido ILIKE $1",
-      [`%${name}%`]
+      "SELECT * FROM clients WHERE \"userId\" = $1 AND nombre || ' ' || apellido ILIKE $2",
+      [id, `%${name}%`]
     );
 
     return res.json(clients);
@@ -226,13 +227,13 @@ export const updateClient = async (req: Request, res: Response) => {
 export const getFullClientBalance = async (req: Request, res: Response) => {
   try {
     const userId = req.params.id;
-    const client = await Client.findBy({user: parseInt(userId)});
+    const client = await Client.findBy({ userId: parseInt(userId) });
     let totalBalance: number = 0;
     client.forEach((client) => {
       totalBalance += client.saldo;
     });
 
-    return res.json({total: totalBalance});
+    return res.json({ total: totalBalance });
   } catch (error) {
     error instanceof Error && res.status(500).json("Internal server error");
   }

@@ -5,7 +5,7 @@ const jwtGenerator = require("../utils/jwtGenerator");
 
 export const getUser = async(req:Request, res:Response) => {
   try{
-    const id = req.params.id;
+    const {id} = req.params;
     const user = await User.findOneBy({id: parseInt(id)});
   
     return res.json(user);
@@ -41,7 +41,7 @@ export const createUser = async (req: Request, res: Response) => {
       //Generating JWT Token
       const token = jwtGenerator(user, user.id);
 
-      return res.json({token: token});
+      return res.json({token: token, id: user.id});
     } else {
       return res.status(401).send("Ya existe un usuario con ese email");
     }

@@ -15,7 +15,7 @@ export class Client extends BaseEntity {
     })
     saldo: number
     @Column()
-    telefono: number
+    telefono: string
     @Column({
         nullable: true
     })
@@ -40,6 +40,6 @@ export class Client extends BaseEntity {
         nullable: true
     })
     sucursal: string
-    @ManyToOne(() => User, user => user.clients)
-    user: User["id"];
+    @Column()
+    userId: number
 }
