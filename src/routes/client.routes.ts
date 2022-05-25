@@ -13,12 +13,12 @@ import {
   orderByClientNameDesc,
   orderByClientBalanceAsc,
   orderByClientBalanceDesc,
-  getFullClientBalance
+  getFullClientBalance,
 } from "../controllers/client.controllers";
 const authorization = require("../middleware/authorization");
 
 router.get("/user:id/clientes", getClients);
-router.get("/cliente/:id", getClient)
+router.get("/cliente/:id", getClient);
 router.post("/nuevo-cliente", addClient);
 router.delete("/cliente/:id", deleteClient);
 router.patch("/cliente/:id", updateClient);

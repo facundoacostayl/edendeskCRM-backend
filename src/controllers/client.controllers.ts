@@ -220,6 +220,7 @@ export const updateClient = async (req: Request, res: Response) => {
 
     return res.json(client);
   } catch (error) {
+    console.error(error)
     error instanceof Error && res.status(500).json("Internal server error");
   }
 };
