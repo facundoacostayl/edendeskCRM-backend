@@ -89,6 +89,15 @@ export const updateUser = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { body } = req;
 
+    //Bcrypt password
+    if (body.password) {
+      const saltRound = 10;
+      const salt = await bcrypt.genSalt(saltRound);
+      const bcryptPassword = await bcrypt.hash(body.password, salt);
+      body.password = bcryptPassword;
+    }
+
+    //Generating query
     const queryBuilder = () => {
       if (Object.keys(body).length === 0) return null;
       let query = `UPDATE users SET `;
