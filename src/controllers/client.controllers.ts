@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Client } from "../entities/Client";
+import {Operation} from '../entities/Operation';
 
 export const getClients = async (req: Request, res: Response) => {
   try {
@@ -64,6 +65,7 @@ export const addToClientBalance = async (req: Request, res: Response) => {
     const { amount } = req.body;
 
     const client = await Client.findOneBy({ clientid: parseInt(id) });
+    const operation = await Operation.findOneBy({userId: parseInt(id)})
 
     if (!client)
       return res.sendStatus(403).json({ message: "User doesn't exists" });
@@ -79,6 +81,8 @@ export const addToClientBalance = async (req: Request, res: Response) => {
       today.getFullYear();
     client.fechaultcarga = todayDate;
     client.montoultcarga = client.saldo;
+
+    operation!.userGain += amount;
 
     await client.save();
 
@@ -97,6 +101,7 @@ export const substractFromClientBalance = async (
     const { id } = req.params;
 
     const client = await Client.findOneBy({ clientid: parseInt(id) });
+    const operation = await Operation.findOneBy({userId: parseInt(id)})
 
     if (!client) return res.status(403).json("User doesn't exists");
 
@@ -111,6 +116,8 @@ export const substractFromClientBalance = async (
       "-" +
       today.getFullYear();
     client.fechaultretiro = todayDate;
+
+    operation!.userGain = operation!.userGain - amount;
 
     await client.save();
 

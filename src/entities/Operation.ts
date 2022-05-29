@@ -1,14 +1,18 @@
-import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
+import {BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
 import { User } from './User';
 
 @Entity('operation')
-export class Operation {
+export class Operation extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
     @Column()
-     rr: string
+    year: Date
     @Column()
-    nombre: string
-    @ManyToOne(() => User, user => user)
-    user: User;
+    month: Date
+    @Column()
+    userGain: number
+    @Column()
+    userLost: User;
+    @Column()
+    userId: number
 }
