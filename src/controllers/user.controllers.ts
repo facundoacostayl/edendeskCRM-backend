@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { User } from "../entities/User";
+import {Operation} from '../entities/Operation';
 const bcrypt = require("bcrypt");
 const jwtGenerator = require("../utils/jwtGenerator");
 
@@ -36,6 +37,16 @@ export const createUser = async (req: Request, res: Response) => {
 
       //Saving User in database
       await user.save();
+
+      //Creating operation column
+      const operation = new Operation();
+      operation.userId = user.id;
+      operation.userGain = 0;
+      operation.userLost = 0;
+      operation.year = new Date().getFullYear();
+      operation.month = new Date().getMonth() + 1;
+
+      await operation.save();
 
       //Generating JWT Token
       const token = jwtGenerator(user, user.id);

@@ -6,13 +6,13 @@ export class Operation extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
     @Column()
-    year: Date
+    year: number
     @Column()
-    month: Date
+    month: number
     @Column()
     userGain: number
     @Column()
-    userLost: User;
+    userLost: number;
     @Column()
     userId: number
 }
