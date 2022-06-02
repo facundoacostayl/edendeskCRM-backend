@@ -61,13 +61,13 @@ export const addClient = async (req: Request, res: Response) => {
 
 export const addToClientBalance = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { userId, clientId } = req.params;
     const { amount } = req.body;
 
-    const client = await Client.findOneBy({ clientid: parseInt(id) });
-    const operation = await Operation.findOneBy({userId: parseInt(id)})
+    const client = await Client.findOneBy({ clientid: parseInt(clientId) });
+    const operation = await Operation.findOneBy({userId: parseInt(userId)})
 
-    if (!client)
+    if (!client || !operation)
       return res.sendStatus(403).json({ message: "User doesn't exists" });
 
     client.saldo += amount;
@@ -82,11 +82,12 @@ export const addToClientBalance = async (req: Request, res: Response) => {
     client.fechaultcarga = todayDate;
     client.montoultcarga = client.saldo;
 
-    operation!.userGain += amount;
+    operation.userGain += amount;
 
     await client.save();
+    await operation.save();
 
-    return res.json(await Client.find());
+    return res.status(200).json("El saldo fue actualizado correctamente");
   } catch (e) {
     e instanceof Error && res.status(500).json("Internal server error");
   }
@@ -234,8 +235,8 @@ export const updateClient = async (req: Request, res: Response) => {
 
 export const getFullClientBalance = async (req: Request, res: Response) => {
   try {
-    const userId = req.params.id;
-    const client = await Client.findBy({ userId: parseInt(userId) });
+    const {id} = req.params;
+    const client = await Client.findBy({ userId: parseInt(id) });
     let totalBalance: number = 0;
     client.forEach((client) => {
       totalBalance += client.saldo;

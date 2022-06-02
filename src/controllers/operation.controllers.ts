@@ -6,7 +6,7 @@ export const getOperationData = async(req: Request, res: Response) => {
     const { id } = req.params;
 
     const operation = await Operation.findOneBy({ userId: parseInt(id) });
-    if (!operation) return null;
+    if (!operation) throw new Error("Todavía no hay operaciones");
 
     return res.json(operation);
   } catch (error) {
