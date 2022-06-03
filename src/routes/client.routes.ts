@@ -25,10 +25,10 @@ router.patch("/cliente/:id", updateClient);
 router.put("/user:userId/cliente:clientId/agregar-saldo", addToClientBalance);
 router.put("/cliente/:id/descontar-saldo", substractFromClientBalance);
 router.get("/user:id/buscar-cliente", searchClient);
-router.get("/cliente/ordenar-por-nombre-asc", orderByClientNameAsc);
-router.get("/cliente/ordenar-por-nombre-desc", orderByClientNameDesc);
-router.get("/cliente/ordenar-por-saldo-asc", orderByClientBalanceAsc);
-router.get("/cliente/ordenar-por-saldo-desc", orderByClientBalanceDesc);
+router.get("/user:id/clientes/ordenar-por-nombre-asc", orderByClientNameAsc);
+router.get("/user:id/clientes/ordenar-por-nombre-desc", orderByClientNameDesc);
+router.get("/user:id/clientes/ordenar-por-saldo-asc", orderByClientBalanceAsc);
+router.get("/user:id/clientes/ordenar-por-saldo-desc", orderByClientBalanceDesc);
 router.get("/user:id/clientes/saldo-total", getFullClientBalance);
 
 export default router;

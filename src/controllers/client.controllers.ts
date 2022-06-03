@@ -146,11 +146,13 @@ export const searchClient = async (req: Request, res: Response) => {
 
 export const orderByClientNameAsc = async (req: Request, res: Response) => {
   try {
-    const clients = await Client.query(
-      "SELECT * FROM clients ORDER BY nombre ASC"
+    const {id} = req.params;
+
+    const clientsSorted = await Client.query(
+      "SELECT * FROM clients WHERE \"userId\" = $1 ORDER BY nombre ASC", [id]
     );
 
-    return res.json(clients);
+    return res.json(clientsSorted);
   } catch (error) {
     error instanceof Error && res.status(500).json("Server internal error");
   }
@@ -158,8 +160,10 @@ export const orderByClientNameAsc = async (req: Request, res: Response) => {
 
 export const orderByClientNameDesc = async (req: Request, res: Response) => {
   try {
+    const {id} = req.params;
+
     const clients = await Client.query(
-      "SELECT * FROM clients ORDER BY nombre DESC"
+      "SELECT * FROM clients WHERE \"userId\" = $1 ORDER BY nombre DESC", [id]
     );
 
     return res.json(clients);
@@ -170,8 +174,10 @@ export const orderByClientNameDesc = async (req: Request, res: Response) => {
 
 export const orderByClientBalanceAsc = async (req: Request, res: Response) => {
   try {
+    const {id} = req.params;
+
     const clients = await Client.query(
-      "SELECT * FROM clients ORDER BY saldo ASC"
+      "SELECT * FROM clients WHERE \"userId\" = $1 ORDER BY saldo ASC", [id]
     );
 
     return res.json(clients);
@@ -182,8 +188,9 @@ export const orderByClientBalanceAsc = async (req: Request, res: Response) => {
 
 export const orderByClientBalanceDesc = async (req: Request, res: Response) => {
   try {
+    const {id} = req.params;
     const clients = await Client.query(
-      "SELECT * FROM clients ORDER BY saldo DESC"
+      "SELECT * FROM clients WHERE \"userId\" = $1 ORDER BY saldo DESC", [id]
     );
 
     return res.json(clients);
