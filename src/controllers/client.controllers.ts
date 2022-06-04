@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Client } from "../entities/Client";
-import {Operation} from '../entities/Operation';
+import { Operation } from "../entities/Operation";
 
 export const getClients = async (req: Request, res: Response) => {
   try {
@@ -65,9 +65,12 @@ export const addToClientBalance = async (req: Request, res: Response) => {
     const { amount } = req.body;
 
     const client = await Client.findOneBy({ clientid: parseInt(clientId) });
-    const operation = await Operation.findOneBy({userId: parseInt(userId), createdAt: new Date().getDate()})
+    const operation = await Operation.findOneBy({
+      userId: parseInt(userId),
+      createdAt: new Date().getDate(),
+    });
 
-    if (!client || !operation) 
+    if (!client || !operation)
       return res.status(403).json({ message: "User doesn't exists" });
 
     client.saldo += amount;
@@ -83,8 +86,8 @@ export const addToClientBalance = async (req: Request, res: Response) => {
     client.montoultcarga = client.saldo;
 
     operation.userGain += amount;
-    !operation.createdAt ? operation.createdAt = new Date().getDate() : null;
-   
+    !operation.createdAt ? (operation.createdAt = new Date().getDate()) : null;
+
     await client.save();
     await operation.save();
 
@@ -94,18 +97,19 @@ export const addToClientBalance = async (req: Request, res: Response) => {
   }
 };
 
-export const substractFromClientBalance = async (
-  req: Request,
-  res: Response
-) => {
+export const substractFromClientBalance = async (req: Request, res: Response) => {
   try {
     const { amount } = req.body;
-    const { id } = req.params;
+    const { userId, clientId } = req.params;
 
-    const client = await Client.findOneBy({ clientid: parseInt(id) });
-    const operation = await Operation.findOneBy({userId: parseInt(id)})
+    const client = await Client.findOneBy({ clientid: parseInt(clientId) });
+    const operation = await Operation.findOneBy({
+      userId: parseInt(userId),
+      createdAt: new Date().getDate(),
+    });
 
-    if (!client) return res.status(403).json("User doesn't exists");
+    if (!client || !operation)
+      return res.status(403).json("User doesn't exists");
 
     client.saldo = client.saldo - amount;
     client.montoultretiro = amount;
@@ -119,11 +123,13 @@ export const substractFromClientBalance = async (
       today.getFullYear();
     client.fechaultretiro = todayDate;
 
-    operation!.userGain = operation!.userGain - amount;
+    operation!.userLost += amount;
+    !operation.createdAt ? (operation.createdAt = new Date().getDate()) : null;
 
     await client.save();
+    await operation.save();
 
-    return res.json(await Client.find());
+    return res.status(200).json("El saldo fue actualizado correctamente");
   } catch (error) {
     error instanceof Error && res.status(500).json("Internal server error");
   }
@@ -147,10 +153,11 @@ export const searchClient = async (req: Request, res: Response) => {
 
 export const orderByClientNameAsc = async (req: Request, res: Response) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
 
     const clientsSorted = await Client.query(
-      "SELECT * FROM clients WHERE \"userId\" = $1 ORDER BY nombre ASC", [id]
+      'SELECT * FROM clients WHERE "userId" = $1 ORDER BY nombre ASC',
+      [id]
     );
 
     return res.json(clientsSorted);
@@ -161,10 +168,11 @@ export const orderByClientNameAsc = async (req: Request, res: Response) => {
 
 export const orderByClientNameDesc = async (req: Request, res: Response) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
 
     const clients = await Client.query(
-      "SELECT * FROM clients WHERE \"userId\" = $1 ORDER BY nombre DESC", [id]
+      'SELECT * FROM clients WHERE "userId" = $1 ORDER BY nombre DESC',
+      [id]
     );
 
     return res.json(clients);
@@ -175,10 +183,11 @@ export const orderByClientNameDesc = async (req: Request, res: Response) => {
 
 export const orderByClientBalanceAsc = async (req: Request, res: Response) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
 
     const clients = await Client.query(
-      "SELECT * FROM clients WHERE \"userId\" = $1 ORDER BY saldo ASC", [id]
+      'SELECT * FROM clients WHERE "userId" = $1 ORDER BY saldo ASC',
+      [id]
     );
 
     return res.json(clients);
@@ -189,9 +198,10 @@ export const orderByClientBalanceAsc = async (req: Request, res: Response) => {
 
 export const orderByClientBalanceDesc = async (req: Request, res: Response) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     const clients = await Client.query(
-      "SELECT * FROM clients WHERE \"userId\" = $1 ORDER BY saldo DESC", [id]
+      'SELECT * FROM clients WHERE "userId" = $1 ORDER BY saldo DESC',
+      [id]
     );
 
     return res.json(clients);
@@ -236,14 +246,14 @@ export const updateClient = async (req: Request, res: Response) => {
 
     return res.json(client);
   } catch (error) {
-    console.error(error)
+    console.error(error);
     error instanceof Error && res.status(500).json("Internal server error");
   }
 };
 
 export const getFullClientBalance = async (req: Request, res: Response) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     const client = await Client.findBy({ userId: parseInt(id) });
     let totalBalance: number = 0;
     client.forEach((client) => {

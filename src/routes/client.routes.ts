@@ -23,7 +23,7 @@ router.post("/nuevo-cliente", addClient);
 router.delete("/cliente/:id", deleteClient);
 router.patch("/cliente/:id", updateClient);
 router.put("/user:userId/cliente:clientId/agregar-saldo", addToClientBalance);
-router.put("/cliente/:id/descontar-saldo", substractFromClientBalance);
+router.put("/user:userId/cliente:clientId/descontar-saldo", substractFromClientBalance);
 router.get("/user:id/buscar-cliente", searchClient);
 router.get("/user:id/clientes/ordenar-por-nombre-asc", orderByClientNameAsc);
 router.get("/user:id/clientes/ordenar-por-nombre-desc", orderByClientNameDesc);
