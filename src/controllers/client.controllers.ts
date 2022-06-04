@@ -86,6 +86,8 @@ export const addToClientBalance = async (req: Request, res: Response) => {
     client.montoultcarga = client.saldo;
 
     operation.userGain += amount;
+    operation.userTotalBalance += amount;
+    operation.dayTransactions++;
     !operation.createdAt ? (operation.createdAt = new Date().getDate()) : null;
 
     await client.save();
@@ -123,7 +125,9 @@ export const substractFromClientBalance = async (req: Request, res: Response) =>
       today.getFullYear();
     client.fechaultretiro = todayDate;
 
-    operation!.userLost += amount;
+    operation.userLost += amount;
+    operation.userTotalBalance = operation.userTotalBalance - amount;
+    operation.dayTransactions++;
     !operation.createdAt ? (operation.createdAt = new Date().getDate()) : null;
 
     await client.save();
@@ -251,17 +255,4 @@ export const updateClient = async (req: Request, res: Response) => {
   }
 };
 
-export const getFullClientBalance = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const client = await Client.findBy({ userId: parseInt(id) });
-    let totalBalance: number = 0;
-    client.forEach((client) => {
-      totalBalance += client.saldo;
-    });
 
-    return res.json({ total: totalBalance });
-  } catch (error) {
-    error instanceof Error && res.status(500).json("Internal server error");
-  }
-};

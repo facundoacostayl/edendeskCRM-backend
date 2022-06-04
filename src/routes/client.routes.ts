@@ -13,7 +13,6 @@ import {
   orderByClientNameDesc,
   orderByClientBalanceAsc,
   orderByClientBalanceDesc,
-  getFullClientBalance,
 } from "../controllers/client.controllers";
 const authorization = require("../middleware/authorization");
 
@@ -29,6 +28,5 @@ router.get("/user:id/clientes/ordenar-por-nombre-asc", orderByClientNameAsc);
 router.get("/user:id/clientes/ordenar-por-nombre-desc", orderByClientNameDesc);
 router.get("/user:id/clientes/ordenar-por-saldo-asc", orderByClientBalanceAsc);
 router.get("/user:id/clientes/ordenar-por-saldo-desc", orderByClientBalanceDesc);
-router.get("/user:id/clientes/saldo-total", getFullClientBalance);
 
 export default router;

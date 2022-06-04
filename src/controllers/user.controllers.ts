@@ -41,11 +41,8 @@ export const createUser = async (req: Request, res: Response) => {
       //Creating operation column
       const operation = new Operation();
       operation.userId = user.id;
-      operation.userGain = 0;
-      operation.userLost = 0;
       operation.year = new Date().getFullYear();
       operation.month = new Date().getMonth() + 1;
-      operation.createdAt = 0;
 
       await operation.save();
 

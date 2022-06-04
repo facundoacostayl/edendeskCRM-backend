@@ -9,11 +9,25 @@ export class Operation extends BaseEntity {
     year: number;
     @Column()
     month: number;
-    @Column()
+    @Column({
+        nullable: true
+    })
     userGain: number;
-    @Column()
+    @Column({
+        nullable: true
+    })
     userLost: number;
-    @Column()
+    @Column({
+        nullable: true
+    })
+    userTotalBalance: number
+    @Column({
+        nullable: true
+    })
+    dayTransactions: number
+    @Column({
+        nullable: true
+    })
     createdAt: number;
     @Column()
     userId: number;

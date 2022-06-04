@@ -14,8 +14,6 @@ export const getOperationData = async (req: Request, res: Response) => {
       operation = new Operation();
       operation.year = new Date().getFullYear();
       operation.month = new Date().getMonth() + 1;
-      operation.userGain = 0;
-      operation.userLost = 0;
       operation.createdAt = new Date().getDate();
       operation.userId = parseInt(id);
 
@@ -27,5 +25,20 @@ export const getOperationData = async (req: Request, res: Response) => {
     return res.json(operation);
   } catch (error) {
     error instanceof Error && res.status(500).send("Server internal error");
+  }
+};
+
+export const getFullClientBalance = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const operation = await Operation.findBy({ userId: parseInt(id) });
+    let totalBalance: number = 0;
+    operation.forEach((op) => {
+      totalBalance += op.userTotalBalance;
+    });
+
+    return res.json({ total: totalBalance });
+  } catch (error) {
+    error instanceof Error && res.status(500).json("Internal server error");
   }
 };
