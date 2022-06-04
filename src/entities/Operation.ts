@@ -4,15 +4,17 @@ import { User } from './User';
 @Entity('operation')
 export class Operation extends BaseEntity {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
     @Column()
-    year: number
+    year: number;
     @Column()
-    month: number
+    month: number;
     @Column()
-    userGain: number
+    userGain: number;
     @Column()
     userLost: number;
     @Column()
-    userId: number
+    createdAt: number;
+    @Column()
+    userId: number;
 }

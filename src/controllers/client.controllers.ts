@@ -65,10 +65,10 @@ export const addToClientBalance = async (req: Request, res: Response) => {
     const { amount } = req.body;
 
     const client = await Client.findOneBy({ clientid: parseInt(clientId) });
-    const operation = await Operation.findOneBy({userId: parseInt(userId)})
+    const operation = await Operation.findOneBy({userId: parseInt(userId), createdAt: new Date().getDate()})
 
-    if (!client || !operation)
-      return res.sendStatus(403).json({ message: "User doesn't exists" });
+    if (!client || !operation) 
+      return res.status(403).json({ message: "User doesn't exists" });
 
     client.saldo += amount;
 
@@ -83,7 +83,8 @@ export const addToClientBalance = async (req: Request, res: Response) => {
     client.montoultcarga = client.saldo;
 
     operation.userGain += amount;
-
+    !operation.createdAt ? operation.createdAt = new Date().getDate() : null;
+   
     await client.save();
     await operation.save();
 

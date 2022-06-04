@@ -45,6 +45,7 @@ export const createUser = async (req: Request, res: Response) => {
       operation.userLost = 0;
       operation.year = new Date().getFullYear();
       operation.month = new Date().getMonth() + 1;
+      operation.createdAt = 0;
 
       await operation.save();
 
