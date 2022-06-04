@@ -268,3 +268,15 @@ export const updateClient = async (req: Request, res: Response) => {
     error instanceof Error && res.status(500).json("Internal server error");
   }
 };
+
+export const getClientsQuantity = async(req: Request, res: Response) => {
+  try{
+    const {userId} = req.params;
+    const client = await Client.findBy({userId: parseInt(userId)});
+
+    const clientLength = client.length;
+    return res.json(clientLength);
+  }catch(error) {
+    error instanceof Error && res.status(500).json("Internal server error");
+  }
+}
