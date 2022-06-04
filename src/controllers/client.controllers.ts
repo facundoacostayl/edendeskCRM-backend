@@ -99,7 +99,10 @@ export const addToClientBalance = async (req: Request, res: Response) => {
   }
 };
 
-export const substractFromClientBalance = async (req: Request, res: Response) => {
+export const substractFromClientBalance = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const { amount } = req.body;
     const { userId, clientId } = req.params;
@@ -215,11 +218,22 @@ export const orderByClientBalanceDesc = async (req: Request, res: Response) => {
 };
 
 export const deleteClient = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const { userId, clientId } = req.params;
 
-  const client = await Client.delete({ clientid: parseInt(id) });
+  const client = await Client.findOneBy({ clientid: parseInt(clientId) });
+  const operation = await Operation.findOneBy({
+    userId: parseInt(userId),
+    createdAt: new Date().getDate(),
+  });
 
-  if (!client) return res.status(403).json({ message: "Client not found" });
+  if (!client || !operation)
+    return res.status(403).json({ message: "Client not found" });
+
+  operation.userLost += client.saldo;
+  operation.userTotalBalance = operation.userTotalBalance - client.saldo;
+  await operation.save();
+
+  await Client.delete({ clientid: parseInt(clientId) });
 
   return res.status(200).json({ message: "Client deleted successfully" });
 };
@@ -254,5 +268,3 @@ export const updateClient = async (req: Request, res: Response) => {
     error instanceof Error && res.status(500).json("Internal server error");
   }
 };
-
-
