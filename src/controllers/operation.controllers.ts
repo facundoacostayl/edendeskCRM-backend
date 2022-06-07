@@ -1,7 +1,19 @@
 import { Response, Request } from "express";
 import { Operation } from "../entities/Operation";
 
-export const getOperationData = async (req: Request, res: Response) => {
+export const getFullOperationData = async (req: Request, res: Response) => {
+  try {
+    const {id} = req.params;
+    const response = await Operation.findBy({userId: parseInt(id)});
+
+    return res.json(response);
+
+  }catch(error){
+    error instanceof Error && res.status(500).json("Internal server error");
+  }
+};
+
+export const getTodayOperationData = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
