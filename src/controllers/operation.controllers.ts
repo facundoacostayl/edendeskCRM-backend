@@ -3,12 +3,11 @@ import { Operation } from "../entities/Operation";
 
 export const getFullOperationData = async (req: Request, res: Response) => {
   try {
-    const {id} = req.params;
-    const response = await Operation.findBy({userId: parseInt(id)});
+    const { id } = req.params;
+    const response = await Operation.findBy({ userId: parseInt(id) });
 
     return res.json(response);
-
-  }catch(error){
+  } catch (error) {
     error instanceof Error && res.status(500).json("Internal server error");
   }
 };
@@ -20,6 +19,8 @@ export const getTodayOperationData = async (req: Request, res: Response) => {
     let operation = await Operation.findOneBy({
       userId: parseInt(id),
       createdAt: new Date().getDate(),
+      month: new Date().getMonth() + 1,
+      year: new Date().getFullYear(),
     });
 
     if (!operation) {
@@ -35,6 +36,32 @@ export const getTodayOperationData = async (req: Request, res: Response) => {
     }
 
     return res.json(operation);
+  } catch (error) {
+    error instanceof Error && res.status(500).send("Server internal error");
+  }
+};
+
+export const getMonthOperationData = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { month, year } = req.body;
+
+    const operation = await Operation.findBy({
+      userId: parseInt(id),
+      year: year,
+      month: month,
+    });
+
+    let incomes: number = 0;
+    operation.forEach((op) => (incomes += op.userGain));
+
+    let outcomes: number = 0;
+    operation.forEach((op) => (outcomes += op.userLost));
+
+    return res.json({
+      userGain: incomes,
+      userLost: outcomes,
+    });
   } catch (error) {
     error instanceof Error && res.status(500).send("Server internal error");
   }
