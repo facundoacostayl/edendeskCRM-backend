@@ -18,7 +18,7 @@ const db_1 = require("./db");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield db_1.AppDataSource.initialize();
-        app_1.default.listen(4000);
+        app_1.default.listen(process.env.PORT || 4000);
         console.log("Server is online");
     }
     catch (err) {
