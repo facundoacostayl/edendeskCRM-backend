@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const operation_controllers_1 = require("../controllers/operation.controllers");
+const router = (0, express_1.Router)();
+router.get("/user:id/operation", operation_controllers_1.getTodayOperationData);
+router.get("/user:id/total-operation", operation_controllers_1.getFullOperationData);
+router.post("/user:id/month-operation", operation_controllers_1.getMonthOperationData);
+router.get("/user:id/clientes/saldo-total", operation_controllers_1.getFullClientBalance);
+exports.default = router;

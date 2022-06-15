@@ -5,7 +5,7 @@ import { AppDataSource } from './db';
 const main = async () => {
    try {
       await AppDataSource.initialize()
-      app.listen(4000);
+      app.listen(process.env.PORT || 4000);
       console.log("Server is online")
    } catch (err) {
       console.error(err)
