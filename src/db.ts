@@ -2,7 +2,7 @@ import {DataSource} from 'typeorm';
 import {User} from './entities/User'; 
 import {Client} from './entities/Client';
 import {Operation} from './entities/Operation';
-require('dotenv').config()
+require('dotenv').config();
 
 export const AppDataSource = new DataSource({
     type: 'postgres',
