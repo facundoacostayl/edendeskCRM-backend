@@ -37,6 +37,6 @@
     "reflect-metadata": "^0.1.13",
     "ts-node": "^10.8.1",
     "typeorm": "0.3.6",
-    "express": "*"
+    "express": "^4.18.1"
   }
 }
