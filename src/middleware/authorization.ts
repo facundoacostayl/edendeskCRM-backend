@@ -16,8 +16,12 @@ module.exports = async (req: ReqWithUser, res:Response, next: NextFunction) => {
             return res.status(403).json(false)
         }
 
+        if(jwtoken) {
         const payload = jwtoken.verify(token, "riverpasion")
         req.user = payload.user;
+    }else{
+        throw new Error("No existe jwtoken")
+    }
 
         next();
 
