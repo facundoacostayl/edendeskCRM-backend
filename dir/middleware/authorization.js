@@ -17,7 +17,7 @@ module.exports = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         if (!token) {
             return res.status(403).json(false);
         }
-        const payload = jwtoken.verify(token, process.env.jwtSecret);
+        const payload = jwtoken.verify(token, process.env.JWT_SECRET);
         req.user = payload.user;
         next();
     }
