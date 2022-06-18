@@ -1,3 +1,4 @@
+require('dotenv').config();
 import "reflect-metadata";
 import app from './app';
 import { AppDataSource } from './db';
