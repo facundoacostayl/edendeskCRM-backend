@@ -16,7 +16,7 @@ module.exports = async (req: ReqWithUser, res:Response, next: NextFunction) => {
             return res.status(403).json(false)
         }
 
-        const payload = jwtoken.verify(token, process.env.JWT_SECRET)
+        const payload = jwtoken.verify(token, process.env.TOKEN)
         req.user = payload.user;
 
         next();
