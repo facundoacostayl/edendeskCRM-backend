@@ -23,12 +23,22 @@ export const getTodayOperationData = async (req: Request, res: Response) => {
       year: new Date().getFullYear(),
     });
 
+    let yesterdayOperation = await Operation.findOneBy({
+      userId: parseInt(id),
+      createdAt: new Date().getDate() - 1,
+      month: new Date().getMonth() + 1,
+      year: new Date().getFullYear(),
+    });
+
     if (!operation) {
       operation = new Operation();
       operation.year = new Date().getFullYear();
       operation.month = new Date().getMonth() + 1;
       operation.createdAt = new Date().getDate();
       operation.userId = parseInt(id);
+      operation.userTotalBalance = yesterdayOperation
+        ? yesterdayOperation.userTotalBalance
+        : 0;
 
       await operation.save();
 
