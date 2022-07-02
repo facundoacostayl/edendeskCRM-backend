@@ -1,9 +1,8 @@
-require('dotenv').config();
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import userRoutes from './routes/user.routes';
-import dashboardRoute from './routes/app.routes';
+import dashboardRoutes from './routes/app.routes';
 import clientRoutes from './routes/client.routes';
 import operationRoutes from './routes/operation.routes';
 const app = express();
@@ -14,7 +13,7 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(userRoutes);
-app.use(dashboardRoute)
+app.use(dashboardRoutes)
 app.use(clientRoutes)
 app.use(operationRoutes)
 

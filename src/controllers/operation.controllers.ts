@@ -54,12 +54,11 @@ export const getTodayOperationData = async (req: Request, res: Response) => {
 export const getMonthOperationData = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { month, year } = req.body;
+    const { year } = req.body;
 
     const operation = await Operation.findBy({
       userId: parseInt(id),
       year: year,
-      month: month,
     });
 
     let incomes: number = 0;

@@ -9,7 +9,7 @@ interface ReqWithUser extends Request {
 
 module.exports = async (req: ReqWithUser, res:Response, next: NextFunction) => {
     try {
-
+        
         const token = req.header("token");
 
         if(!token) {
