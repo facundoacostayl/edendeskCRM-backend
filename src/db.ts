@@ -6,14 +6,12 @@ require('dotenv').config();
 
 export const AppDataSource = new DataSource({
     type: 'postgres',
-    url: process.env.DB_URL,
+    host: "localhost",
+    port: 5432,
+    username: process.env.dbusername,
+    database: process.env.dbdatabase,
+    password: process.env.dbpassword,
     entities: [User, Client, Operation],
     logging: true,
     synchronize: false,
-    ssl: true,
-    extra: {
-        ssl: {
-            rejectUnauthorized: false
-        }
-    }
 });

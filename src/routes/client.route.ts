@@ -31,4 +31,4 @@ router.get("/user:id/clientes/ordenar-por-saldo-asc", orderByClientBalanceAsc);
 router.get("/user:id/clientes/ordenar-por-saldo-desc", orderByClientBalanceDesc);
 router.get("/user:userId/clientes/cantidad-clientes", getClientsQuantity)
 
-export default router;
+export {router};

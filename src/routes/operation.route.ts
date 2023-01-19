@@ -8,4 +8,4 @@ router.get("/user:id/total-operation", getFullOperationData)
 router.post("/user:id/month-operation", getMonthOperationData);
 router.get("/user:id/clientes/saldo-total", getFullClientBalance);
 
-export default router;
+export {router};

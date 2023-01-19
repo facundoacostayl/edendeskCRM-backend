@@ -5,4 +5,4 @@ import { getInfo } from "../controllers/dashboard.controllers";
 
 router.get('/dashboard', authorization, getInfo);
 
-export default router;
+export {router};

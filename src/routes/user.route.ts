@@ -10,4 +10,4 @@ router.get('/verificar', authorization, authorizeToken);
 router.get('/user/:id', getUser);
 router.patch('/user/:id', updateUser);
 
-export default router;
+export {router};

@@ -1,10 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import userRoutes from './routes/user.routes';
-import dashboardRoutes from './routes/app.routes';
-import clientRoutes from './routes/client.routes';
-import operationRoutes from './routes/operation.routes';
+import {router} from '../src/routes/index.route';
 const app = express();
 const port = 4000;
 
@@ -12,9 +9,6 @@ const port = 4000;
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
-app.use(userRoutes);
-app.use(dashboardRoutes)
-app.use(clientRoutes)
-app.use(operationRoutes)
+app.use('/api/2.0', router);
 
 export default app;
