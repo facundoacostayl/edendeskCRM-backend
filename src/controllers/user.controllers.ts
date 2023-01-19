@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { User } from "../entities/User";
-import {Operation} from '../entities/Operation';
+import { User } from "../config/entities/User";
+import {Operation} from '../config/entities/Operation';
 const bcrypt = require("bcrypt");
 const jwtGenerator = require("../utils/jwtGenerator");
 

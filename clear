@@ -1,0 +1,68 @@
+[33maa53b5f[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31mheroku/main[m[33m)[m typo corrected in app.ts
+[33mf06c1ab[m yesterdatOperation let created in getTodayOperationData
+[33m25565fa[m updateClient route is a POST request now (testing)
+[33mc46b835[m jwtGenerator file changes in env
+[33m25aef1b[m authorization solution 20
+[33mcb619b8[m authorization file with heroku config env
+[33m2b6557d[m authorization builded
+[33md3525af[m env JWT_SECRET created
+[33ma1e3425[m .env added again in authorization file
+[33mef6ee67[m authorization throwing error when jwtoken doesn't exist
+[33med33ebc[m testing env
+[33m651bbf3[m dotenv required in index and app files
+[33m6564716[m backtick in authorization file jwtsecret env variable solution
+[33mcea8ec6[m .env file jwtsecret env variable changed
+[33m28e2da1[m env variable name changed in authorization file
+[33m1425081[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m sql file
+[33m78ac073[m migrations removed
+[33m5c5d753[m createdAt column dropped
+[33md6cddc2[m morgan dependencie added to dependencies
+[33m5dcf6fa[m cors added to dependencies
+[33m3b99858[m express removed from devDependencies
+[33me395df2[m express version changed
+[33md5978fa[m Adding express to dependencies
+[33mc4f2488[m ts-node-dev installed
+[33m28f4d34[m fixing dependency tree error
+[33ma4b3fcf[m db.ts
+[33m6f5af12[m Trying deleting lock.json
+[33m99a3692[m Building typeorm postgres
+[33m91b30fa[m[33m ([m[1;31morigin/backend[m[33m)[m TypeOrm build configuration
+[33mf812527[m Heroku connection
+[33med80297[m getMonthOperationData function added
+[33m5b1b1ac[m getFullOperationData function added
+[33m196b316[m getClientsQuantity function added
+[33m959020e[m userTotalBalance updated when client is removed
+[33ma3336d0[m dayTransactions column added to Operation entity
+[33m38fc809[m add and substract from user balance funtions fixed
+[33m108dd58[m getOperationData function creates another row of operations when is another day
+[33m3c5e394[m Functions for sorting clients updated to search by userId
+[33m343f473[m addClient bug related with Operation table fixed
+[33m44cf52a[m getOperationData function added
+[33m3ed8910[m Operation table modified when updating user balance
+[33m183aca6[m bcrypt implemented in updateUser function
+[33mc7f38f9[m updateUser function implemented
+[33mc730873[m SearchClient function query changed to search only clients whose are matched with userId
+[33m8df330d[m Add client controller changed
+[33m53e8444[m Users has their own clients now
+[33m19fb5f4[m Token response modified to be an object with token key
+[33m1e2de0a[m getFullClientBalance function added
+[33m748a309[m parseInt added in updateClient function
+[33m7727c62[m Function updateClient added for updating certain values from body
+[33m50c82b6[m Delete client function added
+[33m72e5608[m order clientlist functions added
+[33m930aeff[m Search Client function added
+[33m0134107[m substractFromClientBalance function added
+[33mf188ea4[m updateClienBalance fixed, now returning all to be rendered later on the frontend
+[33mc0c9869[m getClients function added
+[33mf2c2751[m updateClientBalance function added (JUST TEST NAME, NEXT TO BE CHANGED)
+[33m989d1c2[m Client controllers/routes mofified
+[33m077024e[m Add client function added
+[33m4223b0d[m Client table created
+[33mc5591d5[m Typeorm user entity modified
+[33mad2fef7[m Dashboard route added + JWT auth
+[33md6b1f4d[m JWT Config + Authorization added
+[33md830c56[m createUser fixed
+[33mf679b2e[m Bcrypt + query config in createUser function
+[33mbc1bcb4[m CreateUser query added
+[33m86c1782[m Typeorm config added
+[33m77a1ba7[m Node + Express + Typescript basic start config

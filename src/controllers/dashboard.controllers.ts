@@ -1,5 +1,5 @@
 import {Request, Response} from 'express';
-import {AppDataSource} from '../db';
+import {AppDataSource} from '../config/db/db';
 
 interface ReqWithUser extends Request {
     user?: number

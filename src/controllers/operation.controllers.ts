@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import { Operation } from "../entities/Operation";
+import { Operation } from "../config/entities/Operation";
 
 export const getFullOperationData = async (req: Request, res: Response) => {
   try {

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { Client } from "../entities/Client";
-import { Operation } from "../entities/Operation";
+import { Client } from "../config/entities/Client";
+import { Operation } from "../config/entities/Operation";
 
 export const getClients = async (req: Request, res: Response) => {
   try {
