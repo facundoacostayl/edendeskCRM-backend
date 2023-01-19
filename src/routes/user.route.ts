@@ -7,7 +7,7 @@ const authorization = require('../middleware/authorization');
 router.post('/registro', validInfo, createUser);
 router.post('/login', validInfo, loginUser);
 router.get('/verificar', authorization, authorizeToken);
-router.get('/user/:id', getUser);
-router.patch('/user/:id', updateUser);
+router.get('/:id', getUser);
+router.patch('/:id', updateUser);
 
 export {router};

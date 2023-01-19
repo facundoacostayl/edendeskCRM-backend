@@ -18,10 +18,10 @@ import {
 const authorization = require("../middleware/authorization");
 
 router.get("/user:id/clientes", getItems);
-router.get("/cliente/:id", getClient);
+router.get("/:id", getClient);
 router.post("/nuevo-cliente", addClient);
 router.delete("/user:userId/cliente:clientId", deleteClient);
-router.post("/cliente/:id", updateClient);
+router.post("/:id", updateClient);
 router.put("/user:userId/cliente:clientId/agregar-saldo", addToClientBalance);
 router.put("/user:userId/cliente:clientId/descontar-saldo", substractFromClientBalance);
 router.get("/user:id/buscar-cliente", searchClient);
