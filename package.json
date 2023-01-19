@@ -8,7 +8,8 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "dev": "ts-node-dev --respawn src/index.ts",
+    "dev": "nodemon ./src/index.ts",
+    "typescript": "ts-node-dev --respawn src/index.ts",
     "build": "tsc",
     "start": "node dir/index.js"
   },

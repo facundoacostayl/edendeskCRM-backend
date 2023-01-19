@@ -1,7 +1,7 @@
 import Router from "express";
 const router = Router();
 import {
-  getClients,
+  getItems,
   getClient,
   addClient,
   deleteClient,
@@ -17,7 +17,7 @@ import {
 } from "../controllers/client.controller";
 const authorization = require("../middleware/authorization");
 
-router.get("/user:id/clientes", getClients);
+router.get("/user:id/clientes", getItems);
 router.get("/cliente/:id", getClient);
 router.post("/nuevo-cliente", addClient);
 router.delete("/user:userId/cliente:clientId", deleteClient);

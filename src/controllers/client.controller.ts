@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
 import { Client } from "../config/entities/Client";
 import { Operation } from "../config/entities/Operation";
+import {getClients} from '../services/client.service';
 
-export const getClients = async (req: Request, res: Response) => {
+export const getItems = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const clientList = await Client.findBy({ userId: parseInt(id) });
+    const clientList = await getClients(parseInt(id));
 
     return res.json(clientList);
   } catch (error) {
