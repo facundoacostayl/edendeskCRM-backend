@@ -1,7 +1,7 @@
 import { Router } from "express";
 const router = Router();
 const authorization = require("../middleware/authorization");
-import { getInfo } from "../controllers/dashboard.controllers";
+import { getInfo } from "../controllers/dashboard.controller";
 
 router.get('/dashboard', authorization, getInfo);
 

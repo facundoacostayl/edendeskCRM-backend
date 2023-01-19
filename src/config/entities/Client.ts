@@ -1,5 +1,4 @@
 import {BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, ManyToOne} from 'typeorm';
-import { User } from './User';
 
 @Entity('clients')
 export class Client extends BaseEntity {

@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import {getTodayOperationData, getFullOperationData, getMonthOperationData, getFullClientBalance} from '../controllers/operation.controllers';
+import {getTodayOperationData, getFullOperationData, getMonthOperationData, getFullClientBalance} from '../controllers/operation.controller';
 
 const router = Router();
 

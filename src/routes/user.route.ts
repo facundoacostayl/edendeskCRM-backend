@@ -1,6 +1,6 @@
 import {Router} from 'express';
 const router = Router();
-import {createUser, loginUser, authorizeToken, getUser, updateUser} from '../controllers/user.controllers';
+import {createUser, loginUser, authorizeToken, getUser, updateUser} from '../controllers/user.controller';
 const validInfo = require('../middleware/validInfo');
 const authorization = require('../middleware/authorization');
 

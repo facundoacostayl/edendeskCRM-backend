@@ -14,7 +14,7 @@ import {
   orderByClientBalanceAsc,
   orderByClientBalanceDesc,
   getClientsQuantity
-} from "../controllers/client.controllers";
+} from "../controllers/client.controller";
 const authorization = require("../middleware/authorization");
 
 router.get("/user:id/clientes", getClients);
