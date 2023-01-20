@@ -4,7 +4,7 @@ import {ClientType} from '../interfaces/client.interface';
 import {UserType} from '../interfaces/user.interface';
 
 const getClients = async(userId: UserType['id']) => {
-    const clientList = await Client.findBy({ userId: userId });
+    const clientList = await Client.findBy({ userId });
     
     return clientList;
 };

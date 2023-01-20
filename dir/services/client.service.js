@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getClients = void 0;
 const Client_1 = require("../config/entities/Client");
 const getClients = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    const clientList = yield Client_1.Client.findBy({ userId: userId });
+    const clientList = yield Client_1.Client.findBy({ userId });
     return clientList;
 });
 exports.getClients = getClients;

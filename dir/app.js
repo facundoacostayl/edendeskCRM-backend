@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
-const index_route_1 = require("../src/routes/index.route");
+const index_route_1 = require("./routes/index.route");
 const app = (0, express_1.default)();
 const port = 4000;
 //Middlewares
