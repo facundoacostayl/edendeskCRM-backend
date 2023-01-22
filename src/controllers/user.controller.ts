@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { User } from "../config/entities/User";
 import {Operation} from '../config/entities/Operation';
+import {getUser} from '../services/user.service';
 const bcrypt = require("bcrypt");
 const jwtGenerator = require("../utils/jwtGenerator");
 
-export const getUser = async (req: Request, res: Response) => {
+export const getItem = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const user = await User.findOneBy({ id: parseInt(id) });
