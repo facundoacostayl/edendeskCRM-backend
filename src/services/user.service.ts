@@ -6,9 +6,13 @@ const bcrypt = require("bcrypt");
 const jwtGenerator = require("../utils/jwtGenerator");
 
 const getUser = async(id: UserType['id']) => {
-    const user = await User.findOneBy({ id });
+    const userRequest = await User.findOneBy({ id });
 
-    return user;
+    if(userRequest === null) {
+        return {type: "Error", statusCode: 400, message: "User doesn't exist"};
+    }
+
+    return {type: "Success", statusCode: 200, response: userRequest};
 };
 
 const createUser = async(firstname: UserType['firstname'], loginemail: UserType['loginemail'], password: UserType['password']) => {
@@ -17,7 +21,7 @@ const createUser = async(firstname: UserType['firstname'], loginemail: UserType[
       const userRequest = await User.findOneBy({ loginemail });
 
       if(userRequest !== null) {
-        return {type: "Error", statusCode: 400, message: "Ya existe un usuario con ese correo"};
+        return {type: "Error", statusCode: 400, message: "User already exists"};
       };
 
         const user = new User();
@@ -45,8 +49,36 @@ const createUser = async(firstname: UserType['firstname'], loginemail: UserType[
         //Generating JWT Token
         const token = jwtGenerator(user, user.id);
 
-        return {type: "Success", statusCode: 200, message: "Usuario creado exitosamente"};
+        return {type: "Success", statusCode: 200, message: "User created successfully"};
+}
+
+const loginUser = async(loginemail: User['loginemail'], password: User['password']) => {
+
+ //Check if user exists
+ const userRequest = await User.findOneBy({ loginemail: loginemail });
+
+ if (userRequest === null) {
+    return {type: "Error", statusCode: 400, message: "User doesn't exist"};
+ }
+
+ //Check if incomming password is the same the database password
+ const validPassword = await bcrypt.compare(password, userRequest.password);
+
+ if (!validPassword) {
+    return {type: "Error", statusCode: 400, message: "Incorrect password"};
+ }
+
+ //Give the jwt token to the user
+
+ const token = jwtGenerator(userRequest.id);
+ const user = await User.findOneBy({ loginemail: loginemail });
+ const userId = user && user.id;
+
+ const response = {token, userId: user && user.id}
+
+ return {type: "Success", statusCode: 200, message: "Login successful", response};
+
 }
 
 
-export {getUser, createUser};
+export {getUser, createUser, loginUser};

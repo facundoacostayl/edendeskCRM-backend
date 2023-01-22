@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { User } from "../config/entities/User";
-import {Operation} from '../config/entities/Operation';
-import {getUser, createUser} from '../services/user.service';
+import { Operation } from "../config/entities/Operation";
+import { getUser, createUser, loginUser } from "../services/user.service";
 import { errorHandler } from "../utils/error.handle";
 const bcrypt = require("bcrypt");
 const jwtGenerator = require("../utils/jwtGenerator");
@@ -9,11 +9,18 @@ const jwtGenerator = require("../utils/jwtGenerator");
 export const getItem = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const user = await getUser(parseInt(id));
+    const data = await getUser(parseInt(id));
 
-    return res.json(user);
+    //Checking if there are errors
+    if (data.type === "Error") {
+      throw new Error(data.message);
+    }
+
+    return res.json(data.response);
   } catch (error) {
-    error instanceof Error && res.status(500).json("Internal server error");
+    if (error instanceof Error) {
+      errorHandler(res, error.message, 400);
+    }
   }
 };
 
@@ -27,10 +34,9 @@ export const createItem = async (req: Request, res: Response) => {
     //Checking if there are errors
     if (data.type === "Error") {
       throw new Error(data.message);
-    };
+    }
 
     return res.json(data);
-    
   } catch (error) {
     if (error instanceof Error) {
       errorHandler(res, error.message, 400);
@@ -38,35 +44,22 @@ export const createItem = async (req: Request, res: Response) => {
   }
 };
 
-export const loginUser = async (req: Request, res: Response) => {
+export const loginItem = async (req: Request, res: Response) => {
   try {
     //Require body
     const { loginemail, password } = req.body;
 
-    //Check if user exists
-    const userRequest = await User.findOneBy({ loginemail: loginemail });
+    const data = await loginUser(loginemail, password);
 
-    if (userRequest === null) {
-      return res.status(401).json("No existe el usuario");
+    //Checking if there are errors
+    if (data.type === "Error") {
+      throw new Error(data.message);
     }
 
-    //Check if incomming password is the same the database password
-    const validPassword = await bcrypt.compare(password, userRequest.password);
-
-    if (!validPassword) {
-      return res.status(401).json("El email o contraseña es incorrecta");
-    }
-
-    //Give the jwt token to the user
-
-    const token = jwtGenerator(userRequest.id);
-    const user = await User.findOneBy({ loginemail: loginemail });
-    const userId = user && user.id;
-
-    res.json({ token: token, id: userId });
+    res.json(data.response);
   } catch (error) {
     if (error instanceof Error) {
-      res.status(500).json(error.message);
+      errorHandler(res, error.message, 400)
     }
   }
 };
