@@ -1,14 +1,15 @@
 import { Request, Response } from "express";
 import { User } from "../config/entities/User";
 import {Operation} from '../config/entities/Operation';
-import {getUser} from '../services/user.service';
+import {getUser, createUser} from '../services/user.service';
+import { errorHandler } from "../utils/error.handle";
 const bcrypt = require("bcrypt");
 const jwtGenerator = require("../utils/jwtGenerator");
 
 export const getItem = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const user = await User.findOneBy({ id: parseInt(id) });
+    const user = await getUser(parseInt(id));
 
     return res.json(user);
   } catch (error) {
@@ -16,47 +17,23 @@ export const getItem = async (req: Request, res: Response) => {
   }
 };
 
-export const createUser = async (req: Request, res: Response) => {
+export const createItem = async (req: Request, res: Response) => {
   try {
     //Require body
     const { firstname, loginemail, password } = req.body;
 
-    //Verify if user is already authenticated
-    const userRequest = await User.findOneBy({ loginemail: loginemail });
+    const data = await createUser(firstname, loginemail, password);
 
-    if (userRequest === null) {
-      const user = new User();
-      user.firstname = firstname;
-      user.loginemail = loginemail;
+    //Checking if there are errors
+    if (data.type === "Error") {
+      throw new Error(data.message);
+    };
 
-      //Bcrypt password
-
-      const saltRound = 10;
-      const salt = await bcrypt.genSalt(saltRound);
-      const bcryptPassword = await bcrypt.hash(password, salt);
-      user.password = bcryptPassword;
-
-      //Saving User in database
-      await user.save();
-
-      //Creating operation column
-      const operation = new Operation();
-      operation.userId = user.id;
-      operation.year = new Date().getFullYear();
-      operation.month = new Date().getMonth() + 1;
-
-      await operation.save();
-
-      //Generating JWT Token
-      const token = jwtGenerator(user, user.id);
-
-      return res.json({ token: token, id: user.id });
-    } else {
-      return res.status(401).send("Ya existe un usuario con ese email");
-    }
+    return res.json(data);
+    
   } catch (error) {
     if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
+      errorHandler(res, error.message, 400);
     }
   }
 };
