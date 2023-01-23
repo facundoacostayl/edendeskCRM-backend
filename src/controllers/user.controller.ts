@@ -49,14 +49,14 @@ export const loginItem = async (req: Request, res: Response) => {
     //Require body
     const { loginemail, password } = req.body;
 
-    const data = await loginUser(loginemail, password);
+    const response = await loginUser(loginemail, password);
 
     //Checking if there are errors
-    if (data.type === "Error") {
-      throw new Error(data.message);
+    if (response.responseType === "Error") {
+      throw new Error(response.message);
     }
 
-    res.json(data.response);
+    res.json(response.data);
   } catch (error) {
     if (error instanceof Error) {
       errorHandler(res, error.message, 400)

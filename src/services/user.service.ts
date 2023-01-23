@@ -64,14 +64,14 @@ const loginUser = async (
   const userRequest = await User.findOneBy({ loginemail: loginemail });
 
   if (userRequest === null) {
-    return { type: "Error", statusCode: 400, message: "User doesn't exist" };
+    return responseHandler("Error", 400, "User doesn't exist");
   }
 
   //Check if incomming password is the same the database password
   const validPassword = await bcrypt.compare(password, userRequest.password);
 
   if (!validPassword) {
-    return { type: "Error", statusCode: 400, message: "Incorrect password" };
+    return responseHandler("Error", 400, "Incorrect Password");
   }
 
   //Give the jwt token to the user
@@ -82,12 +82,8 @@ const loginUser = async (
 
   const response = { token, userId: user && user.id };
 
-  return {
-    type: "Success",
-    statusCode: 200,
-    message: "Login successful",
-    response,
-  };
+  return responseHandler("Success", 200, "Logged in succesfully");
+
 };
 
 const updateUser = async (id: UserType["id"], body: UserType) => {
