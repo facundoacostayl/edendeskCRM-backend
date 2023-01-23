@@ -69,14 +69,14 @@ export const updateItem = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { body } = req;
 
-    const data = await updateUser(parseInt(id), body);
+    const response = await updateUser(parseInt(id), body);
 
     //Checking if there are errors
-    if (data.type === "Error") {
-      throw new Error(data.message);
+    if (response.responseType === "Error") {
+      throw new Error(response.message);
     }
 
-    return res.json(data);
+    return res.json(response);
   } catch (error) {
     error instanceof Error && res.status(500).json(error.message);
   }

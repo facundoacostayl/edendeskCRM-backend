@@ -12,7 +12,7 @@ const getUser = async (id: UserType["id"]) => {
     return responseHandler("Error", 400, "User doesn't exist");
   }
 
-  return responseHandler("Success", 200, "User doesn't exist", userRequest);
+  return responseHandler("Success", 200, "User found succesfully", userRequest);
 };
 
 const createUser = async (
@@ -50,10 +50,16 @@ const createUser = async (
   await operation.save();
 
   //Generating JWT Token
-  const response = await User.findOneBy({loginemail});
+  const response = await User.findOneBy({ loginemail });
   const token = jwtGenerator(user, user.id);
 
-  return responseHandler("Success", 200, "User created successfully", response!, token);
+  return responseHandler(
+    "Success",
+    200,
+    "User created succesfully",
+    response!,
+    token
+  );
 };
 
 const loginUser = async (
@@ -83,16 +89,11 @@ const loginUser = async (
   const response = { token, userId: user && user.id };
 
   return responseHandler("Success", 200, "Logged in succesfully");
-
 };
 
 const updateUser = async (id: UserType["id"], body: UserType) => {
-  if (Object.keys(body).length === 0) {
-    return {
-      type: "Error",
-      statusCode: 400,
-      message: "There's no data to update",
-    };
+  if (!Object.keys(body).length) {
+    return responseHandler("Error", 400, "There's no data to update");
   }
 
   //Bcrypt password
@@ -123,12 +124,8 @@ const updateUser = async (id: UserType["id"], body: UserType) => {
 
   const response = await User.findOneBy({ id });
 
-  return {
-    type: "Success",
-    statusCode: 200,
-    message: "Login successful",
-    response,
-  };
+  return responseHandler("Success", 200, "User updated succesfully", response!);
+
 };
 
 export { getUser, createUser, loginUser, updateUser };
