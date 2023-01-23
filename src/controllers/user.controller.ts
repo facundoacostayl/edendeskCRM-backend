@@ -29,14 +29,14 @@ export const createItem = async (req: Request, res: Response) => {
     //Require body
     const { firstname, loginemail, password } = req.body;
 
-    const data = await createUser(firstname, loginemail, password);
+    const response = await createUser(firstname, loginemail, password);
 
     //Checking if there are errors
-    if (data.type === "Error") {
-      throw new Error(data.message);
+    if (response.responseType === "Error") {
+      throw new Error(response.message);
     }
 
-    return res.json(data);
+    return res.json(response);
   } catch (error) {
     if (error instanceof Error) {
       errorHandler(res, error.message, 400);

@@ -5,7 +5,8 @@ interface Response {
     responseType: string,
     statusCode: number,
     message?: string,
-    data?: UserType | ClientType
+    data?: UserType | ClientType,
+    token?: string | number
 }
 
 export {Response as ResponseType};

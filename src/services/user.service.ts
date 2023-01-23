@@ -12,7 +12,7 @@ const getUser = async (id: UserType["id"]) => {
     return responseHandler("Error", 400, "User doesn't exist");
   }
 
-  return responseHandler("Success", 200, "User doesn't exist", userRequest);;
+  return responseHandler("Success", 200, "User doesn't exist", userRequest);
 };
 
 const createUser = async (
@@ -24,7 +24,7 @@ const createUser = async (
   const userRequest = await User.findOneBy({ loginemail });
 
   if (userRequest !== null) {
-    return { type: "Error", statusCode: 400, message: "User already exists" };
+    return responseHandler("Error", 400, "User already exist");
   }
 
   const user = new User();
@@ -50,13 +50,10 @@ const createUser = async (
   await operation.save();
 
   //Generating JWT Token
+  const response = await User.findOneBy({loginemail});
   const token = jwtGenerator(user, user.id);
 
-  return {
-    type: "Success",
-    statusCode: 200,
-    message: "User created successfully",
-  };
+  return responseHandler("Success", 200, "User created successfully", response!, token);
 };
 
 const loginUser = async (
