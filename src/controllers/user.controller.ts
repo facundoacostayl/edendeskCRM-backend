@@ -9,14 +9,14 @@ const jwtGenerator = require("../utils/jwtGenerator");
 export const getItem = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const data = await getUser(parseInt(id));
+    const response = await getUser(parseInt(id));
 
     //Checking if there are errors
-    if (data.type === "Error") {
-      throw new Error(data.message);
+    if (response.responseType === "Error") {
+      throw new Error(response.message);
     }
 
-    return res.json(data.response);
+    return res.json(response.data);
   } catch (error) {
     if (error instanceof Error) {
       errorHandler(res, error.message, 400);
