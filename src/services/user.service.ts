@@ -52,7 +52,7 @@ const createUser = async(firstname: UserType['firstname'], loginemail: UserType[
         return {type: "Success", statusCode: 200, message: "User created successfully"};
 }
 
-const loginUser = async(loginemail: User['loginemail'], password: User['password']) => {
+const loginUser = async(loginemail: UserType['loginemail'], password: UserType['password']) => {
 
  //Check if user exists
  const userRequest = await User.findOneBy({ loginemail: loginemail });
@@ -80,5 +80,43 @@ const loginUser = async(loginemail: User['loginemail'], password: User['password
 
 }
 
+const updateUser = async(id:UserType['id'], body: UserType) => {
 
-export {getUser, createUser, loginUser};
+    if (Object.keys(body).length === 0) {
+      return {type: "Error", statusCode: 400, message: "There's no data to update"};
+    };
+
+
+    //Bcrypt password
+    if (body.password) {
+        const saltRound = 10;
+        const salt = await bcrypt.genSalt(saltRound);
+        const bcryptPassword = await bcrypt.hash(body.password, salt);
+        body.password = bcryptPassword;
+      }
+  
+      //Generating query
+      const queryBuilder = () => {
+        let query = `UPDATE users SET `;
+        query += Object.keys(body)
+          .map((key) => {
+            const valueToSet =
+              typeof body[key as keyof UserType] === "string"
+                ? `'${body[key as keyof UserType]}'`
+                : parseInt(body[key as keyof UserType] as string);
+            return `${key} = ${valueToSet}`;
+          })
+          .join(", ");
+  
+        return query + ` WHERE id = ${id};`;
+      };
+  
+      await User.query(queryBuilder()!);
+  
+      const response = await User.findOneBy({ id });
+
+      return {type: "Success", statusCode: 200, message: "Login successful", response};
+}
+
+
+export {getUser, createUser, loginUser, updateUser};
