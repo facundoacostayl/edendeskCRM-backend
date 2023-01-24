@@ -1,5 +1,5 @@
 interface Client {
-  clientId: number;
+  clientid: number;
   nombre: string;
   apellido: string;
   saldo: number;
@@ -8,9 +8,9 @@ interface Client {
   montoultcarga: number;
   tipodecarga: string;
   fechaultretiro: string;
-  montoultretiro: string;
+  montoultretiro: number;
   sucursal: string;
-  userid: number;
+  userId: number;
 }
 
 export {Client as ClientType}
