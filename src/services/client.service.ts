@@ -1,15 +1,20 @@
 import { ClientType } from "../interfaces/client.interface";
 import { Client } from "../config/entities/Client";
+import { User } from "../config/entities/User";
 import { Operation } from "../config/entities/Operation";
 import { UserType } from "../interfaces/user.interface";
 import { responseHandler } from "../utils/response.handle";
+import {AppDataSource} from '../config/db/db';
 
-const getClients = async (userId: ClientType["userId"]) => {
+//DataSource renamed
+const dataSource = AppDataSource;
+
+const getClients = async (userId: ClientType["user"]) => {
   //FIX userId x userid <---
 
   //Find clients
-  const clientList = await Client.findBy({ userId });
-
+  const clientList = await Client.findBy({user: userId});
+  
   //Verify if client list exists, otherwise returning error
   if (clientList.length <= 0) {
     return responseHandler("Error", 404, "Client list not found");
@@ -19,13 +24,13 @@ const getClients = async (userId: ClientType["userId"]) => {
     "Success",
     200,
     "Client list found succesfully",
-    clientList!
+    clientList
   );
 };
 
 const getClient = async (clientid: ClientType["clientid"]) => {
   //Find Client
-  const client = await Client.findOneBy({ clientid });
+  const client = await User.findOneBy({ id: clientid });
 
   //Verify if user exists, otherwise returning error
   if (client === null) {
@@ -39,7 +44,7 @@ const createClient = async (
   nombre: ClientType["nombre"],
   apellido: ClientType["apellido"],
   telefono: ClientType["telefono"],
-  userId: ClientType["userId"]
+  userId: ClientType["user"]
 ) => {
 
   //Check if client has already been added
@@ -60,14 +65,14 @@ const createClient = async (
     newClient.montoultretiro = 0;
     newClient.tipodecarga = "No especificado";
     newClient.sucursal = "No especificado";
-    newClient.userId = userId;
+    newClient.user = userId;
 
     await newClient.save();
 
     return responseHandler('Success', 200, 'Client added succesfully', newClient);
 };
 
-const addToClientBalance = async(clientid: ClientType['clientid'], userId: ClientType['userId'], amount: number) => {
+const addToClientBalance = async(clientid: ClientType['clientid'], userId: ClientType['user'], amount: number) => {
   const client = await Client.findOneBy({ clientid });
     const operation = await Operation.findOneBy({
       userId
@@ -101,4 +106,38 @@ const addToClientBalance = async(clientid: ClientType['clientid'], userId: Clien
     return responseHandler('Success', 200, `Balance updated succesfully. Client ${client.nombre + " " + client.apellido} balance is $${client.saldo}`);
 }
 
-export { getClients, getClient, createClient, addToClientBalance };
+const substractFromClientBalance = async(clientid: ClientType['clientid'], userId: ClientType['user'], amount: number) => {
+  const client = await Client.findOneBy({ clientid });
+    const operation = await Operation.findOneBy({
+      userId,
+      createdAt: new Date().getDate(),
+    });
+
+    if (!client || !operation){
+      return responseHandler('Error', 404, "Client not found")
+    }
+
+    client.saldo = client.saldo - amount;
+    client.montoultretiro = amount;
+
+    const today = new Date();
+    const todayDate =
+      today.getDate() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getFullYear();
+    client.fechaultretiro = todayDate;
+
+    operation.userLost += amount;
+    operation.userTotalBalance = operation.userTotalBalance - amount;
+    operation.dayTransactions++;
+    !operation.createdAt ? (operation.createdAt = new Date().getDate()) : null;
+
+    await client.save();
+    await operation.save();
+
+    return responseHandler('Success', 200, `Balance updated succesfully. Client ${client.nombre + " " + client.apellido} balance is $${client.saldo}`);
+}
+
+export { getClients, getClient, createClient, addToClientBalance, substractFromClientBalance };

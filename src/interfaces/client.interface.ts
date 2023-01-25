@@ -10,7 +10,7 @@ interface Client {
   fechaultretiro: string;
   montoultretiro: number;
   sucursal: string;
-  userId: number;
+  user: number;
 }
 
 export {Client as ClientType}

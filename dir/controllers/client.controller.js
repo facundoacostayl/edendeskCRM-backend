@@ -9,14 +9,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getClientsQuantity = exports.updateClient = exports.deleteClient = exports.orderByClientBalanceDesc = exports.orderByClientBalanceAsc = exports.orderByClientNameDesc = exports.orderByClientNameAsc = exports.searchClient = exports.substractFromClientBalance = exports.addToClientBalance = exports.addClient = exports.getClient = exports.getItems = void 0;
+exports.getClientsQuantity = exports.updateClient = exports.deleteClient = exports.orderByClientBalanceDesc = exports.orderByClientBalanceAsc = exports.orderByClientNameDesc = exports.orderByClientNameAsc = exports.searchClient = exports.substractFromItemBalance = exports.addToItemBalance = exports.createItem = exports.getItem = exports.getItems = void 0;
 const Client_1 = require("../config/entities/Client");
 const Operation_1 = require("../config/entities/Operation");
 const client_service_1 = require("../services/client.service");
 const getItems = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        //Require params
         const { id } = req.params;
+        //Data request
         const clientList = yield (0, client_service_1.getClients)(parseInt(id));
+        //Checking if data type is "Error", otherwise throwing error
+        if (clientList.responseType === "Error") {
+            throw new Error(clientList.message);
+        }
         return res.json(clientList);
     }
     catch (error) {
@@ -24,114 +30,74 @@ const getItems = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getItems = getItems;
-const getClient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        //Require params
         const { id } = req.params;
-        const client = yield Client_1.Client.findOneBy({ clientid: parseInt(id) });
+        //Data request
+        const client = yield (0, client_service_1.getClient)(parseInt(id));
+        //Checking if data type is "Error", otherwise throwing error
+        if (client.responseType === "Error") {
+            throw new Error(client.message);
+        }
         return res.json(client);
     }
     catch (error) {
         error instanceof Error && res.status(500).json({ message: error.message });
     }
 });
-exports.getClient = getClient;
-const addClient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getItem = getItem;
+const createItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //Require Body
         const { nombre, apellido, telefono, userId } = req.body;
-        //Check if client has already been added
-        const clientRequest = yield Client_1.Client.findOneBy({ telefono: telefono });
-        if (clientRequest === null) {
-            const client = new Client_1.Client();
-            client.nombre = nombre;
-            client.apellido = apellido;
-            client.telefono = telefono;
-            client.saldo = 0;
-            client.fechaultcarga = "No especificado";
-            client.montoultcarga = 0;
-            client.fechaultretiro = "No especificado";
-            client.montoultretiro = 0;
-            client.tipodecarga = "No especificado";
-            client.sucursal = "No especificado";
-            client.userId = userId;
-            yield client.save();
-            return res.json(client);
+        //Data request
+        const response = yield (0, client_service_1.createClient)(nombre, apellido, telefono, userId);
+        //Checking if data type is "Error", otherwise throwing error
+        if (response.responseType === "Error") {
+            throw new Error(response.message);
         }
+        return res.json(response);
     }
     catch (error) {
-        if (error instanceof Error) {
-            console.error(error.message);
-            return res.status(500).json({ error: error.message });
-        }
+        error instanceof Error && res.status(500).json({ message: error.message });
     }
 });
-exports.addClient = addClient;
-const addToClientBalance = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.createItem = createItem;
+const addToItemBalance = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        //Req params
         const { userId, clientId } = req.params;
+        //Req body
         const { amount } = req.body;
-        const client = yield Client_1.Client.findOneBy({ clientid: parseInt(clientId) });
-        const operation = yield Operation_1.Operation.findOneBy({
-            userId: parseInt(userId),
-            createdAt: new Date().getDate(),
-        });
-        if (!client || !operation)
-            return res.status(403).json({ message: "User doesn't exists" });
-        client.saldo += amount;
-        const today = new Date();
-        const todayDate = today.getDate() +
-            "-" +
-            (today.getMonth() + 1) +
-            "-" +
-            today.getFullYear();
-        client.fechaultcarga = todayDate;
-        client.montoultcarga = client.saldo;
-        operation.userGain += amount;
-        operation.userTotalBalance += amount;
-        operation.dayTransactions++;
-        !operation.createdAt ? (operation.createdAt = new Date().getDate()) : null;
-        yield client.save();
-        yield operation.save();
-        return res.status(200).json("El saldo fue actualizado correctamente");
+        //Data request
+        const response = yield (0, client_service_1.addToClientBalance)(parseInt(userId), parseInt(clientId), parseInt(amount));
+        //Checking if data type is "Error", otherwise throwing error
+        if (response.responseType === "Error") {
+            throw new Error(response.message);
+        }
+        return res.status(200).json(response);
     }
-    catch (e) {
-        e instanceof Error && res.status(500).json("Internal server error");
+    catch (error) {
+        error instanceof Error && res.status(500).json({ message: error.message });
     }
 });
-exports.addToClientBalance = addToClientBalance;
-const substractFromClientBalance = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.addToItemBalance = addToItemBalance;
+const substractFromItemBalance = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { amount } = req.body;
         const { userId, clientId } = req.params;
-        const client = yield Client_1.Client.findOneBy({ clientid: parseInt(clientId) });
-        const operation = yield Operation_1.Operation.findOneBy({
-            userId: parseInt(userId),
-            createdAt: new Date().getDate(),
-        });
-        if (!client || !operation)
-            return res.status(403).json("User doesn't exists");
-        client.saldo = client.saldo - amount;
-        client.montoultretiro = amount;
-        const today = new Date();
-        const todayDate = today.getDate() +
-            "-" +
-            (today.getMonth() + 1) +
-            "-" +
-            today.getFullYear();
-        client.fechaultretiro = todayDate;
-        operation.userLost += amount;
-        operation.userTotalBalance = operation.userTotalBalance - amount;
-        operation.dayTransactions++;
-        !operation.createdAt ? (operation.createdAt = new Date().getDate()) : null;
-        yield client.save();
-        yield operation.save();
-        return res.status(200).json("El saldo fue actualizado correctamente");
+        const response = yield (0, client_service_1.substractFromClientBalance)(parseInt(userId), parseInt(clientId), parseInt(amount));
+        if (response.responseType === "Error") {
+            throw new Error(response.message);
+        }
+        return res.status(200).json(response);
     }
     catch (error) {
-        error instanceof Error && res.status(500).json("Internal server error");
+        error instanceof Error && res.status(500).json({ error: error.message });
     }
 });
-exports.substractFromClientBalance = substractFromClientBalance;
+exports.substractFromItemBalance = substractFromItemBalance;
 const searchClient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;

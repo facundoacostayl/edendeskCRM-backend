@@ -5,7 +5,8 @@ import {
   getClients,
   getClient,
   createClient,
-  addToClientBalance
+  addToClientBalance,
+  substractFromClientBalance
 } from "../services/client.service";
 
 export const getItems = async (req: Request, res: Response) => {
@@ -65,15 +66,25 @@ export const createItem = async (req: Request, res: Response) => {
   }
 };
 
+//SQL JOIN
 export const addToItemBalance = async (req: Request, res: Response) => {
   try {
+    //Req params
     const { userId, clientId } = req.params;
+
+    //Req body
     const { amount } = req.body;
 
-    const response = await addToClientBalance(parseInt(userId), parseInt(clientId), parseInt(amount))
+    //Data request
+    const response = await addToClientBalance(
+      parseInt(userId),
+      parseInt(clientId),
+      parseInt(amount)
+    );
 
-    if(response.responseType === "Error") {
-      throw new Error(response.message)
+    //Checking if data type is "Error", otherwise throwing error
+    if (response.responseType === "Error") {
+      throw new Error(response.message);
     }
 
     return res.status(200).json(response);
@@ -82,7 +93,8 @@ export const addToItemBalance = async (req: Request, res: Response) => {
   }
 };
 
-export const substractFromClientBalance = async (
+//SQL JOIN
+export const substractFromItemBalance = async (
   req: Request,
   res: Response
 ) => {
@@ -90,38 +102,15 @@ export const substractFromClientBalance = async (
     const { amount } = req.body;
     const { userId, clientId } = req.params;
 
-    const client = await Client.findOneBy({ clientid: parseInt(clientId) });
-    const operation = await Operation.findOneBy({
-      userId: parseInt(userId),
-      createdAt: new Date().getDate(),
-    });
+    const response = await substractFromClientBalance(parseInt(userId), parseInt(clientId), parseInt(amount))
 
-    if (!client || !operation)
-      return res.status(403).json("User doesn't exists");
+    if(response.responseType === "Error") {
+      throw new Error(response.message);
+    }
 
-    client.saldo = client.saldo - amount;
-    client.montoultretiro = amount;
-
-    const today = new Date();
-    const todayDate =
-      today.getDate() +
-      "-" +
-      (today.getMonth() + 1) +
-      "-" +
-      today.getFullYear();
-    client.fechaultretiro = todayDate;
-
-    operation.userLost += amount;
-    operation.userTotalBalance = operation.userTotalBalance - amount;
-    operation.dayTransactions++;
-    !operation.createdAt ? (operation.createdAt = new Date().getDate()) : null;
-
-    await client.save();
-    await operation.save();
-
-    return res.status(200).json("El saldo fue actualizado correctamente");
+    return res.status(200).json(response);
   } catch (error) {
-    error instanceof Error && res.status(500).json("Internal server error");
+    error instanceof Error && res.status(500).json({error: error.message});
   }
 };
 
@@ -255,7 +244,7 @@ export const updateClient = async (req: Request, res: Response) => {
 export const getClientsQuantity = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const client = await Client.findBy({ userId: parseInt(userId) });
+    const client = await Client.findBy({ user: parseInt(userId) });
 
     const clientLength = client.length;
     return res.json(clientLength);

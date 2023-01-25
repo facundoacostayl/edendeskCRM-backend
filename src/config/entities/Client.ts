@@ -1,4 +1,5 @@
-import {BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, ManyToOne} from 'typeorm';
+import {BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany} from 'typeorm';
+import {User} from './User';
 
 @Entity('clients')
 export class Client extends BaseEntity {
@@ -39,6 +40,7 @@ export class Client extends BaseEntity {
         nullable: true
     })
     sucursal: string
-    @Column()
-    userId: number
+
+    @ManyToOne(type => User, users => users.id)
+    user: User['id'];
 }

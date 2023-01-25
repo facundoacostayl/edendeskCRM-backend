@@ -43,6 +43,6 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.0",
     "ts-node": "^10.8.1",
-    "typeorm": "0.3.6"
+    "typeorm": "^0.3.6"
   }
 }

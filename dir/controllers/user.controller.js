@@ -9,122 +9,86 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authorizeToken = exports.updateUser = exports.loginUser = exports.createUser = exports.getUser = void 0;
-const User_1 = require("../config/entities/User");
-const Operation_1 = require("../config/entities/Operation");
+exports.authorizeToken = exports.updateItem = exports.loginItem = exports.createItem = exports.getItem = void 0;
+const user_service_1 = require("../services/user.service");
+const error_handle_1 = require("../utils/error.handle");
 const bcrypt = require("bcrypt");
 const jwtGenerator = require("../utils/jwtGenerator");
-const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        //Require params
         const { id } = req.params;
-        const user = yield User_1.User.findOneBy({ id: parseInt(id) });
-        return res.json(user);
+        //Data request
+        const response = yield (0, user_service_1.getUser)(parseInt(id));
+        //Checking if data type is "Error", otherwise throwing error
+        if (response.responseType === "Error") {
+            throw new Error(response.message);
+        }
+        return res.json(response.data);
     }
     catch (error) {
-        error instanceof Error && res.status(500).json("Internal server error");
+        if (error instanceof Error) {
+            (0, error_handle_1.errorHandler)(res, error.message, 400);
+        }
     }
 });
-exports.getUser = getUser;
-const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getItem = getItem;
+const createItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //Require body
         const { firstname, loginemail, password } = req.body;
-        //Verify if user is already authenticated
-        const userRequest = yield User_1.User.findOneBy({ loginemail: loginemail });
-        if (userRequest === null) {
-            const user = new User_1.User();
-            user.firstname = firstname;
-            user.loginemail = loginemail;
-            //Bcrypt password
-            const saltRound = 10;
-            const salt = yield bcrypt.genSalt(saltRound);
-            const bcryptPassword = yield bcrypt.hash(password, salt);
-            user.password = bcryptPassword;
-            //Saving User in database
-            yield user.save();
-            //Creating operation column
-            const operation = new Operation_1.Operation();
-            operation.userId = user.id;
-            operation.year = new Date().getFullYear();
-            operation.month = new Date().getMonth() + 1;
-            yield operation.save();
-            //Generating JWT Token
-            const token = jwtGenerator(user, user.id);
-            return res.json({ token: token, id: user.id });
+        //Data request
+        const response = yield (0, user_service_1.createUser)(firstname, loginemail, password);
+        //Checking if data type is "Error", otherwise throwing error
+        if (response.responseType === "Error") {
+            throw new Error(response.message);
         }
-        else {
-            return res.status(401).send("Ya existe un usuario con ese email");
-        }
+        return res.json(response);
     }
     catch (error) {
         if (error instanceof Error) {
-            return res.status(500).json({ message: error.message });
+            (0, error_handle_1.errorHandler)(res, error.message, 400);
         }
     }
 });
-exports.createUser = createUser;
-const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.createItem = createItem;
+const loginItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //Require body
         const { loginemail, password } = req.body;
-        //Check if user exists
-        const userRequest = yield User_1.User.findOneBy({ loginemail: loginemail });
-        if (userRequest === null) {
-            return res.status(401).json("No existe el usuario");
+        //Data request
+        const response = yield (0, user_service_1.loginUser)(loginemail, password);
+        //Checking if data type is "Error", otherwise throwing error
+        if (response.responseType === "Error") {
+            throw new Error(response.message);
         }
-        //Check if incomming password is the same the database password
-        const validPassword = yield bcrypt.compare(password, userRequest.password);
-        if (!validPassword) {
-            return res.status(401).json("El email o contraseña es incorrecta");
-        }
-        //Give the jwt token to the user
-        const token = jwtGenerator(userRequest.id);
-        const user = yield User_1.User.findOneBy({ loginemail: loginemail });
-        const userId = user && user.id;
-        res.json({ token: token, id: userId });
+        res.json(response.data);
     }
     catch (error) {
         if (error instanceof Error) {
-            res.status(500).json(error.message);
+            (0, error_handle_1.errorHandler)(res, error.message, 400);
         }
     }
 });
-exports.loginUser = loginUser;
-const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.loginItem = loginItem;
+const updateItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        //Require params and body
         const { id } = req.params;
         const { body } = req;
-        //Bcrypt password
-        if (body.password) {
-            const saltRound = 10;
-            const salt = yield bcrypt.genSalt(saltRound);
-            const bcryptPassword = yield bcrypt.hash(body.password, salt);
-            body.password = bcryptPassword;
+        //Data request
+        const response = yield (0, user_service_1.updateUser)(parseInt(id), body);
+        //Checking if data type is "Error", otherwise throwing error
+        if (response.responseType === "Error") {
+            throw new Error(response.message);
         }
-        //Generating query
-        const queryBuilder = () => {
-            if (Object.keys(body).length === 0)
-                return null;
-            let query = `UPDATE users SET `;
-            query += Object.keys(body)
-                .map((key) => {
-                const valueToSet = typeof body[key] === "string"
-                    ? `'${body[key]}'`
-                    : parseInt(body[key]);
-                return `${key} = ${valueToSet}`;
-            })
-                .join(", ");
-            return query + ` WHERE id = ${id};`;
-        };
-        yield User_1.User.query(queryBuilder());
-        const response = yield User_1.User.findOneBy({ id: parseInt(id) });
         return res.json(response);
     }
     catch (error) {
         error instanceof Error && res.status(500).json(error.message);
     }
 });
-exports.updateUser = updateUser;
+exports.updateItem = updateItem;
 const authorizeToken = (req, res) => {
     try {
         res.json(true);
