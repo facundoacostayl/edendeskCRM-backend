@@ -13,7 +13,7 @@ const getClients = async (userId: ClientType["user"]) => {
   //FIX userId x userid <---
 
   //Find clients
-  const clientList = await Client.findBy({user: userId});
+  const clientList = await dataSource.getRepository(Client).createQueryBuilder('c').innerJoinAndSelect(User, "u", "u.id = c.user").where("c.user = :id", {id: userId}).getMany();
   
   //Verify if client list exists, otherwise returning error
   if (clientList.length <= 0) {
