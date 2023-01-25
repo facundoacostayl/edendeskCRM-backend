@@ -2,7 +2,7 @@ import Router from "express";
 const router = Router();
 import {
   getItems,
-  getClient,
+  getItem,
   addClient,
   deleteClient,
   updateClient,
@@ -18,7 +18,7 @@ import {
 const authorization = require("../middleware/authorization");
 
 router.get("/user:id/clientes", getItems);
-router.get("/:id", getClient);
+router.get("/:id", getItem);
 router.post("/nuevo-cliente", addClient);
 router.delete("/user:userId/cliente:clientId", deleteClient);
 router.post("/:id", updateClient);

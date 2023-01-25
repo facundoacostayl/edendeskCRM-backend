@@ -1,12 +1,16 @@
 import { Request, Response } from "express";
 import { Client } from "../config/entities/Client";
 import { Operation } from "../config/entities/Operation";
-import {getClients} from '../services/client.service';
+import {getClients, getClient} from '../services/client.service';
 
 export const getItems = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const clientList = await getClients(parseInt(id));
+
+    if(clientList.responseType === "Error") {
+      throw new Error(clientList.message);
+    }
 
     return res.json(clientList);
   } catch (error) {
@@ -14,11 +18,15 @@ export const getItems = async (req: Request, res: Response) => {
   }
 };
 
-export const getClient = async (req: Request, res: Response) => {
+export const getItem = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const client = await Client.findOneBy({ clientid: parseInt(id) });
+    const client = await getClient(parseInt(id));
+
+    if(client.responseType === "Error") {
+      throw new Error(client.message);
+    }
 
     return res.json(client);
   } catch (error) {
