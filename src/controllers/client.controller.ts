@@ -5,6 +5,7 @@ import {
   getClients,
   getClient,
   createClient,
+  addToClientBalance
 } from "../services/client.service";
 
 export const getItems = async (req: Request, res: Response) => {
@@ -60,50 +61,24 @@ export const createItem = async (req: Request, res: Response) => {
 
     return res.json(response);
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(error.message);
-      return res.status(500).json({ error: error.message });
-    }
+    error instanceof Error && res.status(500).json({ message: error.message });
   }
 };
 
-export const addToClientBalance = async (req: Request, res: Response) => {
+export const addToItemBalance = async (req: Request, res: Response) => {
   try {
     const { userId, clientId } = req.params;
     const { amount } = req.body;
 
-    const client = await Client.findOneBy({ clientid: parseInt(clientId) });
-    const operation = await Operation.findOneBy({
-      userId: parseInt(userId),
-      createdAt: new Date().getDate(),
-    });
+    const response = await addToClientBalance(parseInt(userId), parseInt(clientId), parseInt(amount))
 
-    if (!client || !operation)
-      return res.status(403).json({ message: "User doesn't exists" });
+    if(response.responseType === "Error") {
+      throw new Error(response.message)
+    }
 
-    client.saldo += amount;
-
-    const today = new Date();
-    const todayDate =
-      today.getDate() +
-      "-" +
-      (today.getMonth() + 1) +
-      "-" +
-      today.getFullYear();
-    client.fechaultcarga = todayDate;
-    client.montoultcarga = client.saldo;
-
-    operation.userGain += amount;
-    operation.userTotalBalance += amount;
-    operation.dayTransactions++;
-    !operation.createdAt ? (operation.createdAt = new Date().getDate()) : null;
-
-    await client.save();
-    await operation.save();
-
-    return res.status(200).json("El saldo fue actualizado correctamente");
-  } catch (e) {
-    e instanceof Error && res.status(500).json("Internal server error");
+    return res.status(200).json(response);
+  } catch (error) {
+    error instanceof Error && res.status(500).json({ message: error.message });
   }
 };
 

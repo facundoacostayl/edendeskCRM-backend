@@ -6,7 +6,7 @@ import {
   createItem,
   deleteClient,
   updateClient,
-  addToClientBalance,
+  addToItemBalance,
   substractFromClientBalance,
   searchClient,
   orderByClientNameAsc,
@@ -22,7 +22,7 @@ router.get("/:id", getItem);
 router.post("/nuevo-cliente", createItem);
 router.delete("/user:userId/cliente:clientId", deleteClient);
 router.post("/:id", updateClient);
-router.put("/user:userId/cliente:clientId/agregar-saldo", addToClientBalance);
+router.put("/user:userId/cliente:clientId/agregar-saldo", addToItemBalance);
 router.put("/user:userId/cliente:clientId/descontar-saldo", substractFromClientBalance);
 router.get("/user:id/buscar-cliente", searchClient);
 router.get("/user:id/clientes/ordenar-por-nombre-asc", orderByClientNameAsc);

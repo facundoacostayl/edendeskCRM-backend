@@ -67,4 +67,38 @@ const createClient = async (
     return responseHandler('Success', 200, 'Client added succesfully', newClient);
 };
 
-export { getClients, getClient, createClient };
+const addToClientBalance = async(clientid: ClientType['clientid'], userId: ClientType['userId'], amount: number) => {
+  const client = await Client.findOneBy({ clientid });
+    const operation = await Operation.findOneBy({
+      userId
+      //createdAt: new Date().getDate(),
+    });
+
+    if (!client || !operation){
+      return responseHandler('Error', 404, "Client not found");
+    }
+
+    client.saldo += amount;
+
+    const today = new Date();
+    const todayDate =
+      today.getDate() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getFullYear();
+    client.fechaultcarga = todayDate;
+    client.montoultcarga = client.saldo;
+
+    operation.userGain += amount;
+    operation.userTotalBalance += amount;
+    operation.dayTransactions++;
+    !operation.createdAt ? (operation.createdAt = new Date().getDate()) : null;
+
+    await client.save();
+    await operation.save();
+
+    return responseHandler('Success', 200, `Balance updated succesfully. Client ${client.nombre + " " + client.apellido} balance is $${client.saldo}`);
+}
+
+export { getClients, getClient, createClient, addToClientBalance };
