@@ -1,14 +1,22 @@
 import { Request, Response } from "express";
 import { Client } from "../config/entities/Client";
 import { Operation } from "../config/entities/Operation";
-import {getClients, getClient} from '../services/client.service';
+import {
+  getClients,
+  getClient,
+  createClient,
+} from "../services/client.service";
 
 export const getItems = async (req: Request, res: Response) => {
   try {
+    //Require params
     const { id } = req.params;
+
+    //Data request
     const clientList = await getClients(parseInt(id));
 
-    if(clientList.responseType === "Error") {
+    //Checking if data type is "Error", otherwise throwing error
+    if (clientList.responseType === "Error") {
       throw new Error(clientList.message);
     }
 
@@ -20,11 +28,14 @@ export const getItems = async (req: Request, res: Response) => {
 
 export const getItem = async (req: Request, res: Response) => {
   try {
+    //Require params
     const { id } = req.params;
 
+    //Data request
     const client = await getClient(parseInt(id));
 
-    if(client.responseType === "Error") {
+    //Checking if data type is "Error", otherwise throwing error
+    if (client.responseType === "Error") {
       throw new Error(client.message);
     }
 
@@ -34,32 +45,20 @@ export const getItem = async (req: Request, res: Response) => {
   }
 };
 
-export const addClient = async (req: Request, res: Response) => {
+export const createItem = async (req: Request, res: Response) => {
   try {
     //Require Body
     const { nombre, apellido, telefono, userId } = req.body;
 
-    //Check if client has already been added
-    const clientRequest = await Client.findOneBy({ telefono: telefono });
+    //Data request
+    const response = await createClient(nombre, apellido, telefono, userId);
 
-    if (clientRequest === null) {
-      const client = new Client();
-      client.nombre = nombre;
-      client.apellido = apellido;
-      client.telefono = telefono;
-      client.saldo = 0;
-      client.fechaultcarga = "No especificado";
-      client.montoultcarga = 0;
-      client.fechaultretiro = "No especificado";
-      client.montoultretiro = 0;
-      client.tipodecarga = "No especificado";
-      client.sucursal = "No especificado";
-      client.userId = userId;
-
-      await client.save();
-
-      return res.json(client);
+    //Checking if data type is "Error", otherwise throwing error
+    if (response.responseType === "Error") {
+      throw new Error(response.message);
     }
+
+    return res.json(response);
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);
@@ -278,14 +277,14 @@ export const updateClient = async (req: Request, res: Response) => {
   }
 };
 
-export const getClientsQuantity = async(req: Request, res: Response) => {
-  try{
-    const {userId} = req.params;
-    const client = await Client.findBy({userId: parseInt(userId)});
+export const getClientsQuantity = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const client = await Client.findBy({ userId: parseInt(userId) });
 
     const clientLength = client.length;
     return res.json(clientLength);
-  }catch(error) {
+  } catch (error) {
     error instanceof Error && res.status(500).json("Internal server error");
   }
-}
+};

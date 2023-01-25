@@ -3,7 +3,7 @@ const router = Router();
 import {
   getItems,
   getItem,
-  addClient,
+  createItem,
   deleteClient,
   updateClient,
   addToClientBalance,
@@ -19,7 +19,7 @@ const authorization = require("../middleware/authorization");
 
 router.get("/user:id/clientes", getItems);
 router.get("/:id", getItem);
-router.post("/nuevo-cliente", addClient);
+router.post("/nuevo-cliente", createItem);
 router.delete("/user:userId/cliente:clientId", deleteClient);
 router.post("/:id", updateClient);
 router.put("/user:userId/cliente:clientId/agregar-saldo", addToClientBalance);

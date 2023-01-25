@@ -11,8 +11,8 @@ const getClients = async (userId: ClientType["userId"]) => {
   const clientList = await Client.findBy({ userId });
 
   //Verify if client list exists, otherwise returning error
-  if (clientList === null) {
-    return responseHandler("Error", 404, "Client list doesn't exist");
+  if (clientList.length <= 0) {
+    return responseHandler("Error", 404, "Client list not found");
   }
 
   return responseHandler(
@@ -24,7 +24,6 @@ const getClients = async (userId: ClientType["userId"]) => {
 };
 
 const getClient = async (clientid: ClientType["clientid"]) => {
-
   //Find Client
   const client = await Client.findOneBy({ clientid });
 
@@ -33,12 +32,39 @@ const getClient = async (clientid: ClientType["clientid"]) => {
     return responseHandler("Error", 404, "Client doesn't exist");
   }
 
-  return responseHandler(
-    "Success",
-    200,
-    "Client found succesfully",
-    client
-  );
+  return responseHandler("Success", 200, "Client found succesfully", client);
 };
 
-export { getClients, getClient };
+const createClient = async (
+  nombre: ClientType["nombre"],
+  apellido: ClientType["apellido"],
+  telefono: ClientType["telefono"],
+  userId: ClientType["userId"]
+) => {
+
+  //Check if client has already been added
+  const client = await Client.findOneBy({ telefono: telefono });
+
+    if(client) {
+      return responseHandler('Error', 404, 'Client already exists')
+    }
+
+    const newClient = new Client();
+    newClient.nombre = nombre;
+    newClient.apellido = apellido;
+    newClient.telefono = telefono;
+    newClient.saldo = 0;
+    newClient.fechaultcarga = "No especificado";
+    newClient.montoultcarga = 0;
+    newClient.fechaultretiro = "No especificado";
+    newClient.montoultretiro = 0;
+    newClient.tipodecarga = "No especificado";
+    newClient.sucursal = "No especificado";
+    newClient.userId = userId;
+
+    await newClient.save();
+
+    return responseHandler('Success', 200, 'Client added succesfully', newClient);
+};
+
+export { getClients, getClient, createClient };
