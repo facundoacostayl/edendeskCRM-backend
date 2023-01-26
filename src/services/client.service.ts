@@ -33,7 +33,7 @@ const getClient = async (userid: ClientType["user"], clientid: ClientType["clien
   const client = await dataSource.getRepository(Client).createQueryBuilder('c').innerJoinAndSelect(User, "u", "u.id = c.user").where("c.user = :userid", {userid}).andWhere("c.clientid = :clientid", {clientid}).getOne();
 
   //Verify if user exists, otherwise returning error
-  if (client === null) {
+  if (!client) {
     return responseHandler("Error", 404, "Client doesn't exist");
   }
 
@@ -44,16 +44,18 @@ const createClient = async (
   nombre: ClientType["nombre"],
   apellido: ClientType["apellido"],
   telefono: ClientType["telefono"],
-  userId: ClientType["user"]
+  userid: ClientType["user"]
 ) => {
 
   //Check if client has already been added
-  const client = await Client.findOneBy({ telefono: telefono });
+  const client = await dataSource.getRepository(Client).createQueryBuilder('c').innerJoinAndSelect(User, "u", "u.id = c.user").where("c.user = :userid", {userid}).andWhere("c.telefono = :telefono", {telefono}).getOne();
 
-    if(client) {
+  //Verify if client exists, otherwise returning error
+  if(client) {
       return responseHandler('Error', 404, 'Client already exists')
     }
 
+  //Create new client  
     const newClient = new Client();
     newClient.nombre = nombre;
     newClient.apellido = apellido;
@@ -65,8 +67,9 @@ const createClient = async (
     newClient.montoultretiro = 0;
     newClient.tipodecarga = "No especificado";
     newClient.sucursal = "No especificado";
-    newClient.user = userId;
+    newClient.user = userid;
 
+    //Save client
     await newClient.save();
 
     return responseHandler('Success', 200, 'Client added succesfully', newClient);

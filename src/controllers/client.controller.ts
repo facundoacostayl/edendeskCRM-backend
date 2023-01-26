@@ -50,10 +50,10 @@ export const getItem = async (req: Request, res: Response) => {
 export const createItem = async (req: Request, res: Response) => {
   try {
     //Require Body
-    const { nombre, apellido, telefono, userId } = req.body;
+    const { nombre, apellido, telefono, userid } = req.body;
 
     //Data request
-    const response = await createClient(nombre, apellido, telefono, userId);
+    const response = await createClient(nombre, apellido, telefono, userid);
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
