@@ -47,7 +47,7 @@ const createClient = async (
   userid: ClientType["user"]
 ) => {
 
-  //Check if client has already been added
+  //Request in order to check if client has already been added
   const client = await dataSource.getRepository(Client).createQueryBuilder('c').innerJoinAndSelect(User, "u", "u.id = c.user").where("c.user = :userid", {userid}).andWhere("c.telefono = :telefono", {telefono}).getOne();
 
   //Verify if client exists, otherwise returning error
@@ -75,19 +75,27 @@ const createClient = async (
     return responseHandler('Success', 200, 'Client added succesfully', newClient);
 };
 
-const addToClientBalance = async(clientid: ClientType['clientid'], userId: ClientType['user'], amount: number) => {
-  const client = await Client.findOneBy({ clientid });
-    const operation = await Operation.findOneBy({
-      userId
-      //createdAt: new Date().getDate(),
-    });
+  const addToClientBalance = async(userId: ClientType['clientid'], clientid: ClientType['user'], amount: number) => {
 
-    if (!client || !operation){
+
+  //Find client
+  const client = await dataSource.getRepository(Client).createQueryBuilder('c').innerJoinAndSelect(User, 'u', 'u.id = c.user').where("c.user = :userId", {userId}).andWhere("c.clientid = :clientid", {clientid}).getOne();
+
+  //Find operation
+  const operation = await Operation.findOneBy({
+    userId,
+    createdAt: new Date().getDate(),
+  });
+
+  //Verify if client and operation exists, otherwise returning error
+    if (!client){
       return responseHandler('Error', 404, "Client not found");
-    }
+    };
 
+    //Add to customer balance
     client.saldo += amount;
 
+    //Add date of operation
     const today = new Date();
     const todayDate =
       today.getDate() +
@@ -98,31 +106,47 @@ const addToClientBalance = async(clientid: ClientType['clientid'], userId: Clien
     client.fechaultcarga = todayDate;
     client.montoultcarga = client.saldo;
 
+    if(operation){
+    //Add operation
     operation.userGain += amount;
     operation.userTotalBalance += amount;
     operation.dayTransactions++;
     !operation.createdAt ? (operation.createdAt = new Date().getDate()) : null;
 
-    await client.save();
-    await operation.save();
+    
 
-    return responseHandler('Success', 200, `Balance updated succesfully. Client ${client.nombre + " " + client.apellido} balance is $${client.saldo}`);
+    //Save operation
+    await operation.save();
+  }
+
+  //Save client
+  await client.save();
+
+  return responseHandler('Success', 200, `Balance updated succesfully. Client ${client.nombre + " " + client.apellido} balance is $${client.saldo}`);
 }
 
-const substractFromClientBalance = async(clientid: ClientType['clientid'], userId: ClientType['user'], amount: number) => {
-  const client = await Client.findOneBy({ clientid });
-    const operation = await Operation.findOneBy({
-      userId,
-      createdAt: new Date().getDate(),
-    });
+const substractFromClientBalance = async(userId: ClientType['clientid'], clientid: ClientType['user'], amount: number) => {
+  //Find client
+  const client = await dataSource.getRepository(Client).createQueryBuilder('c').innerJoinAndSelect(User, 'u', 'u.id = c.user').where("c.user = :userId", {userId}).andWhere("c.clientid = :clientid", {clientid}).getOne();
 
-    if (!client || !operation){
-      return responseHandler('Error', 404, "Client not found")
+  //Find operation
+  const operation = await Operation.findOneBy({
+    userId,
+    createdAt: new Date().getDate(),
+  });
+
+  //Verify if client and operation exists, otherwise returning error
+    if (!client){
+      return responseHandler('Error', 404, "Client not found");
     }
 
+    //Substract from customer balance
     client.saldo = client.saldo - amount;
+
+    //Add last withdrawal amount
     client.montoultretiro = amount;
 
+    //Add date of operation
     const today = new Date();
     const todayDate =
       today.getDate() +
@@ -132,15 +156,21 @@ const substractFromClientBalance = async(clientid: ClientType['clientid'], userI
       today.getFullYear();
     client.fechaultretiro = todayDate;
 
+    if(operation){
+    //Add operation
     operation.userLost += amount;
     operation.userTotalBalance = operation.userTotalBalance - amount;
     operation.dayTransactions++;
     !operation.createdAt ? (operation.createdAt = new Date().getDate()) : null;
 
-    await client.save();
+    //Save operation
     await operation.save();
+    }
 
-    return responseHandler('Success', 200, `Balance updated succesfully. Client ${client.nombre + " " + client.apellido} balance is $${client.saldo}`);
+        //Save client
+    await client.save();
+
+    return responseHandler('Success', 200, `Balance updated succesfully. Client ${client.nombre + " " + client.apellido} balance is $${client.saldo}`, client);
 }
 
 export { getClients, getClient, createClient, addToClientBalance, substractFromClientBalance };
