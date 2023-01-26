@@ -12,17 +12,17 @@ import {
 export const getItems = async (req: Request, res: Response) => {
   try {
     //Require params
-    const { id } = req.params;
+    const { userid } = req.params;
 
     //Data request
-    const clientList = await getClients(parseInt(id));
+    const response = await getClients(parseInt(userid));
 
     //Checking if data type is "Error", otherwise throwing error
-    if (clientList.responseType === "Error") {
-      throw new Error(clientList.message);
+    if (response.responseType === "Error") {
+      throw new Error(response.message);
     }
 
-    return res.json(clientList);
+    return res.json(response);
   } catch (error) {
     error instanceof Error && res.status(500).json({ message: error.message });
   }
@@ -31,17 +31,17 @@ export const getItems = async (req: Request, res: Response) => {
 export const getItem = async (req: Request, res: Response) => {
   try {
     //Require params
-    const { id } = req.params;
+    const { userid, clientid } = req.params;
 
     //Data request
-    const client = await getClient(parseInt(id));
+    const response = await getClient(parseInt(userid), parseInt(clientid));
 
     //Checking if data type is "Error", otherwise throwing error
-    if (client.responseType === "Error") {
-      throw new Error(client.message);
+    if (response.responseType === "Error") {
+      throw new Error(response.message);
     }
 
-    return res.json(client);
+    return res.json(response);
   } catch (error) {
     error instanceof Error && res.status(500).json({ message: error.message });
   }

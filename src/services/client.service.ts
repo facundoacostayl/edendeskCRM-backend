@@ -28,9 +28,9 @@ const getClients = async (userId: ClientType["user"]) => {
   );
 };
 
-const getClient = async (clientid: ClientType["clientid"]) => {
+const getClient = async (userid: ClientType["user"], clientid: ClientType["clientid"]) => {
   //Find Client
-  const client = await User.findOneBy({ id: clientid });
+  const client = await dataSource.getRepository(Client).createQueryBuilder('c').innerJoinAndSelect(User, "u", "u.id = c.user").where("c.user = :userid", {userid}).andWhere("c.clientid = :clientid", {clientid}).getOne();
 
   //Verify if user exists, otherwise returning error
   if (client === null) {

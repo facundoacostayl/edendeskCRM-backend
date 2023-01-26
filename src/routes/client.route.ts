@@ -17,8 +17,8 @@ import {
 } from "../controllers/client.controller";
 const authorization = require("../middleware/authorization");
 
-router.get("/user:id/clientes", getItems);
-router.get("/:id", getItem);
+router.get("/user:userid/clientes", getItems);
+router.get("/user:userid/client:clientid", getItem);
 router.post("/nuevo-cliente", createItem);
 router.delete("/user:userId/cliente:clientId", deleteClient);
 router.post("/:id", updateClient);
