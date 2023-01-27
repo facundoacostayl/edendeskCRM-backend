@@ -6,7 +6,8 @@ import {
   getClient,
   createClient,
   addToClientBalance,
-  substractFromClientBalance
+  substractFromClientBalance,
+  searchClient,
 } from "../services/client.service";
 
 export const getItems = async (req: Request, res: Response) => {
@@ -66,7 +67,6 @@ export const createItem = async (req: Request, res: Response) => {
   }
 };
 
-//SQL JOIN
 export const addToItemBalance = async (req: Request, res: Response) => {
   try {
     //Req params
@@ -87,46 +87,63 @@ export const addToItemBalance = async (req: Request, res: Response) => {
       throw new Error(response.message);
     }
 
-    return res.status(200).json(response);
+    return res.json(response);
   } catch (error) {
     error instanceof Error && res.status(500).json({ message: error.message });
   }
 };
 
-//SQL JOIN
-export const substractFromItemBalance = async (
-  req: Request,
-  res: Response
-) => {
+export const substractFromItemBalance = async (req: Request, res: Response) => {
   try {
+    //Req body
     const { amount } = req.body;
+
+    //Req params
     const { userId, clientId } = req.params;
 
-    const response = await substractFromClientBalance(parseInt(userId), parseInt(clientId), parseInt(amount))
+    //Data request
+    const response = await substractFromClientBalance(
+      parseInt(userId),
+      parseInt(clientId),
+      parseInt(amount)
+    );
 
-    if(response.responseType === "Error") {
+    //Checking if data type is "Error", otherwise throwing error
+    if (response.responseType === "Error") {
       throw new Error(response.message);
     }
 
-    return res.status(200).json(response);
+    return res.json(response);
   } catch (error) {
-    error instanceof Error && res.status(500).json({error: error.message});
+    error instanceof Error && res.status(500).json({ error: error.message });
   }
 };
 
-export const searchClient = async (req: Request, res: Response) => {
+export const searchItem = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const { name } = req.query;
+    //Req params
+    const { userid } = req.params;
 
-    const clients = await Client.query(
-      "SELECT * FROM clients WHERE \"userId\" = $1 AND nombre || ' ' || apellido ILIKE $2",
-      [id, `%${name}%`]
+    //Req query
+    const { nameSearch } = req.query;
+
+    //Early return if search input is empty.
+    if (nameSearch!.toString().length <= 0) return;
+
+    //Data request
+    const response = await searchClient(
+      parseInt(userid),
+      nameSearch!.toString()
     );
 
-    return res.json(clients);
+    //Checking if data type is "Error", otherwise throwing error
+    if (response.responseType === "Error") {
+      throw new Error(response.message);
+    }
+
+    return res.json(response);
   } catch (error) {
-    error instanceof Error && res.status(500).json("Server internal error");
+    error instanceof Error && res.status(500).json({ error: error.message });
   }
 };
 

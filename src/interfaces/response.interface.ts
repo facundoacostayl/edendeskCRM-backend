@@ -3,7 +3,7 @@ import { ClientType } from "./client.interface";
 import {Client} from '../config/entities/Client';
 
 interface Response {
-    responseType: string,
+    responseType: "Success" | "Error",
     statusCode: number,
     message?: string,
     data?: UserType | UserType[] | ClientType | ClientType[],
