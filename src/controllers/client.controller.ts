@@ -8,6 +8,7 @@ import {
   addToClientBalance,
   substractFromClientBalance,
   searchClient,
+  deleteClient,
 } from "../services/client.service";
 
 export const getItems = async (req: Request, res: Response) => {
@@ -206,25 +207,24 @@ export const orderByClientBalanceDesc = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteClient = async (req: Request, res: Response) => {
-  const { userId, clientId } = req.params;
+export const deleteItem = async (req: Request, res: Response) => {
+  try {
 
-  const client = await Client.findOneBy({ clientid: parseInt(clientId) });
-  const operation = await Operation.findOneBy({
-    userId: parseInt(userId),
-    createdAt: new Date().getDate(),
-  });
+    //Req params
+    const { userid, clientid } = req.params;
 
-  if (!client || !operation)
-    return res.status(403).json({ message: "Client not found" });
+    //Data request
+    const response = await deleteClient(parseInt(userid), parseInt(clientid));
 
-  operation.userLost += client.saldo;
-  operation.userTotalBalance = operation.userTotalBalance - client.saldo;
-  await operation.save();
+    //Checking if data type is "Error", otherwise throwing error
+    if (response.responseType === "Error") {
+      throw new Error(response.message);
+    }
 
-  await Client.delete({ clientid: parseInt(clientId) });
-
-  return res.status(200).json({ message: "Client deleted successfully" });
+    return res.json(response);
+  } catch (error) {
+    error instanceof Error && res.status(500).json(error.message);
+  }
 };
 
 export const updateClient = async (req: Request, res: Response) => {

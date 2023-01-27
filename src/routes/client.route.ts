@@ -4,7 +4,7 @@ import {
   getItems,
   getItem,
   createItem,
-  deleteClient,
+  deleteItem,
   updateClient,
   addToItemBalance,
   substractFromItemBalance,
@@ -20,7 +20,7 @@ const authorization = require("../middleware/authorization");
 router.get("/user:userid/clientes", getItems);
 router.get("/user:userid/client:clientid", getItem);
 router.post("/nuevo-cliente", createItem);
-router.delete("/user:userId/cliente:clientId", deleteClient);
+router.delete("/user:userid/cliente:clientid", deleteItem);
 router.post("/:id", updateClient);
 router.put("/user:userId/cliente:clientId/agregar-saldo", addToItemBalance);
 router.put("/user:userId/cliente:clientId/descontar-saldo", substractFromItemBalance);

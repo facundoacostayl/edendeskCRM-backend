@@ -217,7 +217,6 @@ const searchClient = async (
   userId: ClientType["user"],
   nameSearch: ClientType["nombre"]
 ) => {
-
   //Find clients
   const clients = await dataSource
     .getRepository(Client)
@@ -236,6 +235,45 @@ const searchClient = async (
   return responseHandler("Success", 200, "Client/s found", clients);
 };
 
+const deleteClient = async (
+  userid: ClientType["user"],
+  clientid: ClientType["clientid"]
+) => {
+  //Find client
+  const client = await dataSource
+    .getRepository(Client)
+    .createQueryBuilder("c")
+    .innerJoinAndSelect(User, "u", "u.id = c.user")
+    .where("c.user = :userid", { userid })
+    .andWhere("c.clientid = :clientid", { clientid })
+    .getOne();
+
+  //Find operation
+  const operation = await Operation.findOneBy({
+    userId: userid,
+    createdAt: new Date().getDate(),
+  });
+
+  //Verify if client exists, otherwise returning error
+  if (!client) {
+    return responseHandler("Error", 404, "Client not found");
+  }
+
+  //Save operation data
+  if (operation) {
+    operation.userLost += client.saldo;
+    operation.userTotalBalance = operation.userTotalBalance - client.saldo;
+
+    await operation.save();
+  }
+
+  //Save deleting client request
+  await Client.delete({ clientid });
+
+  return responseHandler("Success", 201, `Client ${client.nombre} deleted succesfully`);
+
+};
+
 export {
   getClients,
   getClient,
@@ -243,4 +281,5 @@ export {
   addToClientBalance,
   substractFromClientBalance,
   searchClient,
+  deleteClient
 };

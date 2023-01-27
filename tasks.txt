@@ -7,8 +7,5 @@ WHERE USE CACHE
 WHERE USE DESIGN PATTERNS
 Rename userId
 CHECK STATUS CODES SENDING WHEN ERROR
-
-const clients = await Client.query(
-      "SELECT * FROM clients WHERE \"userId\" = $1 AND nombre || ' ' || apellido ILIKE $2",
-      [id, `%${name}%`]
-    );
+NOT SENDING STATUSCODE WHEN RETURNING SUCCESFULL
+CUSTOM ERRORS TO SET STATUSCODE
