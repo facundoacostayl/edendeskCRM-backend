@@ -2,15 +2,35 @@ import { Request, Response } from "express";
 import { Client } from "../config/entities/Client";
 import { Operation } from "../config/entities/Operation";
 import {
-  getClients,
   getClient,
+  getClients,
+  getPaginationClientList,
   createClient,
   addToClientBalance,
   substractFromClientBalance,
   searchClient,
   deleteClient,
-  updateClient
+  updateClient,
 } from "../services/client.service";
+
+export const getItem = async (req: Request, res: Response) => {
+  try {
+    //Require params
+    const { userid, clientid } = req.params;
+
+    //Data request
+    const response = await getClient(parseInt(userid), parseInt(clientid));
+
+    //Checking if data type is "Error", otherwise throwing error
+    if (response.responseType === "Error") {
+      throw new Error(response.message);
+    }
+
+    return res.json(response);
+  } catch (error) {
+    error instanceof Error && res.status(500).json({ message: error.message });
+  }
+};
 
 export const getItems = async (req: Request, res: Response) => {
   try {
@@ -31,20 +51,23 @@ export const getItems = async (req: Request, res: Response) => {
   }
 };
 
-export const getItem = async (req: Request, res: Response) => {
+export const getPaginationItemList = async (req: Request, res: Response) => {
   try {
     //Require params
-    const { userid, clientid } = req.params;
+    const { userid } = req.params;
+
+    //Require query (limit of clients to be returned)
+    const { page, offset } = req.query;
 
     //Data request
-    const response = await getClient(parseInt(userid), parseInt(clientid));
+    const response = await getPaginationClientList(parseInt(userid), parseInt(page as string), parseInt(offset as string));
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
       throw new Error(response.message);
     }
 
-    return res.json(response);
+    return res.status(response.statusCode).json(response);
   } catch (error) {
     error instanceof Error && res.status(500).json({ message: error.message });
   }
@@ -210,7 +233,6 @@ export const orderByClientBalanceDesc = async (req: Request, res: Response) => {
 
 export const deleteItem = async (req: Request, res: Response) => {
   try {
-
     //Req params
     const { userid, clientid } = req.params;
 
@@ -230,26 +252,21 @@ export const deleteItem = async (req: Request, res: Response) => {
 
 export const updateItem = async (req: Request, res: Response) => {
   try {
+    //Req params
     const { userid, clientid } = req.params;
+    //Req body
     const { body } = req;
 
-    const response = await updateClient(parseInt(userid), parseInt(clientid), body);
+    //Data request
+    const response = await updateClient(
+      parseInt(userid),
+      parseInt(clientid),
+      body
+    );
 
     return res.status(response.statusCode).json(response);
   } catch (error) {
     console.error(error);
-    error instanceof Error && res.status(500).json("Internal server error");
-  }
-};
-
-export const getClientsQuantity = async (req: Request, res: Response) => {
-  try {
-    const { userId } = req.params;
-    const client = await Client.findBy({ user: parseInt(userId) });
-
-    const clientLength = client.length;
-    return res.json(clientLength);
-  } catch (error) {
     error instanceof Error && res.status(500).json("Internal server error");
   }
 };
