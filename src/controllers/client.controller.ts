@@ -9,6 +9,7 @@ import {
   substractFromClientBalance,
   searchClient,
   deleteClient,
+  updateClient
 } from "../services/client.service";
 
 export const getItems = async (req: Request, res: Response) => {
@@ -227,31 +228,14 @@ export const deleteItem = async (req: Request, res: Response) => {
   }
 };
 
-export const updateClient = async (req: Request, res: Response) => {
+export const updateItem = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { userid, clientid } = req.params;
     const { body } = req;
 
-    const queryBuilder = () => {
-      if (Object.keys(body).length === 0) return null;
-      let query = `UPDATE clients SET `;
-      query += Object.keys(body)
-        .map((key) => {
-          const valueToSet =
-            typeof body[key] === "string"
-              ? `'${body[key]}'`
-              : parseInt(body[key]);
-          return `${key}=${valueToSet}`;
-        })
-        .join(", ");
-      return query + ` WHERE clientid=${id};`;
-    };
+    const response = await updateClient(parseInt(userid), parseInt(clientid), body);
 
-    await Client.query(queryBuilder()!);
-
-    const client = await Client.findOneBy({ clientid: parseInt(id) });
-
-    return res.json(client);
+    return res.status(response.statusCode).json(response);
   } catch (error) {
     console.error(error);
     error instanceof Error && res.status(500).json("Internal server error");

@@ -5,6 +5,7 @@ import { Operation } from "../config/entities/Operation";
 import { UserType } from "../interfaces/user.interface";
 import { responseHandler } from "../utils/response.handle";
 import { AppDataSource } from "../config/db/db";
+import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
 //DataSource renamed
 const dataSource = AppDataSource;
@@ -270,8 +271,35 @@ const deleteClient = async (
   //Save deleting client request
   await Client.delete({ clientid });
 
-  return responseHandler("Success", 201, `Client ${client.nombre} deleted succesfully`);
+  return responseHandler(
+    "Success",
+    201,
+    `Client ${client.nombre} deleted succesfully`
+  );
+};
 
+const updateClient = async (
+  userid: ClientType["user"],
+  clientid: ClientType["clientid"],
+  clientData: ClientType[]
+) => {
+
+  //Execute update query
+  const client = await dataSource
+    .createQueryBuilder()
+    .update(Client)
+    .set(clientData as QueryDeepPartialEntity<Client>)
+    .where("user = :userid", { userid })
+    .andWhere("clientid = :clientid", { clientid })
+    .returning("")
+    .execute();
+
+    if(!client) {
+      return responseHandler('Error', 404, 'Client not found')
+    }
+
+
+  return responseHandler('Success', 200, 'Client updated succesfully');
 };
 
 export {
@@ -281,5 +309,6 @@ export {
   addToClientBalance,
   substractFromClientBalance,
   searchClient,
-  deleteClient
+  deleteClient,
+  updateClient,
 };
