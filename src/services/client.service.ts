@@ -7,26 +7,6 @@ import { responseHandler } from "../utils/response.handle";
 import { AppDataSource as dataSource } from "../config/db/db";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
-const getClient = async (
-  userid: ClientType["user"],
-  clientid: ClientType["clientid"]
-) => {
-  //Find Client
-  const client = await dataSource
-    .getRepository(Client)
-    .createQueryBuilder("c")
-    .innerJoinAndSelect(User, "u", "u.id = c.user")
-    .where("c.user = :userid", { userid })
-    .andWhere("c.clientid = :clientid", { clientid })
-    .getOne();
-
-  //Verify if user exists, otherwise returning error
-  if (!client) {
-    return responseHandler("Error", 404, "Client doesn't exist");
-  }
-
-  return responseHandler("Success", 200, "Client found succesfully", client);
-};
 
 const getClients = async (userid: ClientType["user"]) => {
   //FIX userId x userid <---
@@ -52,31 +32,63 @@ const getClients = async (userid: ClientType["user"]) => {
   );
 };
 
-const getPaginationClientList = async (userid: ClientType["user"], page: number, offset: number) => {
-
-  //Set page number to index for multiplying it * the number of values setted in offset.
+const getPaginationClientList = async (
+  userid: ClientType["user"],
+  page: number,
+  size: number
+) => {
+  //Set page number to index for multiplying it * the number of values setted in size.
   const pageIndex = page - 1;
 
-  //Multiply pageIndex * the number of values setted in offset.
-  const numberOfValuesToSkip = offset * pageIndex;
+  //Multiply pageIndex * the number of values setted in size.
+  const numberOfValuesToSkip = size * pageIndex;
 
-  //Find clients
-  const clients = await dataSource
+  //Find all clients
+  const allClients = await dataSource
+  .getRepository(Client)
+  .createQueryBuilder("c")
+  .innerJoinAndSelect(User, "u", "u.id = c.user")
+  .where("c.user = :userid", { userid })
+  .getCount();
+
+  //Find clients required
+  const clientsRequired = await dataSource
     .getRepository(Client)
     .createQueryBuilder("c")
     .innerJoinAndSelect(User, "u", "u.id = c.user")
-    .where("c.user = :userid", {userid})
+    .where("c.user = :userid", { userid })
     .orderBy("c.user", "DESC")
-    .take(offset)
+    .take(size)
     .skip(numberOfValuesToSkip)
     .getMany();
 
-    //Verify if clients exists, otherwise returning error
-    if(!clients) {
-      return responseHandler('Error', 404, "Clients not found");
-    };
+  //Verify if clients exists, otherwise returning error
+  if (!clientsRequired) {
+    return responseHandler("Error", 404, "Clients not found");
+  }
 
-    return responseHandler('Success', 200, "Clients found succesfully", clients);
+  return responseHandler("Success", 200, "Clients found succesfully", {allValues: allClients, paginatedValues: clientsRequired});
+};
+
+const getClient = async (
+  userid: ClientType["user"],
+  clientid: ClientType["clientid"]
+) => {
+  //Find Client
+  const client = await dataSource
+    .getRepository(Client)
+    .createQueryBuilder("c")
+    .innerJoinAndSelect(User, "u", "u.id = c.user")
+    .where("c.user = :userid", { userid })
+    .andWhere("c.clientid = :clientid", { clientid })
+    .getOne();
+
+  //Verify if user exists, otherwise returning error
+  if (!client) {
+    return responseHandler("Error", 404, "Client doesn't exist");
+  }
+
+  return responseHandler("Success", 200, "Client found succesfully", client);
 };
 
 const createClient = async (
@@ -325,9 +337,9 @@ const updateClient = async (
 };
 
 export {
-  getClient,
   getClients,
   getPaginationClientList,
+  getClient,
   createClient,
   addToClientBalance,
   substractFromClientBalance,

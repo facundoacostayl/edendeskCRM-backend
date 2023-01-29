@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import { Client } from "../config/entities/Client";
 import { Operation } from "../config/entities/Operation";
 import {
-  getClient,
   getClients,
   getPaginationClientList,
+  getClient,
   createClient,
   addToClientBalance,
   substractFromClientBalance,
@@ -12,25 +12,6 @@ import {
   deleteClient,
   updateClient,
 } from "../services/client.service";
-
-export const getItem = async (req: Request, res: Response) => {
-  try {
-    //Require params
-    const { userid, clientid } = req.params;
-
-    //Data request
-    const response = await getClient(parseInt(userid), parseInt(clientid));
-
-    //Checking if data type is "Error", otherwise throwing error
-    if (response.responseType === "Error") {
-      throw new Error(response.message);
-    }
-
-    return res.json(response);
-  } catch (error) {
-    error instanceof Error && res.status(500).json({ message: error.message });
-  }
-};
 
 export const getItems = async (req: Request, res: Response) => {
   try {
@@ -56,11 +37,11 @@ export const getPaginationItemList = async (req: Request, res: Response) => {
     //Require params
     const { userid } = req.params;
 
-    //Require query (limit of clients to be returned)
-    const { page, offset } = req.query;
+    //Require query (page number and limit of clients to be returned)
+    const { page, size } = req.query;
 
     //Data request
-    const response = await getPaginationClientList(parseInt(userid), parseInt(page as string), parseInt(offset as string));
+    const response = await getPaginationClientList(parseInt(userid), parseInt(page as string), parseInt(size as string));
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
@@ -68,6 +49,25 @@ export const getPaginationItemList = async (req: Request, res: Response) => {
     }
 
     return res.status(response.statusCode).json(response);
+  } catch (error) {
+    error instanceof Error && res.status(500).json({ message: error.message });
+  }
+};
+
+export const getItem = async (req: Request, res: Response) => {
+  try {
+    //Require params
+    const { userid, clientid } = req.params;
+
+    //Data request
+    const response = await getClient(parseInt(userid), parseInt(clientid));
+
+    //Checking if data type is "Error", otherwise throwing error
+    if (response.responseType === "Error") {
+      throw new Error(response.message);
+    }
+
+    return res.json(response);
   } catch (error) {
     error instanceof Error && res.status(500).json({ message: error.message });
   }

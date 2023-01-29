@@ -14,23 +14,23 @@ CREATE TABLE clients (
 
 ALTER TABLE users RENAME TO user;
 
-INSERT INTO clients (nombre, apellido, saldo, telefono, "userId")
+INSERT INTO clients (nombre, apellido, saldo, telefono, montoultcarga, montoultretiro, "userId")
 VALUES
-('Magnasco', 'Magnasco', 200 , 1122334455,'1'),
-('Enzo', 'Enzo',  1900 , 2222222222,'1'),
-('Charly', 'Charly', 2700 , 3333333333,'1'),
-('Jaimito', 'Jaimito', 900 , 4444444444,'1'),
-('Martin', 'Martin', 400 , 5555555555,'1'),
-('Joaquin', 'Joaquin', 450 , 666666666,'1'),
-('Jose', 'Jose', 5000 , 7777777777,'1'),
-('Cabezon', 'Cabezon', 7000 , 8888888888,'1'),
-('Fede', 'Fede', 7000 , 9999999999,'1'),
-('Willy', 'Willy', 7000 , 1010101010,'1')
+('Magnasco', 'Magnasco', 200 , 1122334455, 0, 0, '1'),
+('Enzo', 'Enzo',  1900 , 2222222222, 0, 0, '1'),
+('Charly', 'Charly', 2700 , 3333333333, 0, 0, '1'),
+('Jaimito', 'Jaimito', 900 , 4444444444, 0, 0, '1'),
+('Martin', 'Martin', 400 , 5555555555, 0, 0, '1'),
+('Joaquin', 'Joaquin', 450 , 666666666, 0, 0, '1'),
+('Jose', 'Jose', 5000 , 7777777777, 0, 0, '1'),
+('Cabezon', 'Cabezon', 7000 , 8888888888, 0, 0, '1'),
+('Fede', 'Fede', 7000 , 9999999999, 0, 0, '1'),
+('Willy', 'Willy', 7000 , 1010101010, 0, 0, '1')
 ;
 
 INSERT INTO users (loginemail, password)
 VALUES
-('Magnasco', 200 ,'1'),
-('Enzo', 1900 ,'1'),
-('Charly', 2700 ,'1')
+('facundoacostayl@gmail.com', 'riverpasion10'),
+('coroneltamara@hotmail.com', '150421'),
+('iriswayfarer@gmail.com', 'token481')
 ;

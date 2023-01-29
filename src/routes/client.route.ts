@@ -1,9 +1,9 @@
 import Router from "express";
 const router = Router();
 import {
-  getItem,
   getItems,
   getPaginationItemList,
+  getItem,
   createItem,
   deleteItem,
   updateItem,
@@ -17,9 +17,9 @@ import {
 } from "../controllers/client.controller";
 const authorization = require("../middleware/authorization");
 
+router.get("/user:userid/clients", getItems);
+router.get("/user:userid/client-list", getPaginationItemList);
 router.get("/user:userid/client:clientid", getItem);
-router.get("/user:userid/clientes", getItems);
-router.post("/user:userid/clients-page", getPaginationItemList);
 router.post("/nuevo-cliente", createItem);
 router.delete("/user:userid/cliente:clientid", deleteItem);
 router.put("/user:userid/client:clientid", updateItem);

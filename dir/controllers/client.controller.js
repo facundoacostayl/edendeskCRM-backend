@@ -9,44 +9,64 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getClientsQuantity = exports.updateClient = exports.deleteClient = exports.orderByClientBalanceDesc = exports.orderByClientBalanceAsc = exports.orderByClientNameDesc = exports.orderByClientNameAsc = exports.searchClient = exports.substractFromItemBalance = exports.addToItemBalance = exports.createItem = exports.getItem = exports.getItems = void 0;
+exports.updateItem = exports.deleteItem = exports.orderByClientBalanceDesc = exports.orderByClientBalanceAsc = exports.orderByClientNameDesc = exports.orderByClientNameAsc = exports.searchItem = exports.substractFromItemBalance = exports.addToItemBalance = exports.createItem = exports.getPaginationItemList = exports.getItems = exports.getItem = void 0;
 const Client_1 = require("../config/entities/Client");
-const Operation_1 = require("../config/entities/Operation");
 const client_service_1 = require("../services/client.service");
-const getItems = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        //Require params
-        const { id } = req.params;
-        //Data request
-        const clientList = yield (0, client_service_1.getClients)(parseInt(id));
-        //Checking if data type is "Error", otherwise throwing error
-        if (clientList.responseType === "Error") {
-            throw new Error(clientList.message);
-        }
-        return res.json(clientList);
-    }
-    catch (error) {
-        error instanceof Error && res.status(500).json({ message: error.message });
-    }
-});
-exports.getItems = getItems;
 const getItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //Require params
-        const { id } = req.params;
+        const { userid, clientid } = req.params;
         //Data request
-        const client = yield (0, client_service_1.getClient)(parseInt(id));
+        const response = yield (0, client_service_1.getClient)(parseInt(userid), parseInt(clientid));
         //Checking if data type is "Error", otherwise throwing error
-        if (client.responseType === "Error") {
-            throw new Error(client.message);
+        if (response.responseType === "Error") {
+            throw new Error(response.message);
         }
-        return res.json(client);
+        return res.json(response);
     }
     catch (error) {
         error instanceof Error && res.status(500).json({ message: error.message });
     }
 });
 exports.getItem = getItem;
+const getItems = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        //Require params
+        const { userid } = req.params;
+        //Data request
+        const response = yield (0, client_service_1.getClients)(parseInt(userid));
+        //Checking if data type is "Error", otherwise throwing error
+        if (response.responseType === "Error") {
+            throw new Error(response.message);
+        }
+        return res.json(response);
+    }
+    catch (error) {
+        error instanceof Error && res.status(500).json({ message: error.message });
+    }
+});
+exports.getItems = getItems;
+const getPaginationItemList = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        //Require params
+        const { userid } = req.params;
+        //Require query (page number and limit of clients to be returned)
+        const { page, size } = req.query;
+        return (page + "" + size);
+        //Data request
+        /*const response = await getPaginationClientList(parseInt(userid), parseInt(page as string), parseInt(size as string));
+    
+        //Checking if data type is "Error", otherwise throwing error
+        if (response.responseType === "Error") {
+          throw new Error(response.message);
+        }*/
+        return res.json();
+    }
+    catch (error) {
+        error instanceof Error && res.status(500).json({ error });
+    }
+});
+exports.getPaginationItemList = getPaginationItemList;
 const createItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //Require Body
@@ -76,7 +96,7 @@ const addToItemBalance = (req, res) => __awaiter(void 0, void 0, void 0, functio
         if (response.responseType === "Error") {
             throw new Error(response.message);
         }
-        return res.status(200).json(response);
+        return res.json(response);
     }
     catch (error) {
         error instanceof Error && res.status(500).json({ message: error.message });
@@ -85,31 +105,45 @@ const addToItemBalance = (req, res) => __awaiter(void 0, void 0, void 0, functio
 exports.addToItemBalance = addToItemBalance;
 const substractFromItemBalance = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        //Req body
         const { amount } = req.body;
+        //Req params
         const { userId, clientId } = req.params;
+        //Data request
         const response = yield (0, client_service_1.substractFromClientBalance)(parseInt(userId), parseInt(clientId), parseInt(amount));
+        //Checking if data type is "Error", otherwise throwing error
         if (response.responseType === "Error") {
             throw new Error(response.message);
         }
-        return res.status(200).json(response);
+        return res.json(response);
     }
     catch (error) {
         error instanceof Error && res.status(500).json({ error: error.message });
     }
 });
 exports.substractFromItemBalance = substractFromItemBalance;
-const searchClient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const searchItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { id } = req.params;
-        const { name } = req.query;
-        const clients = yield Client_1.Client.query("SELECT * FROM clients WHERE \"userId\" = $1 AND nombre || ' ' || apellido ILIKE $2", [id, `%${name}%`]);
-        return res.json(clients);
+        //Req params
+        const { userid } = req.params;
+        //Req query
+        const { nameSearch } = req.query;
+        //Early return if search input is empty.
+        if (nameSearch.toString().length <= 0)
+            return;
+        //Data request
+        const response = yield (0, client_service_1.searchClient)(parseInt(userid), nameSearch.toString());
+        //Checking if data type is "Error", otherwise throwing error
+        if (response.responseType === "Error") {
+            throw new Error(response.message);
+        }
+        return res.json(response);
     }
     catch (error) {
-        error instanceof Error && res.status(500).json("Server internal error");
+        error instanceof Error && res.status(500).json({ error: error.message });
     }
 });
-exports.searchClient = searchClient;
+exports.searchItem = searchItem;
 const orderByClientNameAsc = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
@@ -154,59 +188,36 @@ const orderByClientBalanceDesc = (req, res) => __awaiter(void 0, void 0, void 0,
     }
 });
 exports.orderByClientBalanceDesc = orderByClientBalanceDesc;
-const deleteClient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userId, clientId } = req.params;
-    const client = yield Client_1.Client.findOneBy({ clientid: parseInt(clientId) });
-    const operation = yield Operation_1.Operation.findOneBy({
-        userId: parseInt(userId),
-        createdAt: new Date().getDate(),
-    });
-    if (!client || !operation)
-        return res.status(403).json({ message: "Client not found" });
-    operation.userLost += client.saldo;
-    operation.userTotalBalance = operation.userTotalBalance - client.saldo;
-    yield operation.save();
-    yield Client_1.Client.delete({ clientid: parseInt(clientId) });
-    return res.status(200).json({ message: "Client deleted successfully" });
-});
-exports.deleteClient = deleteClient;
-const updateClient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const deleteItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { id } = req.params;
+        //Req params
+        const { userid, clientid } = req.params;
+        //Data request
+        const response = yield (0, client_service_1.deleteClient)(parseInt(userid), parseInt(clientid));
+        //Checking if data type is "Error", otherwise throwing error
+        if (response.responseType === "Error") {
+            throw new Error(response.message);
+        }
+        return res.json(response);
+    }
+    catch (error) {
+        error instanceof Error && res.status(500).json(error.message);
+    }
+});
+exports.deleteItem = deleteItem;
+const updateItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        //Req params
+        const { userid, clientid } = req.params;
+        //Req body
         const { body } = req;
-        const queryBuilder = () => {
-            if (Object.keys(body).length === 0)
-                return null;
-            let query = `UPDATE clients SET `;
-            query += Object.keys(body)
-                .map((key) => {
-                const valueToSet = typeof body[key] === "string"
-                    ? `'${body[key]}'`
-                    : parseInt(body[key]);
-                return `${key}=${valueToSet}`;
-            })
-                .join(", ");
-            return query + ` WHERE clientid=${id};`;
-        };
-        yield Client_1.Client.query(queryBuilder());
-        const client = yield Client_1.Client.findOneBy({ clientid: parseInt(id) });
-        return res.json(client);
+        //Data request
+        const response = yield (0, client_service_1.updateClient)(parseInt(userid), parseInt(clientid), body);
+        return res.status(response.statusCode).json(response);
     }
     catch (error) {
         console.error(error);
         error instanceof Error && res.status(500).json("Internal server error");
     }
 });
-exports.updateClient = updateClient;
-const getClientsQuantity = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { userId } = req.params;
-        const client = yield Client_1.Client.findBy({ userId: parseInt(userId) });
-        const clientLength = client.length;
-        return res.json(clientLength);
-    }
-    catch (error) {
-        error instanceof Error && res.status(500).json("Internal server error");
-    }
-});
-exports.getClientsQuantity = getClientsQuantity;
+exports.updateItem = updateItem;

@@ -1,13 +1,13 @@
 import { UserType } from "./user.interface";
 import { ClientType } from "./client.interface";
-import {Client} from '../config/entities/Client';
+import { PaginationDataType } from "./response.pagination.interface";
 
 interface Response {
-    responseType: "Success" | "Error",
-    statusCode: number,
-    message?: string,
-    data?: UserType | UserType[] | ClientType | ClientType[],
-    token?: string | number
+  responseType: "Success" | "Error";
+  statusCode: number;
+  message?: string;
+  data?: UserType | UserType[] | ClientType | ClientType[] | PaginationDataType;
+  token?: string | number;
 }
 
-export {Response as ResponseType};
+export { Response as ResponseType };
