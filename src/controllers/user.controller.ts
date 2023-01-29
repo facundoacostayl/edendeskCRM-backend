@@ -20,7 +20,7 @@ export const getItem = async (req: Request, res: Response) => {
       throw new Error(response.message);
     }
 
-    return res.json(response.data);
+    return res.status(response.statusCode).json(response);
   } catch (error) {
     if (error instanceof Error) {
       errorHandler(res, error.message, 400);
@@ -41,7 +41,7 @@ export const createItem = async (req: Request, res: Response) => {
       throw new Error(response.message);
     }
 
-    return res.json(response);
+    return res.status(response.statusCode).json(response);
   } catch (error) {
     if (error instanceof Error) {
       errorHandler(res, error.message, 400);
@@ -62,7 +62,7 @@ export const loginItem = async (req: Request, res: Response) => {
       throw new Error(response.message);
     }
 
-    res.json(response.data);
+    return res.status(response.statusCode).json(response);
   } catch (error) {
     if (error instanceof Error) {
       errorHandler(res, error.message, 400)
@@ -85,7 +85,7 @@ export const updateItem = async (req: Request, res: Response) => {
       throw new Error(response.message);
     }
 
-    return res.json(response);
+    return res.status(response.statusCode).json(response);
   } catch (error) {
     error instanceof Error && res.status(500).json(error.message);
   }

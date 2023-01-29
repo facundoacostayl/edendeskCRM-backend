@@ -90,12 +90,12 @@ const loginUser = async (
   //Give the jwt token to the user
   const token = jwtGenerator(userRequest.id);
   const user = await User.findOneBy({ loginemail: loginemail });
-  const userId = user && user.id;
+  const userid = user && user.id;
 
   //Response
-  const response = { token, userId: user && user.id };
+  const response = { token, userid: user && user.id };
 
-  return responseHandler("Success", 200, "Logged in succesfully");
+  return responseHandler("Success", 200, "Logged in succesfully", response);
 };
 
 const updateUser = async (id: UserType["id"], body: UserType) => {

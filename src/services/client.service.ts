@@ -8,7 +8,6 @@ import { AppDataSource as dataSource } from "../config/db/db";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
 const getClients = async (userid: ClientType["user"]) => {
-  //FIX userId x userid <---
 
   //Find clients
   const clientList = await dataSource
@@ -55,7 +54,7 @@ const getPaginationClientList = async (
     .where("c.user = :userid", { userid })
     .getCount();
 
-  //Find clients required
+  //Find clients required and sorting them
   const clientsRequired = await dataSource
     .getRepository(Client)
     .createQueryBuilder("c")
@@ -139,7 +138,7 @@ const createClient = async (
 };
 
 const addToClientBalance = async (
-  userId: ClientType["clientid"],
+  userid: ClientType["clientid"],
   clientid: ClientType["user"],
   amount: number
 ) => {
@@ -148,13 +147,13 @@ const addToClientBalance = async (
     .getRepository(Client)
     .createQueryBuilder("c")
     .innerJoinAndSelect(User, "u", "u.id = c.user")
-    .where("c.user = :userId", { userId })
+    .where("c.user = :userid", { userid })
     .andWhere("c.clientid = :clientid", { clientid })
     .getOne();
 
   //Find operation
   const operation = await Operation.findOneBy({
-    userId,
+    userId: userid,
     createdAt: new Date().getDate(),
   });
 
@@ -197,7 +196,7 @@ const addToClientBalance = async (
 };
 
 const substractFromClientBalance = async (
-  userId: ClientType["clientid"],
+  userid: ClientType["clientid"],
   clientid: ClientType["user"],
   amount: number
 ) => {
@@ -206,13 +205,13 @@ const substractFromClientBalance = async (
     .getRepository(Client)
     .createQueryBuilder("c")
     .innerJoinAndSelect(User, "u", "u.id = c.user")
-    .where("c.user = :userId", { userId })
+    .where("c.user = :userid", { userid })
     .andWhere("c.clientid = :clientid", { clientid })
     .getOne();
 
   //Find operation
   const operation = await Operation.findOneBy({
-    userId,
+    userId: userid,
     createdAt: new Date().getDate(),
   });
 
@@ -258,14 +257,14 @@ const substractFromClientBalance = async (
 };
 
 const searchClient = async (
-  userId: ClientType["user"],
+  userid: ClientType["user"],
   nameSearch: ClientType["nombre"]
 ) => {
   //Find clients
   const clients = await dataSource
     .getRepository(Client)
     .createQueryBuilder("c")
-    .where("c.user = :userId", { userId })
+    .where("c.user = :userid", { userid })
     .andWhere("c.nombre ILIKE :nameSearch OR c.apellido ILIKE :nameSearch", {
       nameSearch: `%${nameSearch}%`,
     })
@@ -326,6 +325,11 @@ const updateClient = async (
   clientid: ClientType["clientid"],
   clientData: ClientType[]
 ) => {
+//Verify if data exists, otherwise returning error
+  if (!Object.keys(clientData).length) {
+    return responseHandler("Error", 404, "There's no data to update");
+}
+  
   //Execute update query
   const client = await dataSource
     .createQueryBuilder()
