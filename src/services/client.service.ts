@@ -1,12 +1,11 @@
 import { ClientType } from "../interfaces/client.interface";
+import {PaginationArgsType} from '../interfaces/pagination.interface';
 import { Client } from "../config/entities/Client";
 import { User } from "../config/entities/User";
 import { Operation } from "../config/entities/Operation";
-import { UserType } from "../interfaces/user.interface";
 import { responseHandler } from "../utils/response.handle";
 import { AppDataSource as dataSource } from "../config/db/db";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
-
 
 const getClients = async (userid: ClientType["user"]) => {
   //FIX userId x userid <---
@@ -33,9 +32,11 @@ const getClients = async (userid: ClientType["user"]) => {
 };
 
 const getPaginationClientList = async (
-  userid: ClientType["user"],
-  page: number,
-  size: number
+  userid: PaginationArgsType['userid'],
+  page: PaginationArgsType['page'],
+  size: PaginationArgsType['size'],
+  sortBy: PaginationArgsType['sortBy'],
+  orderBy: PaginationArgsType['orderBy'],
 ) => {
   //Set page number to index for multiplying it * the number of values setted in size.
   const pageIndex = page - 1;
@@ -43,23 +44,26 @@ const getPaginationClientList = async (
   //Multiply pageIndex * the number of values setted in size.
   const numberOfValuesToSkip = size * pageIndex;
 
+  //Rename "created_at" to "user" in order of order based on id number (the highest number, the last value created).
+  const queryOfSortBy = sortBy === "created_at" ? "clientid" : sortBy;
+
   //Find all clients
   const allClients = await dataSource
-  .getRepository(Client)
-  .createQueryBuilder("c")
-  .innerJoinAndSelect(User, "u", "u.id = c.user")
-  .where("c.user = :userid", { userid })
-  .getCount();
+    .getRepository(Client)
+    .createQueryBuilder("c")
+    .innerJoinAndSelect(User, "u", "u.id = c.user")
+    .where("c.user = :userid", { userid })
+    .getCount();
 
   //Find clients required
   const clientsRequired = await dataSource
     .getRepository(Client)
     .createQueryBuilder("c")
-    .innerJoinAndSelect(User, "u", "u.id = c.user")
+    .innerJoin(User, "u", "u.id = c.user")
     .where("c.user = :userid", { userid })
-    .orderBy("c.user", "DESC")
     .take(size)
     .skip(numberOfValuesToSkip)
+    .orderBy(`c.${queryOfSortBy}`, orderBy)
     .getMany();
 
   //Verify if clients exists, otherwise returning error
@@ -67,7 +71,10 @@ const getPaginationClientList = async (
     return responseHandler("Error", 404, "Clients not found");
   }
 
-  return responseHandler("Success", 200, "Clients found succesfully", {allValues: allClients, paginatedValues: clientsRequired});
+  return responseHandler("Success", 200, "Clients found succesfully", {
+    allValues: allClients,
+    paginatedValues: clientsRequired,
+  });
 };
 
 const getClient = async (

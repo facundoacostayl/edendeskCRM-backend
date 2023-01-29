@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Client } from "../config/entities/Client";
 import { Operation } from "../config/entities/Operation";
+import { PaginationArgsType } from "../interfaces/pagination.interface";
 import {
   getClients,
   getPaginationClientList,
@@ -38,10 +39,10 @@ export const getPaginationItemList = async (req: Request, res: Response) => {
     const { userid } = req.params;
 
     //Require query (page number and limit of clients to be returned)
-    const { page, size } = req.query;
+    const { page, size, sortBy, orderBy } = req.query;
 
     //Data request
-    const response = await getPaginationClientList(parseInt(userid), parseInt(page as string), parseInt(size as string));
+    const response = await getPaginationClientList(parseInt(userid), parseInt(page as string), parseInt(size as string), sortBy as PaginationArgsType['sortBy'], orderBy as PaginationArgsType['orderBy'],);
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
