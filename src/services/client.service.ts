@@ -1,5 +1,5 @@
 import { ClientType } from "../interfaces/client.interface";
-import {PaginationArgsType} from '../interfaces/pagination.interface';
+import { PaginationArgsType } from "../interfaces/pagination.interface";
 import { Client } from "../config/entities/Client";
 import { User } from "../config/entities/User";
 import { Operation } from "../config/entities/Operation";
@@ -8,7 +8,6 @@ import { AppDataSource as dataSource } from "../config/db/db";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
 const getClients = async (userid: ClientType["user"]) => {
-
   //Find clients
   const clientList = await dataSource
     .getRepository(Client)
@@ -31,11 +30,11 @@ const getClients = async (userid: ClientType["user"]) => {
 };
 
 const getPaginationClientList = async (
-  userid: PaginationArgsType['userid'],
-  page: PaginationArgsType['page'],
-  size: PaginationArgsType['size'],
-  sortBy: PaginationArgsType['sortBy'],
-  orderBy: PaginationArgsType['orderBy'],
+  userid: PaginationArgsType["userid"],
+  page: PaginationArgsType["page"],
+  size: PaginationArgsType["size"],
+  sortBy: PaginationArgsType["sortBy"],
+  orderBy: PaginationArgsType["orderBy"]
 ) => {
   //Set page number to index for multiplying it * the number of values setted in size.
   const pageIndex = page - 1;
@@ -325,26 +324,29 @@ const updateClient = async (
   clientid: ClientType["clientid"],
   clientData: ClientType[]
 ) => {
-//Verify if data exists, otherwise returning error
+  //Verify if data exists, otherwise returning error
   if (!Object.keys(clientData).length) {
     return responseHandler("Error", 404, "There's no data to update");
-}
-  
+  }
+
   //Execute update query
-  const client = await dataSource
+  const updateClient = await dataSource
     .createQueryBuilder()
     .update(Client)
     .set(clientData as QueryDeepPartialEntity<Client>)
     .where("user = :userid", { userid })
     .andWhere("clientid = :clientid", { clientid })
-    .returning("")
     .execute();
 
-  if (!client) {
-    return responseHandler("Error", 404, "Client not found");
+  //Find client
+  const client = await Client.findOneBy({ clientid });
+
+  //Verify if client exists, otherwise returning error
+  if (!updateClient || !client) {
+    return responseHandler("Error", 404, "User not found");
   }
 
-  return responseHandler("Success", 200, "Client updated succesfully");
+  return responseHandler("Success", 200, "Client updated succesfully", client);
 };
 
 export {

@@ -76,7 +76,7 @@ router.get("/verificar", authorization, authorizeToken);
  *              schema:
  *                $ref: "#/components/schemas/user"
  * */
-router.get("/:id", getItem);
+router.get("/:userid", getItem);
 
 /**
  * @openapi
@@ -96,6 +96,6 @@ router.get("/:id", getItem);
  *              schema:
  *                $ref: "#/components/schemas/user"
  * */
-router.patch("/:id", updateItem);
+router.put("/:userid", updateItem);
 
 export { router };

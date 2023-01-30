@@ -74,11 +74,11 @@ export const updateItem = async (req: Request, res: Response) => {
   try {
 
     //Require params and body
-    const { id } = req.params;
+    const { userid } = req.params;
     const { body } = req;
 
     //Data request
-    const response = await updateUser(parseInt(id), body);
+    const response = await updateUser(parseInt(userid), body);
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {

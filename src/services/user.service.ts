@@ -2,11 +2,11 @@ import { UserType } from "../interfaces/user.interface";
 import { User } from "../config/entities/User";
 import { Operation } from "../config/entities/Operation";
 import { responseHandler } from "../utils/response.handle";
+import { AppDataSource as dataSource } from "../config/db/db";
 const bcrypt = require("bcrypt");
 const jwtGenerator = require("../utils/jwtGenerator");
 
 const getUser = async (id: UserType["id"]) => {
-
   //Find User
   const userRequest = await User.findOneBy({ id });
 
@@ -23,7 +23,6 @@ const createUser = async (
   loginemail: UserType["loginemail"],
   password: UserType["password"]
 ) => {
-
   //Verify if user is already authenticated
   const userRequest = await User.findOneBy({ loginemail });
 
@@ -71,7 +70,6 @@ const loginUser = async (
   loginemail: UserType["loginemail"],
   password: UserType["password"]
 ) => {
-
   //Check if user exists
   const userRequest = await User.findOneBy({ loginemail: loginemail });
 
@@ -95,48 +93,40 @@ const loginUser = async (
   //Response
   const response = { token, userid: user && user.id };
 
-  return responseHandler("Success", 200, "Logged in succesfully", response);
+  return responseHandler("Success", 200, "Logged in succesfully");
 };
 
-const updateUser = async (id: UserType["id"], body: UserType) => {
-
+const updateUser = async (userid: UserType["id"], userData: UserType) => {
   //Verify if data exists, otherwise returning error
-  if (!Object.keys(body).length) {
+  if (!Object.keys(userData).length) {
     return responseHandler("Error", 404, "There's no data to update");
   }
 
   //Bcrypt password
-  if (body.password) {
+  if (userData.password) {
     const saltRound = 10;
     const salt = await bcrypt.genSalt(saltRound);
-    const bcryptPassword = await bcrypt.hash(body.password, salt);
-    body.password = bcryptPassword;
+    const bcryptPassword = await bcrypt.hash(userData.password, salt);
+    userData.password = bcryptPassword;
   }
 
-  //Generating query and parsing data if necessary
-  const queryBuilder = () => {
-    let query = `UPDATE users SET `;
-    query += Object.keys(body)
-      .map((key) => {
-        const valueToSet =
-          typeof body[key as keyof UserType] === "string"
-            ? `'${body[key as keyof UserType]}'`
-            : parseInt(body[key as keyof UserType] as string);
-        return `${key} = ${valueToSet}`;
-      })
-      .join(", ");
+  //Execute update query
+  const updateUser = await dataSource
+    .createQueryBuilder()
+    .update(User)
+    .set(userData)
+    .where("id = :userid", { userid })
+    .execute();
 
-    return query + ` WHERE id = ${id};`;
-  };
+  //Find user
+  const user = await User.findOneBy({ id: userid });
 
-  //Sending query
-  await User.query(queryBuilder()!);
+  //Verify if user exists, otherwise returning error
+  if (!updateUser || !user) {
+    return responseHandler("Error", 404, "User not found");
+  }
 
-  //Response
-  const response = await User.findOneBy({ id });
-
-  return responseHandler("Success", 200, "User updated succesfully", response!);
-
+  return responseHandler("Success", 200, "User updated succesfully", user);
 };
 
 export { getUser, createUser, loginUser, updateUser };
