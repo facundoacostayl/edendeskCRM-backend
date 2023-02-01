@@ -1,3 +1,5 @@
+import {UserType} from './user.interface';
+
 interface Client {
   clientid: number;
   nombre: string;
@@ -10,7 +12,7 @@ interface Client {
   fechaultretiro: string;
   montoultretiro: number;
   sucursal: string;
-  user: number;
+  user: UserType['id'];
 }
 
 export {Client as ClientType}

@@ -1,5 +1,6 @@
 import {BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany} from 'typeorm';
 import {User} from './User';
+import {Operation} from './Operation';
 
 @Entity('clients')
 export class Client extends BaseEntity {
@@ -40,6 +41,9 @@ export class Client extends BaseEntity {
         nullable: true
     })
     sucursal: string
+
+    @OneToMany(type => Operation, operation => operation.operationId)
+    operation: Operation['operationId'];
 
     @ManyToOne(type => User, users => users.id)
     user: User['id'];

@@ -1,14 +1,18 @@
 import { Response, Request } from "express";
-import { Operation } from "../config/entities/Operation";
+import { getFullOperationData } from "../services/operation.service";
 
-export const getFullOperationData = async (req: Request, res: Response) => {
+export const getFullItemData = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const response = await Operation.findBy({ userId: parseInt(id) });
+    const { userid } = req.params;
+    const response = await getFullOperationData(parseInt(userid));
 
-    return res.json(response);
+    if(response.responseType === "Error") {
+      throw new Error(response.message)
+    }
+
+    return res.status(response.statusCode).json(response);
   } catch (error) {
-    error instanceof Error && res.status(500).json("Internal server error");
+    error instanceof Error && res.status(500).json(error.message);
   }
 };
 

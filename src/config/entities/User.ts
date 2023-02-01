@@ -1,5 +1,6 @@
 import {BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, OneToMany} from 'typeorm';
 import {Client} from './Client';
+import {Operation} from './Operation';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -17,4 +18,7 @@ export class User extends BaseEntity {
 
     @OneToMany(type => Client, clients => clients.user)
     clients: Client[];
+
+    @OneToMany(type => Operation, operations => operations.operationId)
+    operations: Operation[];
 }

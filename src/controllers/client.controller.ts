@@ -76,11 +76,14 @@ export const getItem = async (req: Request, res: Response) => {
 
 export const createItem = async (req: Request, res: Response) => {
   try {
+    //Require params
+    const {userid} = req.params;
+
     //Require Body
-    const { nombre, apellido, telefono, userid } = req.body;
+    const { nombre, apellido, telefono } = req.body;
 
     //Data request
-    const response = await createClient(nombre, apellido, telefono, userid);
+    const response = await createClient(nombre, apellido, telefono, parseInt(userid));
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {

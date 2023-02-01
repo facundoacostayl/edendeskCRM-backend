@@ -4,31 +4,32 @@ import { User } from './User';
 @Entity('operation')
 export class Operation extends BaseEntity {
     @PrimaryGeneratedColumn()
-    id: number;
+    operationId: number;
     @Column()
-    year: number;
+    año: number;
     @Column()
-    month: number;
+    mes: number;
     @Column({
         nullable: true
     })
-    userGain: number;
+    gananciaUsuario: number;
     @Column({
         nullable: true
     })
-    userLost: number;
+    perdidaUsuario: number;
     @Column({
         nullable: true
     })
-    userTotalBalance: number
+    totalDeSaldosUsuario: number
     @Column({
         nullable: true
     })
-    dayTransactions: number
+    transaccionesDelDia: number
     @Column({
         nullable: true
     })
-    createdAt: number;
-    @Column()
-    userId: number;
+    fechaDeCreacion: number;
+
+    @ManyToOne(type => User, user => user.id)
+    user: User['id']
 }

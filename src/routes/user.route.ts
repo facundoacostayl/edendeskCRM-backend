@@ -12,7 +12,7 @@ const authorization = require("../middleware/authorization");
 
 /**
  * @openapi
- * /user/registro:
+ * /users/registro:
  *    post:
  *      tags:
  *        - users
@@ -28,7 +28,7 @@ router.post("/registro", validInfo, createItem);
 
 /**
  * @openapi
- * /user/login:
+ * /users/login:
  *    post:
  *      tags:
  *        - users
@@ -44,7 +44,7 @@ router.post("/login", validInfo, loginItem);
 
 /**
  * @openapi
- * /user/verificar:
+ * /users/verificar:
  *    get:
  *      tags:
  *        - users
@@ -60,7 +60,7 @@ router.get("/verificar", authorization, authorizeToken);
 
 /**
  * @openapi
- * /user/{:id}:
+ * /users/{:userid}:
  *    get:
  *      tags:
  *        - users
@@ -68,7 +68,7 @@ router.get("/verificar", authorization, authorizeToken);
  *      description: This endpoint finds a user and returns its information
  *      parameters:
  *      - in: path
- *        name: id
+ *        name: userid
  *        required: true
  *      requestBody:
  *          content:
@@ -80,7 +80,7 @@ router.get("/:userid", getItem);
 
 /**
  * @openapi
- * /user/{:id}:
+ * /users/{:userid}:
  *    patch:
  *      tags:
  *        - users
@@ -88,7 +88,7 @@ router.get("/:userid", getItem);
  *      description: This endpoint finds a user, updates its information and returns it
  *      parameters:
  *      - in: path
- *        name: id
+ *        name: userid
  *        required: true
  *      requestBody:
  *          content:

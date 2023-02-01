@@ -152,8 +152,8 @@ const addToClientBalance = async (
 
   //Find operation
   const operation = await Operation.findOneBy({
-    userId: userid,
-    createdAt: new Date().getDate(),
+    user: userid,
+    fechaDeCreacion: new Date().getDate(),
   });
 
   //Verify if client and operation exists, otherwise returning error
@@ -173,10 +173,10 @@ const addToClientBalance = async (
 
   if (operation) {
     //Add operation
-    operation.userGain += amount;
-    operation.userTotalBalance += amount;
-    operation.dayTransactions++;
-    !operation.createdAt ? (operation.createdAt = new Date().getDate()) : null;
+    operation.gananciaUsuario += amount;
+    operation.totalDeSaldosUsuario += amount;
+    operation.transaccionesDelDia++;
+    !operation.fechaDeCreacion ? (operation.fechaDeCreacion = new Date().getDate()) : null;
 
     //Save operation
     await operation.save();
@@ -210,8 +210,8 @@ const substractFromClientBalance = async (
 
   //Find operation
   const operation = await Operation.findOneBy({
-    userId: userid,
-    createdAt: new Date().getDate(),
+    user: userid,
+    fechaDeCreacion: new Date().getDate(),
   });
 
   //Verify if client and operation exists, otherwise returning error
@@ -233,10 +233,10 @@ const substractFromClientBalance = async (
 
   if (operation) {
     //Add operation
-    operation.userLost += amount;
-    operation.userTotalBalance = operation.userTotalBalance - amount;
-    operation.dayTransactions++;
-    !operation.createdAt ? (operation.createdAt = new Date().getDate()) : null;
+    operation.perdidaUsuario += amount;
+    operation.totalDeSaldosUsuario = operation.totalDeSaldosUsuario - amount;
+    operation.transaccionesDelDia++;
+    !operation.fechaDeCreacion ? (operation.fechaDeCreacion = new Date().getDate()) : null;
 
     //Save operation
     await operation.save();
@@ -292,8 +292,8 @@ const deleteClient = async (
 
   //Find operation
   const operation = await Operation.findOneBy({
-    userId: userid,
-    createdAt: new Date().getDate(),
+    user: userid,
+    fechaDeCreacion: new Date().getDate(),
   });
 
   //Verify if client exists, otherwise returning error
@@ -303,8 +303,8 @@ const deleteClient = async (
 
   //Save operation data
   if (operation) {
-    operation.userLost += client.saldo;
-    operation.userTotalBalance = operation.userTotalBalance - client.saldo;
+    operation.perdidaUsuario += client.saldo;
+    operation.totalDeSaldosUsuario = operation.totalDeSaldosUsuario - client.saldo;
 
     await operation.save();
   }
