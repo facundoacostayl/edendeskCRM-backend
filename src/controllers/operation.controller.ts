@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import { getFullOperationData } from "../services/operation.service";
+import { getFullOperationData, getTodayOperationData, getMonthOperationData } from "../services/operation.service";
 
 export const getFullItemData = async (req: Request, res: Response) => {
   try {
@@ -16,65 +16,27 @@ export const getFullItemData = async (req: Request, res: Response) => {
   }
 };
 
-export const getTodayOperationData = async (req: Request, res: Response) => {
+export const getTodayItemData = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { userid } = req.params;
 
-    let operation = await Operation.findOneBy({
-      userId: parseInt(id),
-      createdAt: new Date().getDate(),
-      month: new Date().getMonth() + 1,
-      year: new Date().getFullYear(),
-    });
+    const response = await getTodayOperationData(parseInt(userid));
 
-    let yesterdayOperation = await Operation.findOneBy({
-      userId: parseInt(id),
-      createdAt: new Date().getDate() - 1,
-      month: new Date().getMonth() + 1,
-      year: new Date().getFullYear(),
-    });
+    return res.status(response!.statusCode).json(response);
 
-    if (!operation) {
-      operation = new Operation();
-      operation.year = new Date().getFullYear();
-      operation.month = new Date().getMonth() + 1;
-      operation.createdAt = new Date().getDate();
-      operation.userId = parseInt(id);
-      operation.userTotalBalance = yesterdayOperation
-        ? yesterdayOperation.userTotalBalance
-        : 0;
-
-      await operation.save();
-
-      return res.json(operation);
-    }
-
-    return res.json(operation);
   } catch (error) {
     error instanceof Error && res.status(500).send("Server internal error");
   }
 };
 
-export const getMonthOperationData = async (req: Request, res: Response) => {
+export const getMonthItemData = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const { year } = req.body;
+    const { userid } = req.params;
+    const { month } = req.body; //YEAR SHOULD MATCH TOO
 
-    const operation = await Operation.findBy({
-      userId: parseInt(id),
-      year: year,
-    });
+    const response = await getMonthOperationData(parseInt(userid), parseInt(month));
 
-    let incomes: number = 0;
-    operation.forEach((op) => (incomes += op.userGain));
-
-    let outcomes: number = 0;
-    operation.forEach((op) => (outcomes += op.userLost));
-
-    return res.json({
-      userGain: incomes,
-      userLost: outcomes,
-    });
+    return res.status(response.statusCode).json(response);
   } catch (error) {
     error instanceof Error && res.status(500).send("Server internal error");
   }

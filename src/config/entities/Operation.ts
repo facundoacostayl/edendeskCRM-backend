@@ -5,10 +5,14 @@ import { User } from './User';
 export class Operation extends BaseEntity {
     @PrimaryGeneratedColumn()
     operationId: number;
+    @Column({
+        nullable: true
+    })
+    fechaDeCreacion: number;
     @Column()
-    año: number;
+    mesDeCreacion: number;
     @Column()
-    mes: number;
+    añoDeCreacion: number;
     @Column({
         nullable: true
     })
@@ -25,10 +29,6 @@ export class Operation extends BaseEntity {
         nullable: true
     })
     transaccionesDelDia: number
-    @Column({
-        nullable: true
-    })
-    fechaDeCreacion: number;
 
     @ManyToOne(type => User, user => user.id)
     user: User['id']

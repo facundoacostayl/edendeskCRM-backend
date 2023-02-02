@@ -1,14 +1,14 @@
 import {UserType} from './user.interface';
 
 interface Operation {
-    operationid: number;
-    año: number;
-    mes: number;
+    operationId: number;
+    fechaDeCreacion: number;
+    mesDeCreacion: number;
+    añoDeCreacion: number;
     gananciaUsuario: number;
     perdidaUsuario: number;
     totalDeSaldosUsuario: number;
     transaccionesDelDia: number;
-    fechaDeCreacion: number;
     user: UserType['id'];
 }
 
