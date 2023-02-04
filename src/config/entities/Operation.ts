@@ -16,13 +16,13 @@ export class Operation extends BaseEntity {
     nullable: true,
   })
   creationDay: number;
-  @Column({
-    nullable: true,
-  })
+  @Column()
   creationMonth: number;
   @Column()
   creationYear: number;
-  @Column()
+  @Column({
+    nullable: true,
+  })
   userEarnings: number;
   @Column({
     nullable: true,

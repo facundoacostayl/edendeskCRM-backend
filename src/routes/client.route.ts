@@ -15,7 +15,7 @@ const authorization = require("../middleware/authorization");
 
 /**
  * @openapi
- * /clients/user{:userid}/all-clients:
+ * /client/user{:userId}/all-clients:
  *    get:
  *      tags:
  *        - clients
@@ -23,7 +23,7 @@ const authorization = require("../middleware/authorization");
  *      description: This endpoint finds all clients of a certain user found by its "id" sended in the url params and returns its information
  *      parameters:
  *      - in: path
- *        name: userid
+ *        name: userId
  *        required: true
  *      requestBody:
  *          content:
@@ -31,11 +31,11 @@ const authorization = require("../middleware/authorization");
  *              schema:
  *                $ref: "#/components/schemas/client"
  * */
-router.get("/user:userid/all-clients", getItems);
+router.get("/user:userId/all-clients", getItems);
 
 /**
  * @openapi
- * /clients/user{:userid}/listed-clients:
+ * /client/user{:userId}/listed-clients:
  *    get:
  *      tags:
  *        - clients
@@ -43,7 +43,7 @@ router.get("/user:userid/all-clients", getItems);
  *      description: This endpoint finds a limited list of clients of a certain user found by its "id" sended in the url params and returns its information. Limit info is sended in the url query params.
  *      parameters:
  *      - in: path
- *        name: userid
+ *        name: userId
  *        required: true
  *      requestBody:
  *          content:
@@ -51,11 +51,11 @@ router.get("/user:userid/all-clients", getItems);
  *              schema:
  *                $ref: "#/components/schemas/client"
  * */
-router.get("/user:userid/listed-clients", getPaginationItemList);
+router.get("/user:userId/listed-clients", getPaginationItemList);
 
 /**
  * @openapi
- * /clients/user{:userid}/client{:clientid}":
+ * /client/user{:userId}/client{:clientId}":
  *    get:
  *      tags:
  *        - clients
@@ -63,7 +63,7 @@ router.get("/user:userid/listed-clients", getPaginationItemList);
  *      description: This endpoint finds a client and returns its information
  *      parameters:
  *      - in: path
- *        name: userid, clientid
+ *        name: userId, clientId
  *        required: true
  *      requestBody:
  *          content:
@@ -71,11 +71,11 @@ router.get("/user:userid/listed-clients", getPaginationItemList);
  *              schema:
  *                $ref: "#/components/schemas/client"
  * */
-router.get("/user:userid/client:clientid", getItem);
+router.get("/user:userId/client:clientId", getItem);
 
 /**
  * @openapi
- * /clients/user{:userid}/new-client":
+ * /client/user{:userId}/new-client":
  *    post:
  *      tags:
  *        - clients
@@ -83,7 +83,7 @@ router.get("/user:userid/client:clientid", getItem);
  *      description: This endpoint creates a new client
  *      parameters:
  *      - in: path
- *        name: userid
+ *        name: userId
  *        required: true
  *      requestBody:
  *          content:
@@ -91,11 +91,11 @@ router.get("/user:userid/client:clientid", getItem);
  *              schema:
  *                $ref: "#/components/schemas/client"
  * */
-router.post("/user:userid/new-client", createItem);
+router.post("/user:userId/new-client", createItem);
 
 /**
  * @openapi
- * /clients/user{:userid}/client{:clientid}":
+ * /client/user{:userId}/client{:clientId}":
  *    delete:
  *      tags:
  *        - clients
@@ -103,7 +103,7 @@ router.post("/user:userid/new-client", createItem);
  *      description: This endpoint deletes a client
  *      parameters:
  *      - in: path
- *        name: userid, clientid
+ *        name: userId, clientId
  *        required: true
  *      requestBody:
  *          content:
@@ -111,11 +111,11 @@ router.post("/user:userid/new-client", createItem);
  *              schema:
  *                $ref: "#/components/schemas/client"
  * */
-router.delete("/user:userid/client:clientid", deleteItem);
+router.delete("/user:userId/client:clientId", deleteItem);
 
 /**
  * @openapi
- * /clients/user{:userid}/client{:clientid}":
+ * /client/user{:userId}/client{:clientId}":
  *    put:
  *      tags:
  *        - clients
@@ -123,7 +123,7 @@ router.delete("/user:userid/client:clientid", deleteItem);
  *      description: This endpoint updates a client
  *      parameters:
  *      - in: path
- *        name: userid, clientid
+ *        name: userId, clientId
  *        required: true
  *      requestBody:
  *          content:
@@ -131,11 +131,11 @@ router.delete("/user:userid/client:clientid", deleteItem);
  *              schema:
  *                $ref: "#/components/schemas/client"
  * */
-router.put("/user:userid/client:clientid", updateItem);
+router.put("/user:userId/client:clientId", updateItem);
 
 /**
  * @openapi
- * /clients/user{:userid}/client{:clientid}/add-balance":
+ * /client/user{:userId}/client{:clientId}/add-balance":
  *    put:
  *      tags:
  *        - clients
@@ -143,7 +143,7 @@ router.put("/user:userid/client:clientid", updateItem);
  *      description: This endpoint finds a client and updates it's balance increasing it.
  *      parameters:
  *      - in: path
- *        name: userid, clientid
+ *        name: userId, clientId
  *        required: true
  *      requestBody:
  *          content:
@@ -151,11 +151,11 @@ router.put("/user:userid/client:clientid", updateItem);
  *              schema:
  *                $ref: "#/components/schemas/client"
  * */
-router.put("/user:userid/client:clientid/add-balance", addToItemBalance);
+router.put("/user:userId/client:clientId/add-balance", addToItemBalance);
 
 /**
  * @openapi
- * /clients/user{:userid}/client{:clientid}/deduct-balance":
+ * /client/user{:userId}/client{:clientId}/deduct-balance":
  *    put:
  *      tags:
  *        - clients
@@ -163,7 +163,7 @@ router.put("/user:userid/client:clientid/add-balance", addToItemBalance);
  *      description: This endpoint finds a client and updates it's balance deducting it.
  *      parameters:
  *      - in: path
- *        name: userid, clientid
+ *        name: userId, clientId
  *        required: true
  *      requestBody:
  *          content:
@@ -171,11 +171,14 @@ router.put("/user:userid/client:clientid/add-balance", addToItemBalance);
  *              schema:
  *                $ref: "#/components/schemas/client"
  * */
-router.put("/user:userid/client:clientid/deduct-balance", substractFromItemBalance);
+router.put(
+  "/user:userId/client:clientId/deduct-balance",
+  substractFromItemBalance
+);
 
 /**
  * @openapi
- * /clients/user{:userid}/search-client":
+ * /client/user{:userId}/search-client":
  *    get:
  *      tags:
  *        - clients
@@ -183,7 +186,7 @@ router.put("/user:userid/client:clientid/deduct-balance", substractFromItemBalan
  *      description: This endpoint search a client using data sended from the url query parameter..
  *      parameters:
  *      - in: path
- *        name: userid
+ *        name: userId
  *        required: true
  *      requestBody:
  *          content:
@@ -191,6 +194,6 @@ router.put("/user:userid/client:clientid/deduct-balance", substractFromItemBalan
  *              schema:
  *                $ref: "#/components/schemas/client"
  * */
-router.get("/user:userid/search-client", searchItem);
+router.get("/user:userId/search-client", searchItem);
 
-export {router};
+export { router };

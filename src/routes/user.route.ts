@@ -1,5 +1,4 @@
 import { Router } from "express";
-const router = Router();
 import {
   createItem,
   loginItem,
@@ -7,12 +6,13 @@ import {
   getItem,
   updateItem,
 } from "../controllers/user.controller";
+const router = Router();
 const validInfo = require("../middleware/validInfo");
 const authorization = require("../middleware/authorization");
 
 /**
  * @openapi
- * /users/registro:
+ * /user/registro:
  *    post:
  *      tags:
  *        - users
@@ -28,7 +28,7 @@ router.post("/registro", validInfo, createItem);
 
 /**
  * @openapi
- * /users/login:
+ * /user/login:
  *    post:
  *      tags:
  *        - users
@@ -44,7 +44,7 @@ router.post("/login", validInfo, loginItem);
 
 /**
  * @openapi
- * /users/verificar:
+ * /user/verificar:
  *    get:
  *      tags:
  *        - users
@@ -60,7 +60,7 @@ router.get("/verificar", authorization, authorizeToken);
 
 /**
  * @openapi
- * /users/{:userid}:
+ * /user/{:userId}:
  *    get:
  *      tags:
  *        - users
@@ -68,7 +68,7 @@ router.get("/verificar", authorization, authorizeToken);
  *      description: This endpoint finds a user and returns its information
  *      parameters:
  *      - in: path
- *        name: userid
+ *        name: userId
  *        required: true
  *      requestBody:
  *          content:
@@ -76,19 +76,19 @@ router.get("/verificar", authorization, authorizeToken);
  *              schema:
  *                $ref: "#/components/schemas/user"
  * */
-router.get("/:userid", getItem);
+router.get("/:userId", getItem);
 
 /**
  * @openapi
- * /users/{:userid}:
- *    patch:
+ * /user/{:userId}:
+ *    put:
  *      tags:
  *        - users
  *      summary: "Update User Info"
  *      description: This endpoint finds a user, updates its information and returns it
  *      parameters:
  *      - in: path
- *        name: userid
+ *        name: userId
  *        required: true
  *      requestBody:
  *          content:
@@ -96,6 +96,6 @@ router.get("/:userid", getItem);
  *              schema:
  *                $ref: "#/components/schemas/user"
  * */
-router.put("/:userid", updateItem);
+router.put("/:userId", updateItem);
 
 export { router };
