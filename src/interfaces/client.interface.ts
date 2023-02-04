@@ -1,17 +1,17 @@
 import {UserType} from './user.interface';
 
 interface Client {
-  clientid: number;
-  nombre: string;
-  apellido: string;
-  saldo: number;
-  telefono: string;
-  fechaultcarga: string;
-  montoultcarga: number;
-  tipodecarga: string;
-  fechaultretiro: string;
-  montoultretiro: number;
-  sucursal: string;
+  clientId: number;
+  firstName: string;
+  lastName: string;
+  balance: number;
+  tel: string;
+  lastAddDate: string;
+  lastAddAmount: number;
+  addType: string;
+  lastWithdrawDate: string;
+  lastWithdrawAmount: number;
+  branch: string;
   user: UserType['id'];
 }
 

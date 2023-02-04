@@ -99,7 +99,7 @@ export const createItem = async (req: Request, res: Response) => {
 export const addToItemBalance = async (req: Request, res: Response) => {
   try {
     //Req params
-    const { userid, clientId } = req.params;
+    const { userid, clientid } = req.params;
 
     //Req body
     const { amount } = req.body;
@@ -107,7 +107,7 @@ export const addToItemBalance = async (req: Request, res: Response) => {
     //Data request
     const response = await addToClientBalance(
       parseInt(userid),
-      parseInt(clientId),
+      parseInt(clientid),
       parseInt(amount)
     );
 
@@ -128,12 +128,12 @@ export const substractFromItemBalance = async (req: Request, res: Response) => {
     const { amount } = req.body;
 
     //Req params
-    const { userid, clientId } = req.params;
+    const { userid, clientid } = req.params;
 
     //Data request
     const response = await substractFromClientBalance(
       parseInt(userid),
-      parseInt(clientId),
+      parseInt(clientid),
       parseInt(amount)
     );
 

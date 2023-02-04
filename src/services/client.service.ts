@@ -136,6 +136,7 @@ const createClient = async (
   return responseHandler("Success", 200, "Client added succesfully", newClient);
 };
 
+//CHECK OPERATION FECHADECREACION ****
 const addToClientBalance = async (
   userid: ClientType["clientid"],
   clientid: ClientType["user"],
@@ -153,7 +154,7 @@ const addToClientBalance = async (
   //Find operation
   const operation = await Operation.findOneBy({
     user: userid,
-    fechaDeCreacion: new Date().getDate(),
+    fechaDeCreacion: new Date().getDate(), //****<----- HERE */
   });
 
   //Verify if client and operation exists, otherwise returning error

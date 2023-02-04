@@ -47,9 +47,9 @@ const createUser = async (
 
   //Creating and saving operation column
   const operation = new Operation();
-  operation.userId = user.id;
-  operation.year = new Date().getFullYear();
-  operation.month = new Date().getMonth() + 1;
+  operation.user = user.id;
+  operation.añoDeCreacion = new Date().getFullYear();
+  operation.mesDeCreacion = new Date().getMonth() + 1;
 
   await operation.save();
 

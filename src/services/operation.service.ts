@@ -10,7 +10,7 @@ export const getFullOperationData = async (userid: UserType["id"]) => {
   const operationList = await dataSource
     .getRepository(Operation)
     .createQueryBuilder("o")
-    .innerJoinAndSelect(User, "u", "o.operationId = u.user")
+    .innerJoinAndSelect(User, "u", "o.user = u.id")
     .where("o.operationId = :userid", { userid })
     .getMany();
 
@@ -32,7 +32,7 @@ export const getTodayOperationData = async (userId: UserType["id"]) => {
     let todayOperation = await dataSource
     .getRepository(Operation)
     .createQueryBuilder("o")
-    .innerJoinAndSelect(User, "u", "o.operationId = u.user")
+    .innerJoinAndSelect(User, "u", "o.user = u.id")
     .where("o.operationId = :userid", { userId })
     .andWhere("o.fechaDeCreacion = :creationDate", {creationDate: new Date().getDate()})
     .andWhere("o.mesDeCreacion = :creationMonth", {creationMonth: new Date().getMonth() + 1})
@@ -43,7 +43,7 @@ export const getTodayOperationData = async (userId: UserType["id"]) => {
     const operationList = await dataSource
     .getRepository(Operation)
     .createQueryBuilder("o")
-    .innerJoinAndSelect(User, "u", "o.operationId = u.user")
+    .innerJoinAndSelect(User, "u", "o.user = u.id")
     .where("o.operationId = :userid", { userId })
     .getMany();
 
@@ -74,12 +74,12 @@ export const getMonthOperationData = async(userId: User['id'], month: OperationT
     const monthOperation = await dataSource //YEAR SHOULD MATCH TOO
     .getRepository(Operation)
     .createQueryBuilder("o")
-    .innerJoin(User, "u", "o.operationId = u.user")
+    .innerJoin(User, "u", "o.user = u.id")
     .select('COUNT(o.gananciaUsuario)', 'totalGananciasUsuario')
     .addSelect('COUNT(o.perdidaUsuario)', 'totalPerdidasUsuario')
     .where("o.operationId = :userId", { userId })
     .andWhere("o.mesDeCreacion = :creationMonth", {creationMonth: month})
-    .getRawMany();
+    .getRawOne();
 
     if(!monthOperation) {
         return responseHandler('Error', 404, "No month operations found");
@@ -94,6 +94,22 @@ export const getMonthOperationData = async(userId: User['id'], month: OperationT
       */
 
       return responseHandler("Success", 200, "Month operation data found succesfully", monthOperation);
-
-
 }
+
+export const getSumOfAllBalances = async(userid: User['id']) => {
+  //Find sum of balances
+  const balances = await dataSource
+  .getRepository(Operation)
+  .createQueryBuilder('o')
+  .innerJoin(User, 'u', "o.user = u.id")
+  .select("COUNT(o.gananciaUsuario)", "totalGananciasUsuario")
+  .where("o.user = :userid", {userid})
+  .getRawOne();
+
+  if(!balances) {
+    return responseHandler("Error", 404, "Balance data not found")
+  }
+
+  return responseHandler("Success", 200, "Total of balances found succesfully", balances);
+
+} 

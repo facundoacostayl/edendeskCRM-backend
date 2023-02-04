@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import { getFullOperationData, getTodayOperationData, getMonthOperationData } from "../services/operation.service";
+import { getFullOperationData, getTodayOperationData, getMonthOperationData, getSumOfAllBalances } from "../services/operation.service";
 
 export const getFullItemData = async (req: Request, res: Response) => {
   try {
@@ -44,15 +44,16 @@ export const getMonthItemData = async (req: Request, res: Response) => {
 
 export const getFullClientBalance = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const operation = await Operation.findBy({ userId: parseInt(id) });
-    let totalBalance: number = 0;
-    operation.forEach((op) => {
-      totalBalance += op.userTotalBalance;
-    });
+    const { userid } = req.params;
+    
+    const response = await getSumOfAllBalances(parseInt(userid));
 
-    return res.json({ total: totalBalance });
+    if(response.responseType === "Error") {
+      throw new Error(response.message);
+    }
+
+    return res.status(response.statusCode).json(response);
   } catch (error) {
-    error instanceof Error && res.status(500).json("Internal server error");
+    error instanceof Error && res.status(500).json(error.message);
   }
 };

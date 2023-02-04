@@ -28,6 +28,8 @@ VALUES
 ('Willy', 'Willy', 7000 , 1010101010, 0, 0, '1')
 ;
 
+UPDATE clients SET saldo = 100000 where clientid = 11;
+
 INSERT INTO users (loginemail, password)
 VALUES
 ('facundoacostayl@gmail.com', 'riverpasion10'),

@@ -6,41 +6,41 @@ import {Operation} from './Operation';
 export class Client extends BaseEntity {
 
     @PrimaryGeneratedColumn()
-    clientid: number
+    clientId: number
     @Column()
-    nombre: string
+    firstName: string
     @Column()
-    apellido: string
+    lastName: string
     @Column({
         nullable: true
     })
-    saldo: number
+   balance: number
     @Column()
-    telefono: string
+    tel: string
     @Column({
         nullable: true
     })
-    fechaultcarga: string
+    lastAddDate: string
     @Column({
         nullable: true
     })
-    montoultcarga: number
+    lastAddAmount: number
     @Column({
         nullable: true
     })
-    tipodecarga: string
+    addType: string
     @Column({
         nullable: true
     })
-    fechaultretiro: string
+    lastWithdrawDate: string
     @Column({
         nullable: true
     })
-    montoultretiro: number
+    lastWithdrawAmount: number
     @Column({
         nullable: true
     })
-    sucursal: string
+    branch: string
 
     @OneToMany(type => Operation, operation => operation.operationId)
     operation: Operation['operationId'];

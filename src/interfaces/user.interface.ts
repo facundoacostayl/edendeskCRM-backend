@@ -1,8 +1,9 @@
 interface User {
     id: number,
-    loginemail: string,
+    loginEmail: string,
     password: string,
-    firstname?: string
+    firstName?: string,
+    lastName?: string
 };
 
 export {User as UserType};
