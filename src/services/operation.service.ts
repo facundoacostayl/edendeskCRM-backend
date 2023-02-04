@@ -69,7 +69,7 @@ export const getTodayOperationData = async (userId: UserType["id"]) => {
   }
 };
 
-export const getMonthOperationData = async(userId: User['id'], month: OperationType['creationMonth']) => {
+export const getMonthOperationData = async(userId: User['id'], creationMonth: OperationType['creationMonth'], creationYear: OperationType['creationYear']) => {
     //Find operations of a certain month
     const monthOperation = await dataSource //YEAR SHOULD MATCH TOO
     .getRepository(Operation)
@@ -78,21 +78,14 @@ export const getMonthOperationData = async(userId: User['id'], month: OperationT
     .select('COUNT(o.gananciaUsuario)', 'totalGananciasUsuario')
     .addSelect('COUNT(o.perdidaUsuario)', 'totalPerdidasUsuario')
     .where("o.operationId = :userId", { userId })
-    .andWhere("o.creationMonth = :creationMonth", {creationMonth: month})
+    .andWhere("o.creationMonth = :creationMonth", {creationMonth})
+    .andWhere("o.creationYear = :creationYear", {creationYear})
     .getRawOne();
 
     if(!monthOperation) {
         return responseHandler('Error', 404, "No month operations found");
     }
       
-  
-      /*let incomes: number = 0;
-      monthOperation.forEach((op) => (incomes += op.gananciaUsuario));
-  
-      let outcomes: number = 0;
-      monthOperation.forEach((op) => (outcomes += op.perdidaUsuario));
-      */
-
       return responseHandler("Success", 200, "Month operation data found succesfully", monthOperation);
 }
 

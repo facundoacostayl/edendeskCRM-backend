@@ -17,10 +17,10 @@ import {
 export const getItems = async (req: Request, res: Response) => {
   try {
     //Require params
-    const { userid } = req.params;
+    const { userId } = req.params;
 
     //Data request
-    const response = await getClients(parseInt(userid));
+    const response = await getClients(parseInt(userId));
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
@@ -36,13 +36,13 @@ export const getItems = async (req: Request, res: Response) => {
 export const getPaginationItemList = async (req: Request, res: Response) => {
   try {
     //Require params
-    const { userid } = req.params;
+    const { userId } = req.params;
 
     //Require query (page number and limit of clients to be returned)
     const { page, size, sortBy, orderBy } = req.query;
 
     //Data request
-    const response = await getPaginationClientList(parseInt(userid), parseInt(page as string), parseInt(size as string), sortBy as PaginationArgsType['sortBy'], orderBy as PaginationArgsType['orderBy'],);
+    const response = await getPaginationClientList(parseInt(userId), parseInt(page as string), parseInt(size as string), sortBy as PaginationArgsType['sortBy'], orderBy as PaginationArgsType['orderBy'],);
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
@@ -58,10 +58,10 @@ export const getPaginationItemList = async (req: Request, res: Response) => {
 export const getItem = async (req: Request, res: Response) => {
   try {
     //Require params
-    const { userid, clientid } = req.params;
+    const { userId, clientId } = req.params;
 
     //Data request
-    const response = await getClient(parseInt(userid), parseInt(clientid));
+    const response = await getClient(parseInt(userId), parseInt(clientId));
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
@@ -77,13 +77,13 @@ export const getItem = async (req: Request, res: Response) => {
 export const createItem = async (req: Request, res: Response) => {
   try {
     //Require params
-    const {userid} = req.params;
+    const {userId} = req.params;
 
     //Require Body
-    const { nombre, apellido, telefono } = req.body;
+    const { firstname, lastName, tel } = req.body;
 
     //Data request
-    const response = await createClient(nombre, apellido, telefono, parseInt(userid));
+    const response = await createClient(firstname, lastName, tel, parseInt(userId));
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
@@ -99,15 +99,15 @@ export const createItem = async (req: Request, res: Response) => {
 export const addToItemBalance = async (req: Request, res: Response) => {
   try {
     //Req params
-    const { userid, clientid } = req.params;
+    const { userId, clientId } = req.params;
 
     //Req body
     const { amount } = req.body;
 
     //Data request
     const response = await addToClientBalance(
-      parseInt(userid),
-      parseInt(clientid),
+      parseInt(userId),
+      parseInt(clientId),
       parseInt(amount)
     );
 
@@ -128,12 +128,12 @@ export const substractFromItemBalance = async (req: Request, res: Response) => {
     const { amount } = req.body;
 
     //Req params
-    const { userid, clientid } = req.params;
+    const { userId, clientId } = req.params;
 
     //Data request
     const response = await substractFromClientBalance(
-      parseInt(userid),
-      parseInt(clientid),
+      parseInt(userId),
+      parseInt(clientId),
       parseInt(amount)
     );
 
@@ -151,7 +151,7 @@ export const substractFromItemBalance = async (req: Request, res: Response) => {
 export const searchItem = async (req: Request, res: Response) => {
   try {
     //Req params
-    const { userid } = req.params;
+    const { userId } = req.params;
 
     //Req query
     const { nameSearch } = req.query;
@@ -161,7 +161,7 @@ export const searchItem = async (req: Request, res: Response) => {
 
     //Data request
     const response = await searchClient(
-      parseInt(userid),
+      parseInt(userId),
       nameSearch!.toString()
     );
 
@@ -180,10 +180,10 @@ export const searchItem = async (req: Request, res: Response) => {
 export const deleteItem = async (req: Request, res: Response) => {
   try {
     //Req params
-    const { userid, clientid } = req.params;
+    const { userId, clientId } = req.params;
 
     //Data request
-    const response = await deleteClient(parseInt(userid), parseInt(clientid));
+    const response = await deleteClient(parseInt(userId), parseInt(clientId));
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
@@ -199,14 +199,14 @@ export const deleteItem = async (req: Request, res: Response) => {
 export const updateItem = async (req: Request, res: Response) => {
   try {
     //Req params
-    const { userid, clientid } = req.params;
+    const { userId, clientId } = req.params;
     //Req body
     const { body } = req;
 
     //Data request
     const response = await updateClient(
-      parseInt(userid),
-      parseInt(clientid),
+      parseInt(userId),
+      parseInt(clientId),
       body
     );
 

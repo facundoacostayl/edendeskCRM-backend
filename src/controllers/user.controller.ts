@@ -10,10 +10,10 @@ export const getItem = async (req: Request, res: Response) => {
   try {
 
     //Require params
-    const { id } = req.params;
+    const { userId } = req.params;
 
     //Data request
-    const response = await getUser(parseInt(id));
+    const response = await getUser(parseInt(userId));
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
@@ -31,10 +31,10 @@ export const getItem = async (req: Request, res: Response) => {
 export const createItem = async (req: Request, res: Response) => {
   try {
     //Require body
-    const { firstname, loginemail, password } = req.body;
+    const { firstName, loginEmail, password } = req.body;
 
     //Data request
-    const response = await createUser(firstname, loginemail, password);
+    const response = await createUser(firstName, loginEmail, password);
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
@@ -52,10 +52,10 @@ export const createItem = async (req: Request, res: Response) => {
 export const loginItem = async (req: Request, res: Response) => {
   try {
     //Require body
-    const { loginemail, password } = req.body;
+    const { loginEmail, password } = req.body;
 
     //Data request
-    const response = await loginUser(loginemail, password);
+    const response = await loginUser(loginEmail, password);
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
@@ -74,11 +74,11 @@ export const updateItem = async (req: Request, res: Response) => {
   try {
 
     //Require params and body
-    const { userid } = req.params;
+    const { userId } = req.params;
     const { body } = req;
 
     //Data request
-    const response = await updateUser(parseInt(userid), body);
+    const response = await updateUser(parseInt(userId), body);
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {

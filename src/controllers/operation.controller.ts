@@ -3,8 +3,8 @@ import { getFullOperationData, getTodayOperationData, getMonthOperationData, get
 
 export const getFullItemData = async (req: Request, res: Response) => {
   try {
-    const { userid } = req.params;
-    const response = await getFullOperationData(parseInt(userid));
+    const { userId } = req.params;
+    const response = await getFullOperationData(parseInt(userId));
 
     if(response.responseType === "Error") {
       throw new Error(response.message)
@@ -18,9 +18,9 @@ export const getFullItemData = async (req: Request, res: Response) => {
 
 export const getTodayItemData = async (req: Request, res: Response) => {
   try {
-    const { userid } = req.params;
+    const { userId } = req.params;
 
-    const response = await getTodayOperationData(parseInt(userid));
+    const response = await getTodayOperationData(parseInt(userId));
 
     return res.status(response!.statusCode).json(response);
 
@@ -31,10 +31,10 @@ export const getTodayItemData = async (req: Request, res: Response) => {
 
 export const getMonthItemData = async (req: Request, res: Response) => {
   try {
-    const { userid } = req.params;
-    const { month } = req.body; //YEAR SHOULD MATCH TOO
+    const { userId } = req.params;
+    const { creationMonth, creationYear } = req.body; //YEAR SHOULD MATCH TOO
 
-    const response = await getMonthOperationData(parseInt(userid), parseInt(month));
+    const response = await getMonthOperationData(parseInt(userId), parseInt(creationMonth), parseInt(creationYear));
 
     return res.status(response.statusCode).json(response);
   } catch (error) {
@@ -44,9 +44,9 @@ export const getMonthItemData = async (req: Request, res: Response) => {
 
 export const getFullClientBalance = async (req: Request, res: Response) => {
   try {
-    const { userid } = req.params;
+    const { userId } = req.params;
     
-    const response = await getSumOfAllBalances(parseInt(userid));
+    const response = await getSumOfAllBalances(parseInt(userId));
 
     if(response.responseType === "Error") {
       throw new Error(response.message);
