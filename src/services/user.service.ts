@@ -8,14 +8,14 @@ const jwtGenerator = require("../utils/jwtGenerator");
 
 const getUser = async (id: UserType["id"]) => {
   //Find User
-  const userRequest = await User.findOneBy({ id });
+  const user = await User.findOneBy({ id });
 
   //Verify if user exists, otherwise returning error
-  if (userRequest === null) {
+  if (user === null) {
     return responseHandler("Error", 404, "User doesn't exist");
   }
 
-  return responseHandler("Success", 200, "User found succesfully", userRequest);
+  return responseHandler("Success", 200, "User found succesfully", user);
 };
 
 const createUser = async (
@@ -24,44 +24,44 @@ const createUser = async (
   password: UserType["password"]
 ) => {
   //Verify if user is already authenticated
-  const userRequest = await User.findOneBy({ loginEmail });
+  const user = await User.findOneBy({ loginEmail });
 
   //Verify if user doesn't exist, otherwise returning error
-  if (userRequest !== null) {
+  if (user !== null) {
     return responseHandler("Error", 409, "User already exist");
   }
 
   //Creating a new user
-  const user = new User();
-  user.firstName = firstName as string;
-  user.loginEmail = loginEmail as string;
+  const newUser = new User();
+  newUser.firstName = firstName as string;
+  newUser.loginEmail = loginEmail as string;
 
   //Bcrypt password
   const saltRound = 10;
   const salt = await bcrypt.genSalt(saltRound);
   const bcryptPassword = await bcrypt.hash(password, salt);
-  user.password = bcryptPassword;
+  newUser.password = bcryptPassword;
 
   //Saving User in database
-  await user.save();
+  await newUser.save();
 
   //Creating and saving operation column
   const operation = new Operation();
-  operation.user = user.id;
+  operation.user = newUser.id;
   operation.creationYear = new Date().getFullYear();
   operation.creationMonth = new Date().getMonth() + 1;
 
   await operation.save();
 
   //Generating JWT Token
-  const response = await User.findOneBy({ loginEmail });
-  const token = jwtGenerator(user, user.id);
+  const createdUser = await User.findOneBy({ loginEmail });
+  const token = jwtGenerator(user, createdUser!.id);
 
   return responseHandler(
     "Success",
     201,
     "User created succesfully",
-    response!,
+    createdUser!,
     token
   );
 };
@@ -71,29 +71,26 @@ const loginUser = async (
   password: UserType["password"]
 ) => {
   //Check if user exists
-  const userRequest = await User.findOneBy({ loginEmail: loginEmail });
+  const user = await User.findOneBy({ loginEmail: loginEmail });
 
   //Verify if user exists, otherwise returning error
-  if (userRequest === null) {
+  if (user === null) {
     return responseHandler("Error", 404, "User doesn't exist");
   }
 
   //Check if incomming password is the same the database password
-  const validPassword = await bcrypt.compare(password, userRequest.password);
+  const validPassword = await bcrypt.compare(password, user.password);
 
   if (!validPassword) {
     return responseHandler("Error", 404, "Incorrect Password");
   }
 
   //Give the jwt token to the user
-  const token = jwtGenerator(userRequest.id);
-  const user = await User.findOneBy({ loginEmail: loginEmail });
-  const userid = user && user.id;
+  const token = jwtGenerator(user.id);
+  const loggedUser = await User.findOneBy({ loginEmail: loginEmail });
+  const userid = loggedUser && loggedUser.id;
 
-  //Response
-  const response = { token, userid: user && user.id };
-
-  return responseHandler("Success", 200, "Logged in succesfully");
+  return responseHandler("Success", 200, "Logged in succesfully", loggedUser!, token);
 };
 
 const updateUser = async (userid: UserType["id"], userData: UserType) => {
