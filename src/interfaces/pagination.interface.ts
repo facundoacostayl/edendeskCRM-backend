@@ -4,7 +4,7 @@ interface PaginationArgs {
   userid: ClientType["user"],
   page: number,
   size: number,
-  sortBy: "nombre" | "saldo" | "created_at",
+  sortBy: "firstName" | "balance" | "created_at",
   orderBy: "ASC" | "DESC"
 }
 
