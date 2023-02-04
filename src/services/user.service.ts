@@ -19,12 +19,12 @@ const getUser = async (id: UserType["id"]) => {
 };
 
 const createUser = async (
-  firstname: UserType["firstname"],
-  loginemail: UserType["loginemail"],
+  firstName: UserType["firstName"],
+  loginEmail: UserType["loginEmail"],
   password: UserType["password"]
 ) => {
   //Verify if user is already authenticated
-  const userRequest = await User.findOneBy({ loginemail });
+  const userRequest = await User.findOneBy({ loginEmail });
 
   //Verify if user doesn't exist, otherwise returning error
   if (userRequest !== null) {
@@ -33,8 +33,8 @@ const createUser = async (
 
   //Creating a new user
   const user = new User();
-  user.firstname = firstname as string;
-  user.loginemail = loginemail as string;
+  user.firstName = firstName as string;
+  user.loginEmail = loginEmail as string;
 
   //Bcrypt password
   const saltRound = 10;
@@ -48,13 +48,13 @@ const createUser = async (
   //Creating and saving operation column
   const operation = new Operation();
   operation.user = user.id;
-  operation.añoDeCreacion = new Date().getFullYear();
-  operation.mesDeCreacion = new Date().getMonth() + 1;
+  operation.creationYear = new Date().getFullYear();
+  operation.creationMonth = new Date().getMonth() + 1;
 
   await operation.save();
 
   //Generating JWT Token
-  const response = await User.findOneBy({ loginemail });
+  const response = await User.findOneBy({ loginEmail });
   const token = jwtGenerator(user, user.id);
 
   return responseHandler(
@@ -67,11 +67,11 @@ const createUser = async (
 };
 
 const loginUser = async (
-  loginemail: UserType["loginemail"],
+  loginEmail: UserType["loginEmail"],
   password: UserType["password"]
 ) => {
   //Check if user exists
-  const userRequest = await User.findOneBy({ loginemail: loginemail });
+  const userRequest = await User.findOneBy({ loginEmail: loginEmail });
 
   //Verify if user exists, otherwise returning error
   if (userRequest === null) {
@@ -87,7 +87,7 @@ const loginUser = async (
 
   //Give the jwt token to the user
   const token = jwtGenerator(userRequest.id);
-  const user = await User.findOneBy({ loginemail: loginemail });
+  const user = await User.findOneBy({ loginEmail: loginEmail });
   const userid = user && user.id;
 
   //Response

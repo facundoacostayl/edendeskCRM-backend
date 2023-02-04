@@ -5,13 +5,13 @@ import {OperationType} from "../interfaces/operation.interface";
 import { AppDataSource as dataSource } from "../config/db/db";
 import { responseHandler } from "../utils/response.handle";
 
-export const getFullOperationData = async (userid: UserType["id"]) => {
+export const getFullOperationData = async (userId: UserType["id"]) => {
   //Find operations
   const operationList = await dataSource
     .getRepository(Operation)
     .createQueryBuilder("o")
     .innerJoinAndSelect(User, "u", "o.user = u.id")
-    .where("o.operationId = :userid", { userid })
+    .where("o.operationId = :userId", { userId })
     .getMany();
 
   if (!operationList) {
@@ -33,10 +33,10 @@ export const getTodayOperationData = async (userId: UserType["id"]) => {
     .getRepository(Operation)
     .createQueryBuilder("o")
     .innerJoinAndSelect(User, "u", "o.user = u.id")
-    .where("o.operationId = :userid", { userId })
-    .andWhere("o.fechaDeCreacion = :creationDate", {creationDate: new Date().getDate()})
-    .andWhere("o.mesDeCreacion = :creationMonth", {creationMonth: new Date().getMonth() + 1})
-    .andWhere("o.añoDeCreacion = :creationYear", {creationYear: new Date().getFullYear})
+    .where("o.operationId = :userId", { userId })
+    .andWhere("o.creationYear = :creationDate", {creationDate: new Date().getDate()})
+    .andWhere("o.creationMonth = :creationMonth", {creationMonth: new Date().getMonth() + 1})
+    .andWhere("o.creationYear = :creationYear", {creationYear: new Date().getFullYear})
     .getOne();
 
     //Find all operation list
@@ -44,7 +44,7 @@ export const getTodayOperationData = async (userId: UserType["id"]) => {
     .getRepository(Operation)
     .createQueryBuilder("o")
     .innerJoinAndSelect(User, "u", "o.user = u.id")
-    .where("o.operationId = :userid", { userId })
+    .where("o.operationId = :userId", { userId })
     .getMany();
 
     //Find yesterday operation data
@@ -54,13 +54,13 @@ export const getTodayOperationData = async (userId: UserType["id"]) => {
     //If todayOperation doesn't exist, create a new one;
   if (!todayOperation) {
     todayOperation = new Operation();
-    todayOperation.añoDeCreacion = new Date().getFullYear();
-    todayOperation.mesDeCreacion = new Date().getMonth() + 1;
-    todayOperation.fechaDeCreacion = new Date().getDate();
+    todayOperation.creationYear = new Date().getFullYear();
+    todayOperation.creationMonth = new Date().getMonth() + 1;
+    todayOperation.creationYear = new Date().getDate();
     todayOperation.user = userId;
-    //If yesterdayOperation exists, get its totalDeSaldosUsuario, otherwise get 0;
-    todayOperation.totalDeSaldosUsuario = yesterdayOperation
-      ? yesterdayOperation.totalDeSaldosUsuario
+    //If yesterdayOperation exists, get its totalSumOfBalances, otherwise get 0;
+    todayOperation.totalSumOfBalances = yesterdayOperation
+      ? yesterdayOperation.totalSumOfBalances
       : 0;
 
     await todayOperation.save();
@@ -69,7 +69,7 @@ export const getTodayOperationData = async (userId: UserType["id"]) => {
   }
 };
 
-export const getMonthOperationData = async(userId: User['id'], month: OperationType['mesDeCreacion']) => {
+export const getMonthOperationData = async(userId: User['id'], month: OperationType['creationMonth']) => {
     //Find operations of a certain month
     const monthOperation = await dataSource //YEAR SHOULD MATCH TOO
     .getRepository(Operation)
@@ -78,7 +78,7 @@ export const getMonthOperationData = async(userId: User['id'], month: OperationT
     .select('COUNT(o.gananciaUsuario)', 'totalGananciasUsuario')
     .addSelect('COUNT(o.perdidaUsuario)', 'totalPerdidasUsuario')
     .where("o.operationId = :userId", { userId })
-    .andWhere("o.mesDeCreacion = :creationMonth", {creationMonth: month})
+    .andWhere("o.creationMonth = :creationMonth", {creationMonth: month})
     .getRawOne();
 
     if(!monthOperation) {
@@ -96,14 +96,14 @@ export const getMonthOperationData = async(userId: User['id'], month: OperationT
       return responseHandler("Success", 200, "Month operation data found succesfully", monthOperation);
 }
 
-export const getSumOfAllBalances = async(userid: User['id']) => {
+export const getSumOfAllBalances = async(userId: User['id']) => {
   //Find sum of balances
   const balances = await dataSource
   .getRepository(Operation)
   .createQueryBuilder('o')
   .innerJoin(User, 'u', "o.user = u.id")
   .select("COUNT(o.gananciaUsuario)", "totalGananciasUsuario")
-  .where("o.user = :userid", {userid})
+  .where("o.user = :userId", {userId})
   .getRawOne();
 
   if(!balances) {

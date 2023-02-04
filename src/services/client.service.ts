@@ -7,13 +7,13 @@ import { responseHandler } from "../utils/response.handle";
 import { AppDataSource as dataSource } from "../config/db/db";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
-const getClients = async (userid: ClientType["user"]) => {
+const getClients = async (userId: ClientType["user"]) => {
   //Find clients
   const clientList = await dataSource
     .getRepository(Client)
     .createQueryBuilder("c")
     .innerJoinAndSelect(User, "u", "u.id = c.user")
-    .where("c.user = :userid", { userid })
+    .where("c.user = :userId", { userId })
     .getMany();
 
   //Verify if client list exists, otherwise returning error
@@ -30,7 +30,7 @@ const getClients = async (userid: ClientType["user"]) => {
 };
 
 const getPaginationClientList = async (
-  userid: PaginationArgsType["userid"],
+  userId: PaginationArgsType["userid"],
   page: PaginationArgsType["page"],
   size: PaginationArgsType["size"],
   sortBy: PaginationArgsType["sortBy"],
@@ -43,14 +43,14 @@ const getPaginationClientList = async (
   const numberOfValuesToSkip = size * pageIndex;
 
   //Rename "created_at" to "user" in order of order based on id number (the highest number, the last value created).
-  const queryOfSortBy = sortBy === "created_at" ? "clientid" : sortBy;
+  const queryOfSortBy = sortBy === "created_at" ? "clientId" : sortBy;
 
   //Find all clients
   const allClients = await dataSource
     .getRepository(Client)
     .createQueryBuilder("c")
     .innerJoinAndSelect(User, "u", "u.id = c.user")
-    .where("c.user = :userid", { userid })
+    .where("c.user = :userId", { userId })
     .getCount();
 
   //Find clients required and sorting them
@@ -58,7 +58,7 @@ const getPaginationClientList = async (
     .getRepository(Client)
     .createQueryBuilder("c")
     .innerJoin(User, "u", "u.id = c.user")
-    .where("c.user = :userid", { userid })
+    .where("c.user = :userId", { userId })
     .take(size)
     .skip(numberOfValuesToSkip)
     .orderBy(`c.${queryOfSortBy}`, orderBy)
@@ -76,16 +76,16 @@ const getPaginationClientList = async (
 };
 
 const getClient = async (
-  userid: ClientType["user"],
-  clientid: ClientType["clientid"]
+  userId: ClientType["user"],
+  clientId: ClientType["clientId"]
 ) => {
   //Find Client
   const client = await dataSource
     .getRepository(Client)
     .createQueryBuilder("c")
     .innerJoinAndSelect(User, "u", "u.id = c.user")
-    .where("c.user = :userid", { userid })
-    .andWhere("c.clientid = :clientid", { clientid })
+    .where("c.user = :userId", { userId })
+    .andWhere("c.clientId = :clientId", { clientId })
     .getOne();
 
   //Verify if user exists, otherwise returning error
@@ -97,18 +97,18 @@ const getClient = async (
 };
 
 const createClient = async (
-  nombre: ClientType["nombre"],
-  apellido: ClientType["apellido"],
-  telefono: ClientType["telefono"],
-  userid: ClientType["user"]
+  firstName: ClientType["firstName"],
+  lastName: ClientType["lastName"],
+  tel: ClientType["tel"],
+  userId: ClientType["user"]
 ) => {
   //Request in order to check if client has already been added
   const client = await dataSource
     .getRepository(Client)
     .createQueryBuilder("c")
     .innerJoinAndSelect(User, "u", "u.id = c.user")
-    .where("c.user = :userid", { userid })
-    .andWhere("c.telefono = :telefono", { telefono })
+    .where("c.user = :userId", { userId })
+    .andWhere("c.tel = :tel", { tel })
     .getOne();
 
   //Verify if client exists, otherwise returning error
@@ -118,17 +118,17 @@ const createClient = async (
 
   //Create new client
   const newClient = new Client();
-  newClient.nombre = nombre;
-  newClient.apellido = apellido;
-  newClient.telefono = telefono;
-  newClient.saldo = 0;
-  newClient.fechaultcarga = "No especificado";
-  newClient.montoultcarga = 0;
-  newClient.fechaultretiro = "No especificado";
-  newClient.montoultretiro = 0;
-  newClient.tipodecarga = "No especificado";
-  newClient.sucursal = "No especificado";
-  newClient.user = userid;
+  newClient.firstName = firstName;
+  newClient.lastName = lastName;
+  newClient.tel = tel;
+  newClient.balance = 0;
+  newClient.lastAddDate = "No especificado";
+  newClient.lastAddAmount = 0;
+  newClient.lastWithdrawDate = "No especificado";
+  newClient.lastWithdrawAmount = 0;
+  newClient.addType = "No especificado";
+  newClient.branch = "No especificado";
+  newClient.user = userId;
 
   //Save client
   await newClient.save();
@@ -138,8 +138,8 @@ const createClient = async (
 
 //CHECK OPERATION FECHADECREACION ****
 const addToClientBalance = async (
-  userid: ClientType["clientid"],
-  clientid: ClientType["user"],
+  userId: ClientType["clientId"],
+  clientId: ClientType["user"],
   amount: number
 ) => {
   //Find client
@@ -147,14 +147,14 @@ const addToClientBalance = async (
     .getRepository(Client)
     .createQueryBuilder("c")
     .innerJoinAndSelect(User, "u", "u.id = c.user")
-    .where("c.user = :userid", { userid })
-    .andWhere("c.clientid = :clientid", { clientid })
+    .where("c.user = :userId", { userId })
+    .andWhere("c.clientId = :clientId", { clientId })
     .getOne();
 
   //Find operation
   const operation = await Operation.findOneBy({
-    user: userid,
-    fechaDeCreacion: new Date().getDate(), //****<----- HERE */
+    user: userId,
+    creationDay: new Date().getDate(), //****<----- HERE */
   });
 
   //Verify if client and operation exists, otherwise returning error
@@ -163,21 +163,21 @@ const addToClientBalance = async (
   }
 
   //Add to customer balance
-  client.saldo += amount;
+  client.balance += amount;
 
   //Add date of operation
   const today = new Date();
   const todayDate =
     today.getDate() + "-" + (today.getMonth() + 1) + "-" + today.getFullYear();
-  client.fechaultcarga = todayDate;
-  client.montoultcarga = client.saldo;
+  client.lastAddDate = todayDate;
+  client.lastAddAmount = client.balance;
 
   if (operation) {
     //Add operation
-    operation.gananciaUsuario += amount;
-    operation.totalDeSaldosUsuario += amount;
-    operation.transaccionesDelDia++;
-    !operation.fechaDeCreacion ? (operation.fechaDeCreacion = new Date().getDate()) : null;
+    operation.userEarnings += amount;
+    operation.totalSumOfBalances += amount;
+    operation.dayTransactions++;
+    !operation.creationDay ? (operation.creationDay = new Date().getDate()) : null;
 
     //Save operation
     await operation.save();
@@ -190,14 +190,14 @@ const addToClientBalance = async (
     "Success",
     200,
     `Balance updated succesfully. Client ${
-      client.nombre + " " + client.apellido
-    } balance is $${client.saldo}`
+      client.firstName + " " + client.lastName
+    } balance is $${client.balance}`
   );
 };
 
 const substractFromClientBalance = async (
-  userid: ClientType["clientid"],
-  clientid: ClientType["user"],
+  userId: ClientType["clientId"],
+  clientId: ClientType["user"],
   amount: number
 ) => {
   //Find client
@@ -205,14 +205,14 @@ const substractFromClientBalance = async (
     .getRepository(Client)
     .createQueryBuilder("c")
     .innerJoinAndSelect(User, "u", "u.id = c.user")
-    .where("c.user = :userid", { userid })
-    .andWhere("c.clientid = :clientid", { clientid })
+    .where("c.user = :userId", { userId })
+    .andWhere("c.clientId = :clientId", { clientId })
     .getOne();
 
   //Find operation
   const operation = await Operation.findOneBy({
-    user: userid,
-    fechaDeCreacion: new Date().getDate(),
+    user: userId,
+    creationDay: new Date().getDate(),
   });
 
   //Verify if client and operation exists, otherwise returning error
@@ -221,23 +221,23 @@ const substractFromClientBalance = async (
   }
 
   //Substract from customer balance
-  client.saldo = client.saldo - amount;
+  client.balance = client.balance - amount;
 
   //Add last withdrawal amount
-  client.montoultretiro = amount;
+  client.lastAddAmount = amount;
 
   //Add date of operation
   const today = new Date();
   const todayDate =
     today.getDate() + "-" + (today.getMonth() + 1) + "-" + today.getFullYear();
-  client.fechaultretiro = todayDate;
+  client.lastWithdrawDate = todayDate;
 
   if (operation) {
     //Add operation
-    operation.perdidaUsuario += amount;
-    operation.totalDeSaldosUsuario = operation.totalDeSaldosUsuario - amount;
-    operation.transaccionesDelDia++;
-    !operation.fechaDeCreacion ? (operation.fechaDeCreacion = new Date().getDate()) : null;
+    operation.userLosses += amount;
+    operation.totalSumOfBalances = operation.totalSumOfBalances - amount;
+    operation.dayTransactions++;
+    !operation.creationDay ? (operation.creationDay = new Date().getDate()) : null;
 
     //Save operation
     await operation.save();
@@ -250,22 +250,22 @@ const substractFromClientBalance = async (
     "Success",
     200,
     `Balance updated succesfully. Client ${
-      client.nombre + " " + client.apellido
-    } balance is $${client.saldo}`,
+      client.firstName + " " + client.lastName
+    } balance is $${client.balance}`,
     client
   );
 };
 
 const searchClient = async (
-  userid: ClientType["user"],
-  nameSearch: ClientType["nombre"]
+  userId: ClientType["user"],
+  nameSearch: ClientType["firstName"]
 ) => {
   //Find clients
   const clients = await dataSource
     .getRepository(Client)
     .createQueryBuilder("c")
-    .where("c.user = :userid", { userid })
-    .andWhere("c.nombre ILIKE :nameSearch OR c.apellido ILIKE :nameSearch", {
+    .where("c.user = :userId", { userId })
+    .andWhere("c.firstName ILIKE :nameSearch OR c.lastName ILIKE :nameSearch", {
       nameSearch: `%${nameSearch}%`,
     })
     .getMany();
@@ -279,22 +279,22 @@ const searchClient = async (
 };
 
 const deleteClient = async (
-  userid: ClientType["user"],
-  clientid: ClientType["clientid"]
+  userId: ClientType["user"],
+  clientId: ClientType["clientId"]
 ) => {
   //Find client
   const client = await dataSource
     .getRepository(Client)
     .createQueryBuilder("c")
     .innerJoinAndSelect(User, "u", "u.id = c.user")
-    .where("c.user = :userid", { userid })
-    .andWhere("c.clientid = :clientid", { clientid })
+    .where("c.user = :userId", { userId })
+    .andWhere("c.clientId = :clientId", { clientId })
     .getOne();
 
   //Find operation
   const operation = await Operation.findOneBy({
-    user: userid,
-    fechaDeCreacion: new Date().getDate(),
+    user: userId,
+    creationDay: new Date().getDate(),
   });
 
   //Verify if client exists, otherwise returning error
@@ -304,25 +304,25 @@ const deleteClient = async (
 
   //Save operation data
   if (operation) {
-    operation.perdidaUsuario += client.saldo;
-    operation.totalDeSaldosUsuario = operation.totalDeSaldosUsuario - client.saldo;
+    operation.userLosses += client.balance;
+    operation.totalSumOfBalances = operation.totalSumOfBalances - client.balance;
 
     await operation.save();
   }
 
   //Save deleting client request
-  await Client.delete({ clientid });
+  await Client.delete({ clientId });
 
   return responseHandler(
     "Success",
     201,
-    `Client ${client.nombre} deleted succesfully`
+    `Client ${client.firstName} deleted succesfully`
   );
 };
 
 const updateClient = async (
-  userid: ClientType["user"],
-  clientid: ClientType["clientid"],
+  userId: ClientType["user"],
+  clientId: ClientType["clientId"],
   clientData: ClientType[]
 ) => {
   //Verify if data exists, otherwise returning error
@@ -335,12 +335,12 @@ const updateClient = async (
     .createQueryBuilder()
     .update(Client)
     .set(clientData as QueryDeepPartialEntity<Client>)
-    .where("user = :userid", { userid })
-    .andWhere("clientid = :clientid", { clientid })
+    .where("user = :userId", { userId })
+    .andWhere("clientId = :clientId", { clientId })
     .execute();
 
   //Find client
-  const client = await Client.findOneBy({ clientid });
+  const client = await Client.findOneBy({ clientId });
 
   //Verify if client exists, otherwise returning error
   if (!updateClient || !client) {
