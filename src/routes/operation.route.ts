@@ -50,7 +50,7 @@ router.get("/user:userId/total-operation-data", getFullItemData);
 
 /**
  * @openapi
- * /operation/user{:userId}/month{:month}/year{:year/month-operation}:
+ * /operation/user{:userId}/month{:creationMonth}/year{:creationYear}/month-operation}:
  *    get:
  *      tags:
  *        - operations
@@ -58,7 +58,7 @@ router.get("/user:userId/total-operation-data", getFullItemData);
  *      description: This endpoint get specified month's user's operation data
  *      parameters:
  *      - in: path
- *        name: userId, month, year
+ *        name: userId, creationMonth, creationYear
  *        required: true
  *      requestBody:
  *          content:

@@ -32,7 +32,7 @@ export const getTodayItemData = async (req: Request, res: Response) => {
 export const getMonthItemData = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const { creationMonth, creationYear } = req.body;
+    const { creationMonth, creationYear } = req.params;
 
     const response = await getMonthOperationData(parseInt(userId), parseInt(creationMonth), parseInt(creationYear));
 

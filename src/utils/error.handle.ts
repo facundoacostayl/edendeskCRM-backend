@@ -1,7 +1,22 @@
-import {Response} from 'express';
+import {ResponseType} from '../interfaces/response.interface';
 
-export const errorHandler = (res: Response, message: string, status: number) => {
-    res.status(status);
-    res.send({error: message});
+class ErrorWithStatus extends Error {
+  private status: number = 0;
+  
+  get statusCode(): number {
+    return this.status;
+  }
+
+  set statusCode(code: number) {
+    this.status = code;
+  }  
 };
 
+const throwErrorWithStatus = (response: ResponseType) => {
+  const error = new ErrorWithStatus(response.message);
+  error.statusCode = response.statusCode;
+
+  throw error;
+}
+
+export {ErrorWithStatus, throwErrorWithStatus};
