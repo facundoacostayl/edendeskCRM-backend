@@ -1,6 +1,4 @@
 import { Request, Response } from "express";
-import { Client } from "../config/entities/Client";
-import { Operation } from "../config/entities/Operation";
 import { PaginationArgsType } from "../interfaces/pagination.interface";
 import {
   getClients,
@@ -42,7 +40,13 @@ export const getPaginationItemList = async (req: Request, res: Response) => {
     const { page, size, sortBy, orderBy } = req.query;
 
     //Data request
-    const response = await getPaginationClientList(parseInt(userId), parseInt(page as string), parseInt(size as string), sortBy as PaginationArgsType['sortBy'], orderBy as PaginationArgsType['orderBy'],);
+    const response = await getPaginationClientList(
+      parseInt(userId),
+      parseInt(page as string),
+      parseInt(size as string),
+      sortBy as PaginationArgsType["sortBy"],
+      orderBy as PaginationArgsType["orderBy"]
+    );
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
@@ -77,13 +81,18 @@ export const getItem = async (req: Request, res: Response) => {
 export const createItem = async (req: Request, res: Response) => {
   try {
     //Require params
-    const {userId} = req.params;
+    const { userId } = req.params;
 
     //Require Body
     const { firstname, lastName, tel } = req.body;
 
     //Data request
-    const response = await createClient(firstname, lastName, tel, parseInt(userId));
+    const response = await createClient(
+      firstname,
+      lastName,
+      tel,
+      parseInt(userId)
+    );
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
@@ -157,12 +166,12 @@ export const searchItem = async (req: Request, res: Response) => {
     const { nameSearch } = req.query;
 
     //Early return if search input is empty.
-    if (nameSearch!.toString().length <= 0) return;
+    if (!nameSearch || nameSearch.toString().length <= 0) return;
 
     //Data request
     const response = await searchClient(
       parseInt(userId),
-      nameSearch!.toString()
+      nameSearch.toString()
     );
 
     //Checking if data type is "Error", otherwise throwing error
@@ -175,7 +184,6 @@ export const searchItem = async (req: Request, res: Response) => {
     error instanceof Error && res.status(500).json({ error: error.message });
   }
 };
-
 
 export const deleteItem = async (req: Request, res: Response) => {
   try {

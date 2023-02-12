@@ -1,15 +1,15 @@
 import "reflect-metadata";
-import app from './app';
-import { AppDataSource } from './config/db/db';
+import { app, port } from "./app";
+import { AppDataSource } from "./config/db/db";
 
 const main = async () => {
-   try {
-      await AppDataSource.initialize()
-      app.listen(process.env.PORT || 4000);
-      console.log("Server is online")
-   } catch (err) {
-      console.error(err)
-   }
-}
+  try {
+    await AppDataSource.initialize();
+    app.listen(process.env.PORT || port);
+    console.log("Server is online");
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 main();
