@@ -4,8 +4,10 @@ import { UserType } from "../interfaces/user.interface";
 import {OperationType} from "../interfaces/operation.interface";
 import { AppDataSource as dataSource } from "../config/db/db";
 import { responseHandler } from "../utils/response.handle";
+import {httpStatusCodes} from "../utils/httpStatusCodes";
 
-export const getFullOperationData = async (userId: UserType["id"]) => {
+
+const getFullOperationData = async (userId: UserType["id"]) => {
   //Find operations
   const operationList = await dataSource
     .getRepository(Operation)
@@ -15,18 +17,18 @@ export const getFullOperationData = async (userId: UserType["id"]) => {
     .getMany();
 
   if (!operationList) {
-    return responseHandler("Error", 404, "Operations not found");
+    return responseHandler("Error", httpStatusCodes.NOT_FOUND, "Operations not found");
   }
 
   return responseHandler(
     "Success",
-    200,
+    httpStatusCodes.OK,
     "Operations found succesfully",
     operationList
   );
 };
 
-export const getTodayOperationData = async (userId: UserType["id"]) => {
+const getTodayOperationData = async (userId: UserType["id"]) => {
 
     //Find today's operation data
     let todayOperation = await dataSource
@@ -65,11 +67,11 @@ export const getTodayOperationData = async (userId: UserType["id"]) => {
 
     await todayOperation.save();
 
-    return responseHandler('Success', 200, "Today's operation found succesfully", todayOperation)
+    return responseHandler('Success', httpStatusCodes.OK, "Today's operation found succesfully", todayOperation)
   }
 };
 
-export const getMonthOperationData = async(userId: User['id'], creationMonth: OperationType['creationMonth'], creationYear: OperationType['creationYear']) => {
+const getMonthOperationData = async(userId: User['id'], creationMonth: OperationType['creationMonth'], creationYear: OperationType['creationYear']) => {
     //Find operations of a certain month
     const monthOperation = await dataSource //YEAR SHOULD MATCH TOO
     .getRepository(Operation)
@@ -83,13 +85,13 @@ export const getMonthOperationData = async(userId: User['id'], creationMonth: Op
     .getRawOne();
 
     if(!monthOperation) {
-        return responseHandler('Error', 404, "No month operations found");
+        return responseHandler('Error', httpStatusCodes.NOT_FOUND, "No month operations found");
     }
       
-      return responseHandler("Success", 200, "Month operation data found succesfully", monthOperation);
+      return responseHandler("Success", httpStatusCodes.OK, "Month operation data found succesfully", monthOperation);
 }
 
-export const getSumOfAllBalances = async(userId: User['id']) => {
+const getSumOfAllBalances = async(userId: User['id']) => {
   //Find sum of balances
   const balances = await dataSource
   .getRepository(Operation)
@@ -100,9 +102,11 @@ export const getSumOfAllBalances = async(userId: User['id']) => {
   .getRawOne();
 
   if(!balances) {
-    return responseHandler("Error", 404, "Balance data not found")
+    return responseHandler("Error", httpStatusCodes.NOT_FOUND, "Balance data not found")
   }
 
-  return responseHandler("Success", 200, "Total of balances found succesfully", balances);
+  return responseHandler("Success", httpStatusCodes.OK, "Total of balances found succesfully", balances);
 
 } 
+
+export {getFullOperationData, getTodayOperationData, getMonthOperationData, getSumOfAllBalances};

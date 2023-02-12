@@ -4,6 +4,7 @@ import { Client } from "../config/entities/Client";
 import { User } from "../config/entities/User";
 import { Operation } from "../config/entities/Operation";
 import { responseHandler } from "../utils/response.handle";
+import {httpStatusCodes} from "../utils/httpStatusCodes";
 import { AppDataSource as dataSource } from "../config/db/db";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
@@ -18,12 +19,12 @@ const getClients = async (userId: ClientType["user"]) => {
 
   //Verify if client list exists, otherwise returning error
   if (clientList.length <= 0) {
-    return responseHandler("Error", 404, "Client list not found");
+    return responseHandler("Error", httpStatusCodes.NOT_FOUND, "Client list not found");
   }
 
   return responseHandler(
     "Success",
-    200,
+    httpStatusCodes.OK,
     "Client list found succesfully",
     clientList
   );
@@ -66,10 +67,10 @@ const getPaginationClientList = async (
 
   //Verify if clients exists, otherwise returning error
   if (!clientsRequired) {
-    return responseHandler("Error", 404, "Clients not found");
+    return responseHandler("Error", httpStatusCodes.NOT_FOUND, "Clients not found");
   }
 
-  return responseHandler("Success", 200, "Clients found succesfully", {
+  return responseHandler("Success", httpStatusCodes.OK, "Clients found succesfully", {
     allValues: allClients,
     paginatedValues: clientsRequired,
   });
@@ -90,10 +91,10 @@ const getClient = async (
 
   //Verify if user exists, otherwise returning error
   if (!client) {
-    return responseHandler("Error", 404, "Client doesn't exist");
+    return responseHandler("Error", httpStatusCodes.NOT_FOUND, "Client doesn't exist");
   }
 
-  return responseHandler("Success", 200, "Client found succesfully", client);
+  return responseHandler("Success", httpStatusCodes.OK, "Client found succesfully", client);
 };
 
 const createClient = async (
@@ -113,7 +114,7 @@ const createClient = async (
 
   //Verify if client exists, otherwise returning error
   if (client) {
-    return responseHandler("Error", 404, "Client already exists");
+    return responseHandler("Error", httpStatusCodes.NOT_FOUND, "Client already exists");
   }
 
   //Create new client
@@ -133,7 +134,7 @@ const createClient = async (
   //Save client
   await newClient.save();
 
-  return responseHandler("Success", 200, "Client added succesfully", newClient);
+  return responseHandler("Success", httpStatusCodes.CREATED, "Client added succesfully", newClient);
 };
 
 //CHECK OPERATION FECHADECREACION ****
@@ -159,7 +160,7 @@ const addToClientBalance = async (
 
   //Verify if client and operation exists, otherwise returning error
   if (!client) {
-    return responseHandler("Error", 404, "Client not found");
+    return responseHandler("Error", httpStatusCodes.NOT_FOUND, "Client not found");
   }
 
   //Add to customer balance
@@ -188,7 +189,7 @@ const addToClientBalance = async (
 
   return responseHandler(
     "Success",
-    200,
+    httpStatusCodes.OK,
     `Balance updated succesfully. Client ${
       client.firstName + " " + client.lastName
     } balance is $${client.balance}`
@@ -217,7 +218,7 @@ const substractFromClientBalance = async (
 
   //Verify if client and operation exists, otherwise returning error
   if (!client) {
-    return responseHandler("Error", 404, "Client not found");
+    return responseHandler("Error", httpStatusCodes.NOT_FOUND, "Client not found");
   }
 
   //Substract from customer balance
@@ -248,7 +249,7 @@ const substractFromClientBalance = async (
 
   return responseHandler(
     "Success",
-    200,
+    httpStatusCodes.OK,
     `Balance updated succesfully. Client ${
       client.firstName + " " + client.lastName
     } balance is $${client.balance}`,
@@ -272,10 +273,10 @@ const searchClient = async (
 
   //Verify there are clients, otherwise returning error
   if (!clients) {
-    return responseHandler("Error", 404, "Client/s not found");
+    return responseHandler("Error", httpStatusCodes.NOT_FOUND, "Client/s not found");
   }
 
-  return responseHandler("Success", 200, "Client/s found", clients);
+  return responseHandler("Success", httpStatusCodes.OK, "Client/s found", clients);
 };
 
 const deleteClient = async (
@@ -299,7 +300,7 @@ const deleteClient = async (
 
   //Verify if client exists, otherwise returning error
   if (!client) {
-    return responseHandler("Error", 404, "Client not found");
+    return responseHandler("Error", httpStatusCodes.NOT_FOUND, "Client not found");
   }
 
   //Save operation data
@@ -315,7 +316,7 @@ const deleteClient = async (
 
   return responseHandler(
     "Success",
-    201,
+    httpStatusCodes.OK,
     `Client ${client.firstName} deleted succesfully`
   );
 };
@@ -344,10 +345,10 @@ const updateClient = async (
 
   //Verify if client exists, otherwise returning error
   if (!updateClient || !client) {
-    return responseHandler("Error", 404, "User not found");
+    return responseHandler("Error", httpStatusCodes.NOT_FOUND, "User not found");
   }
 
-  return responseHandler("Success", 200, "Client updated succesfully", client);
+  return responseHandler("Success", httpStatusCodes.OK, "Client updated succesfully", client);
 };
 
 export {
