@@ -1,9 +1,9 @@
-import {UserType} from './user.interface';
-import {ClientType} from './client.interface';
+import { UserType } from "./user.interface";
+import { ClientType } from "./client.interface";
 
 interface PaginationResponseData {
-    allValues: number,
-    paginatedValues: UserType[] | ClientType[]
-};
+  allValues: number;
+  paginatedValues: UserType[] | ClientType[];
+}
 
-export {PaginationResponseData as PaginationResponseDataType};
+export { PaginationResponseData as PaginationResponseDataType };

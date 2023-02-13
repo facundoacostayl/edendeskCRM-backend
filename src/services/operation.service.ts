@@ -1,11 +1,10 @@
 import { Operation } from "../config/entities/Operation";
 import { User } from "../config/entities/User";
 import { UserType } from "../interfaces/user.interface";
-import {OperationType} from "../interfaces/operation.interface";
+import { OperationType } from "../interfaces/operation.interface";
 import { AppDataSource as dataSource } from "../config/db/db";
 import { responseHandler } from "../utils/response.handle";
-import {httpStatusCodes} from "../utils/httpStatusCodes";
-
+import { httpStatusCodes } from "../utils/httpStatusCodes";
 
 const getFullOperationData = async (userId: UserType["id"]) => {
   //Find operations
@@ -17,7 +16,11 @@ const getFullOperationData = async (userId: UserType["id"]) => {
     .getMany();
 
   if (!operationList) {
-    return responseHandler("Error", httpStatusCodes.NOT_FOUND, "Operations not found");
+    return responseHandler(
+      "Error",
+      httpStatusCodes.NOT_FOUND,
+      "Operations not found"
+    );
   }
 
   return responseHandler(
@@ -29,31 +32,36 @@ const getFullOperationData = async (userId: UserType["id"]) => {
 };
 
 const getTodayOperationData = async (userId: UserType["id"]) => {
-
-    //Find today's operation data
-    let todayOperation = await dataSource
+  //Find today's operation data
+  let todayOperation = await dataSource
     .getRepository(Operation)
     .createQueryBuilder("o")
     .innerJoinAndSelect(User, "u", "o.user = u.id")
     .where("o.operationId = :userId", { userId })
-    .andWhere("o.creationYear = :creationDate", {creationDate: new Date().getDate()})
-    .andWhere("o.creationMonth = :creationMonth", {creationMonth: new Date().getMonth() + 1})
-    .andWhere("o.creationYear = :creationYear", {creationYear: new Date().getFullYear})
+    .andWhere("o.creationYear = :creationDate", {
+      creationDate: new Date().getDate(),
+    })
+    .andWhere("o.creationMonth = :creationMonth", {
+      creationMonth: new Date().getMonth() + 1,
+    })
+    .andWhere("o.creationYear = :creationYear", {
+      creationYear: new Date().getFullYear,
+    })
     .getOne();
 
-    //Find all operation list
-    const operationList = await dataSource
+  //Find all operation list
+  const operationList = await dataSource
     .getRepository(Operation)
     .createQueryBuilder("o")
     .innerJoinAndSelect(User, "u", "o.user = u.id")
     .where("o.operationId = :userId", { userId })
     .getMany();
 
-    //Find yesterday operation data
-    const operationListLength = operationList.length;
-    const yesterdayOperation = operationList[operationListLength - 1];    
+  //Find yesterday operation data
+  const operationListLength = operationList.length;
+  const yesterdayOperation = operationList[operationListLength - 1];
 
-    //If todayOperation doesn't exist, create a new one;
+  //If todayOperation doesn't exist, create a new one;
   if (!todayOperation) {
     todayOperation = new Operation();
     todayOperation.creationYear = new Date().getFullYear();
@@ -67,46 +75,77 @@ const getTodayOperationData = async (userId: UserType["id"]) => {
 
     await todayOperation.save();
 
-    return responseHandler('Success', httpStatusCodes.OK, "Today's operation found succesfully", todayOperation)
+    return responseHandler(
+      "Success",
+      httpStatusCodes.OK,
+      "Today's operation found succesfully",
+      todayOperation
+    );
   }
 };
 
-const getMonthOperationData = async(userId: User['id'], creationMonth: OperationType['creationMonth'], creationYear: OperationType['creationYear']) => {
-    //Find operations of a certain month
-    const monthOperation = await dataSource //YEAR SHOULD MATCH TOO
+const getMonthOperationData = async (
+  userId: User["id"],
+  creationMonth: OperationType["creationMonth"],
+  creationYear: OperationType["creationYear"]
+) => {
+  //Find operations of a certain month
+  const monthOperation = await dataSource //YEAR SHOULD MATCH TOO
     .getRepository(Operation)
     .createQueryBuilder("o")
     .innerJoin(User, "u", "o.user = u.id")
-    .select('COUNT(o.gananciaUsuario)', 'totalGananciasUsuario')
-    .addSelect('COUNT(o.perdidaUsuario)', 'totalPerdidasUsuario')
+    .select("COUNT(o.gananciaUsuario)", "totalGananciasUsuario")
+    .addSelect("COUNT(o.perdidaUsuario)", "totalPerdidasUsuario")
     .where("o.operationId = :userId", { userId })
-    .andWhere("o.creationMonth = :creationMonth", {creationMonth})
-    .andWhere("o.creationYear = :creationYear", {creationYear})
+    .andWhere("o.creationMonth = :creationMonth", { creationMonth })
+    .andWhere("o.creationYear = :creationYear", { creationYear })
     .getRawOne();
 
-    if(!monthOperation) {
-        return responseHandler('Error', httpStatusCodes.NOT_FOUND, "No month operations found");
-    }
-      
-      return responseHandler("Success", httpStatusCodes.OK, "Month operation data found succesfully", monthOperation);
-}
-
-const getSumOfAllBalances = async(userId: User['id']) => {
-  //Find sum of balances
-  const balances = await dataSource
-  .getRepository(Operation)
-  .createQueryBuilder('o')
-  .innerJoin(User, 'u', "o.user = u.id")
-  .select("COUNT(o.gananciaUsuario)", "totalGananciasUsuario")
-  .where("o.user = :userId", {userId})
-  .getRawOne();
-
-  if(!balances) {
-    return responseHandler("Error", httpStatusCodes.NOT_FOUND, "Balance data not found")
+  if (!monthOperation) {
+    return responseHandler(
+      "Error",
+      httpStatusCodes.NOT_FOUND,
+      "No month operations found"
+    );
   }
 
-  return responseHandler("Success", httpStatusCodes.OK, "Total of balances found succesfully", balances);
+  return responseHandler(
+    "Success",
+    httpStatusCodes.OK,
+    "Month operation data found succesfully",
+    monthOperation
+  );
+};
 
-} 
+const getSumOfAllBalances = async (userId: User["id"]) => {
+  //Find sum of balances
+  const balances = await dataSource
+    .getRepository(Operation)
+    .createQueryBuilder("o")
+    .innerJoin(User, "u", "o.user = u.id")
+    .select("COUNT(o.gananciaUsuario)", "totalGananciasUsuario")
+    .where("o.user = :userId", { userId })
+    .getRawOne();
 
-export {getFullOperationData, getTodayOperationData, getMonthOperationData, getSumOfAllBalances};
+  if (!balances) {
+    return responseHandler(
+      "Error",
+      httpStatusCodes.NOT_FOUND,
+      "Balance data not found"
+    );
+  }
+
+  return responseHandler(
+    "Success",
+    httpStatusCodes.OK,
+    "Total of balances found succesfully",
+    balances
+  );
+};
+
+export {
+  getFullOperationData,
+  getTodayOperationData,
+  getMonthOperationData,
+  getSumOfAllBalances,
+};

@@ -1,4 +1,4 @@
-import {UserType} from './user.interface';
+import { UserType } from "./user.interface";
 
 interface Client {
   clientId: number;
@@ -12,7 +12,7 @@ interface Client {
   lastWithdrawDate: string;
   lastWithdrawAmount: number;
   branch: string;
-  user: UserType['id'];
+  user: UserType["id"];
 }
 
-export {Client as ClientType}
+export { Client as ClientType };

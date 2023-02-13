@@ -1,13 +1,18 @@
 import { Response, Request } from "express";
-import { getFullOperationData, getTodayOperationData, getMonthOperationData, getSumOfAllBalances } from "../services/operation.service";
+import {
+  getFullOperationData,
+  getTodayOperationData,
+  getMonthOperationData,
+  getSumOfAllBalances,
+} from "../services/operation.service";
 
 export const getFullItemData = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const response = await getFullOperationData(parseInt(userId));
 
-    if(response.responseType === "Error") {
-      throw new Error(response.message)
+    if (response.responseType === "Error") {
+      throw new Error(response.message);
     }
 
     return res.status(response.statusCode).json(response);
@@ -22,8 +27,11 @@ export const getTodayItemData = async (req: Request, res: Response) => {
 
     const response = await getTodayOperationData(parseInt(userId));
 
-    return res.status(response!.statusCode).json(response);
+    if (response) {
+      return res.status(response.statusCode).json(response);
+    }
 
+    throw new Error();
   } catch (error) {
     error instanceof Error && res.status(500).send("Server internal error");
   }
@@ -34,21 +42,29 @@ export const getMonthItemData = async (req: Request, res: Response) => {
     const { userId } = req.params;
     const { creationMonth, creationYear } = req.params;
 
-    const response = await getMonthOperationData(parseInt(userId), parseInt(creationMonth), parseInt(creationYear));
+    const response = await getMonthOperationData(
+      parseInt(userId),
+      parseInt(creationMonth),
+      parseInt(creationYear)
+    );
+
+    if (response.responseType === "Error") {
+      throw new Error(response.message);
+    }
 
     return res.status(response.statusCode).json(response);
   } catch (error) {
-    error instanceof Error && res.status(500).send("Server internal error");
+    error instanceof Error && res.status(500).send(error.message);
   }
 };
 
 export const getFullClientBalance = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    
+
     const response = await getSumOfAllBalances(parseInt(userId));
 
-    if(response.responseType === "Error") {
+    if (response.responseType === "Error") {
       throw new Error(response.message);
     }
 

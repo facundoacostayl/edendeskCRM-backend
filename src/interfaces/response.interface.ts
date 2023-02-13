@@ -7,7 +7,14 @@ interface Response {
   responseType: "Success" | "Error";
   statusCode: number;
   message?: string;
-  data?: UserType | UserType[] | ClientType | ClientType[] | OperationType | OperationType[] | PaginationResponseDataType;
+  data?:
+    | UserType
+    | UserType[]
+    | ClientType
+    | ClientType[]
+    | OperationType
+    | OperationType[]
+    | PaginationResponseDataType;
   token?: string | number;
 }
 

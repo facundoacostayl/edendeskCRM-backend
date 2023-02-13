@@ -7,8 +7,8 @@ import {
   updateItem,
 } from "../controllers/user.controller";
 const router = Router();
-const validInfo = require("../middleware/validInfo");
-const authorization = require("../middleware/authorization");
+import { validInfo } from "../middleware/validInfo";
+import { authorization } from "../middleware/authorization";
 
 /**
  * @openapi
