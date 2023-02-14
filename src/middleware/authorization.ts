@@ -1,30 +1,26 @@
 import { Request, Response, NextFunction } from "express";
-
-import jwtoken from "jsonwebtoken";
-import * as dotenv from "dotenv";
-dotenv.config();
-
-interface ReqWithUser extends Request {
-  user: number;
-}
+import { jwtVerify } from "../utils/jwt.handle";
 
 const authorization = async (
-  req: ReqWithUser,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const token = req.header("token");
+    const token = req.headers.token as string;
+    const jwt = token && token.split(" ").pop();
 
-    if (!token) {
+    if (!jwt) {
       return res.status(403).json(false);
     }
 
-    const payload = jwtoken.verify(
-      token,
-      process.env.JWT_SECRET as jwtoken.Secret
-    );
-    //req.user = payload.user;
+    const isVerified = jwtVerify(jwt);
+
+    if (!isVerified) {
+      return res.status(403).send("JWT is not valid");
+    }
+
+    req.user = isVerified;
 
     next();
   } catch (error) {

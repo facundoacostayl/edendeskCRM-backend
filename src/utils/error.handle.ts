@@ -1,7 +1,7 @@
 import { ResponseType } from "../interfaces/response.interface";
 
 class ErrorWithStatus extends Error {
-  private status: number = 0;
+  private status = 0;
 
   get statusCode(): number {
     return this.status;

@@ -11,7 +11,6 @@ import {
   substractFromItemBalance,
   searchItem,
 } from "../controllers/client.controller";
-const authorization = require("../middleware/authorization");
 
 /**
  * @openapi

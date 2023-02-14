@@ -1,10 +1,6 @@
 import { Request, Response } from "express";
 
-interface ReqWithUser extends Request {
-  user?: number;
-}
-
-export const getInfo = (req: ReqWithUser, res: Response) => {
+export const getInfo = (req: Request, res: Response) => {
   try {
     res.json(req.user);
   } catch (error) {

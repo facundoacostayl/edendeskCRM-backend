@@ -5,7 +5,7 @@ import { responseHandler } from "../utils/response.handle";
 import { httpStatusCodes } from "../utils/httpStatusCodes";
 import { AppDataSource as dataSource } from "../config/db/db";
 import bcrypt from "bcryptjs";
-import { jwtGenerator } from "../utils/jwtGenerator";
+import { jwtGenerator } from "../utils/jwt.handle";
 
 const getUser = async (id: UserType["id"]) => {
   //Find User
@@ -71,7 +71,7 @@ const createUser = async (
   const createdUser = await User.findOneBy({ loginEmail });
 
   if (createdUser) {
-    const token = jwtGenerator(createdUser.id);
+    const token = jwtGenerator(createdUser);
 
     return responseHandler(
       "Success",
@@ -117,7 +117,7 @@ const loginUser = async (
   }
 
   //Give the jwt token to the user
-  const token = jwtGenerator(user.id);
+  const token = jwtGenerator(user);
   const loggedUser = await User.findOneBy({ loginEmail: loginEmail });
 
   if (loggedUser) {

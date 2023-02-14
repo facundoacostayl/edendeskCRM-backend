@@ -3,7 +3,7 @@ import Router from "express";
 
 const router = Router();
 
-const currentPath: string = `${__dirname}`;
+const currentPath = `${__dirname}`;
 
 const removeExtension = (file: string) => {
   const cleanFile = file.split(".").shift();
