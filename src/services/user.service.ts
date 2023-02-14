@@ -71,7 +71,7 @@ const createUser = async (
   const createdUser = await User.findOneBy({ loginEmail });
 
   if (createdUser) {
-    const token = jwtGenerator(createdUser);
+    const token = jwtGenerator(createdUser.id);
 
     return responseHandler(
       "Success",
@@ -117,23 +117,14 @@ const loginUser = async (
   }
 
   //Give the jwt token to the user
-  const token = jwtGenerator(user);
-  const loggedUser = await User.findOneBy({ loginEmail: loginEmail });
-
-  if (loggedUser) {
-    return responseHandler(
-      "Success",
-      httpStatusCodes.OK,
-      "Logged in succesfully",
-      loggedUser,
-      token
-    );
-  }
+  const token = jwtGenerator(user.id);
 
   return responseHandler(
-    "Error",
-    httpStatusCodes.INTERNAL_SERVER,
-    "Internal Server Error"
+    "Success",
+    httpStatusCodes.OK,
+    "Logged in succesfully",
+    user,
+    token
   );
 };
 

@@ -5,9 +5,9 @@ dotenv.config();
 
 const jwtSecret = `${process.env.JWT_SECRET}`;
 
-const jwtGenerator = (user: UserType) => {
+const jwtGenerator = (userId: UserType["id"]) => {
   const payload = {
-    user,
+    userId,
   };
 
   return jwt.sign(payload, jwtSecret, {
