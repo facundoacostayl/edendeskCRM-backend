@@ -8,7 +8,7 @@ import {
 } from "../controllers/user.controller";
 const router = Router();
 import { validInfo } from "../middleware/validInfo";
-import { authorization } from "../middleware/authorization";
+import { authJwt } from "../middleware/jwtAuthorization";
 
 /**
  * @openapi
@@ -56,7 +56,7 @@ router.post("/login", validInfo, loginItem);
  *              schema:
  *                $ref: "#/components/schemas/user"
  * */
-router.get("/verificar", authorization, authorizeToken);
+router.get("/verificar", authJwt, authorizeToken);
 
 /**
  * @openapi

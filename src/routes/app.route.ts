@@ -1,8 +1,8 @@
 import { Router } from "express";
 const router = Router();
-import { authorization } from "../middleware/authorization";
+import { authJwt } from "../middleware/jwtAuthorization";
 import { getInfo } from "../controllers/dashboard.controller";
 
-router.get("/dashboard", authorization, getInfo);
+router.get("/dashboard", authJwt, getInfo);
 
 export { router };

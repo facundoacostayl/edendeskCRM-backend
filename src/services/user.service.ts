@@ -73,7 +73,7 @@ const createUser = async (
   const createdUser = await User.findOneBy({ loginEmail });
 
   if (createdUser) {
-    const token = jwtGenerator(createdUser.id);
+    const token = jwtGenerator(createdUser.id, createdUser.role);
 
     return responseHandler(
       "Success",
@@ -119,7 +119,7 @@ const loginUser = async (
   }
 
   //Give the jwt token to the user
-  const token = jwtGenerator(user.id);
+  const token = jwtGenerator(user.id, user.role);
 
   return responseHandler(
     "Success",

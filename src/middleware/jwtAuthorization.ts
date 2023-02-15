@@ -2,11 +2,7 @@ import { Response, NextFunction } from "express";
 import { jwtVerify } from "../utils/jwt.handle";
 import { RequestExt } from "../interfaces/requestExt.interface";
 
-const authorization = async (
-  req: RequestExt,
-  res: Response,
-  next: NextFunction
-) => {
+const authJwt = async (req: RequestExt, res: Response, next: NextFunction) => {
   try {
     const token = req.headers.token as string;
     const jwt = token && token.split(" ").pop();
@@ -32,4 +28,4 @@ const authorization = async (
   }
 };
 
-export { authorization };
+export { authJwt };
