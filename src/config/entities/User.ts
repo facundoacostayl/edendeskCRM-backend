@@ -25,6 +25,9 @@ export class User extends BaseEntity {
   @Column()
   password: string;
 
+  @Column()
+  role: string;
+
   @OneToMany((type) => Client, (clients) => clients.user)
   clients: Client[];
 

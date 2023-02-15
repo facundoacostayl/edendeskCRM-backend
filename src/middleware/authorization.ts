@@ -1,8 +1,9 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { jwtVerify } from "../utils/jwt.handle";
+import { RequestExt } from "../interfaces/requestExt.interface";
 
 const authorization = async (
-  req: Request,
+  req: RequestExt,
   res: Response,
   next: NextFunction
 ) => {

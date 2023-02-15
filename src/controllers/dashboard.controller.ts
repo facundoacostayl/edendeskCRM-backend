@@ -1,8 +1,10 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import { RequestExt } from "../interfaces/requestExt.interface";
 
-export const getInfo = (req: Request, res: Response) => {
+export const getInfo = (req: RequestExt, res: Response) => {
   try {
     res.json(req.user);
+    console.log("Welcome!");
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);

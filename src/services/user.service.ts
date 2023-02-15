@@ -3,6 +3,7 @@ import { User } from "../config/entities/User";
 import { Operation } from "../config/entities/Operation";
 import { responseHandler } from "../utils/response.handle";
 import { httpStatusCodes } from "../utils/httpStatusCodes";
+import { ROLE } from "../utils/userRoles";
 import { AppDataSource as dataSource } from "../config/db/db";
 import bcrypt from "bcryptjs";
 import { jwtGenerator } from "../utils/jwt.handle";
@@ -49,6 +50,7 @@ const createUser = async (
   const newUser = new User();
   newUser.firstName = firstName as string;
   newUser.loginEmail = loginEmail as string;
+  newUser.role = ROLE.BASIC;
 
   //Bcrypt password
   const saltRound = 10;
