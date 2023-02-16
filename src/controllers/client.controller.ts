@@ -23,12 +23,13 @@ export const getItems = async (req: Request, res: Response) => {
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
-      throw new Error(response.message);
+      throwErrorWithStatus(response);
     }
 
     return res.status(response.statusCode).json(response);
   } catch (error) {
-    error instanceof Error && res.status(500).json({ message: error.message });
+    error instanceof ErrorWithStatus &&
+      res.status(error.statusCode).json({ message: error.message });
   }
 };
 
@@ -51,12 +52,13 @@ export const getPaginationItemList = async (req: Request, res: Response) => {
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
-      throw new Error(response.message);
+      throwErrorWithStatus(response);
     }
 
     return res.status(response.statusCode).json(response);
   } catch (error) {
-    error instanceof Error && res.status(500).json({ message: error.message });
+    error instanceof ErrorWithStatus &&
+      res.status(error.statusCode).json({ message: error.message });
   }
 };
 
@@ -70,12 +72,13 @@ export const getItem = async (req: Request, res: Response) => {
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
-      throw new Error(response.message);
+      throwErrorWithStatus(response);
     }
 
     return res.status(response.statusCode).json(response);
   } catch (error) {
-    error instanceof Error && res.status(500).json({ message: error.message });
+    error instanceof ErrorWithStatus &&
+      res.status(error.statusCode).json({ message: error.message });
   }
 };
 
@@ -97,12 +100,13 @@ export const createItem = async (req: Request, res: Response) => {
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
-      throw new Error(response.message);
+      throwErrorWithStatus(response);
     }
 
     return res.status(response.statusCode).json(response);
   } catch (error) {
-    error instanceof Error && res.status(500).json({ message: error.message });
+    error instanceof ErrorWithStatus &&
+      res.status(error.statusCode).json({ message: error.message });
   }
 };
 
@@ -123,12 +127,13 @@ export const addToItemBalance = async (req: Request, res: Response) => {
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
-      throw new Error(response.message);
+      throwErrorWithStatus(response);
     }
 
     return res.status(response.statusCode).json(response);
   } catch (error) {
-    error instanceof Error && res.status(500).json({ message: error.message });
+    error instanceof ErrorWithStatus &&
+      res.status(error.statusCode).json({ message: error.message });
   }
 };
 
@@ -149,12 +154,13 @@ export const substractFromItemBalance = async (req: Request, res: Response) => {
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
-      throw new Error(response.message);
+      throwErrorWithStatus(response);
     }
 
     return res.status(response.statusCode).json(response);
   } catch (error) {
-    error instanceof Error && res.status(500).json({ error: error.message });
+    error instanceof ErrorWithStatus &&
+      res.status(error.statusCode).json({ error: error.message });
   }
 };
 
@@ -177,12 +183,13 @@ export const searchItem = async (req: Request, res: Response) => {
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
-      throw new Error(response.message);
+      throwErrorWithStatus(response);
     }
 
     return res.status(response.statusCode).json(response);
   } catch (error) {
-    error instanceof Error && res.status(500).json({ error: error.message });
+    error instanceof ErrorWithStatus &&
+      res.status(error.statusCode).json({ error: error.message });
   }
 };
 
@@ -196,12 +203,13 @@ export const deleteItem = async (req: Request, res: Response) => {
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
-      throw new Error(response.message);
+      throwErrorWithStatus(response);
     }
 
     return res.status(response.statusCode).json(response);
   } catch (error) {
-    error instanceof Error && res.status(500).json(error.message);
+    error instanceof ErrorWithStatus &&
+      res.status(error.statusCode).json(error.message);
   }
 };
 
@@ -219,9 +227,15 @@ export const updateItem = async (req: Request, res: Response) => {
       body
     );
 
+    //Checking if data type is "Error", otherwise throwing error
+    if (response.responseType === "Error") {
+      throwErrorWithStatus(response);
+    }
+
     return res.status(response.statusCode).json(response);
   } catch (error) {
     console.error(error);
-    error instanceof Error && res.status(500).json("Internal server error");
+    error instanceof ErrorWithStatus &&
+      res.status(error.statusCode).json("Internal server error");
   }
 };
