@@ -11,6 +11,7 @@ import {
   deleteClient,
   updateClient,
 } from "../services/client.service";
+import { ErrorWithStatus, throwErrorWithStatus } from "../utils/error.handle";
 
 export const getItems = async (req: Request, res: Response) => {
   try {
