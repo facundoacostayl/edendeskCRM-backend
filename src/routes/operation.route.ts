@@ -1,12 +1,12 @@
 import { Router } from "express";
+const router = Router();
 import {
   getTodayItemData,
   getFullItemData,
   getMonthItemData,
   getFullClientBalance,
 } from "../controllers/operation.controller";
-
-const router = Router();
+import { authRole } from "../middleware/roleAuthorization";
 
 /**
  * @openapi
@@ -26,7 +26,7 @@ const router = Router();
  *              schema:
  *                $ref: "#/components/schemas/operation"
  * */
-router.get("/user:userId/today-operation-data", getTodayItemData);
+router.get("/user:userId/today-operation-data", authRole, getTodayItemData);
 
 /**
  * @openapi
@@ -46,7 +46,7 @@ router.get("/user:userId/today-operation-data", getTodayItemData);
  *              schema:
  *                $ref: "#/components/schemas/operation"
  * */
-router.get("/user:userId/total-operation-data", getFullItemData);
+router.get("/user:userId/total-operation-data", authRole, getFullItemData);
 
 /**
  * @openapi
@@ -66,7 +66,11 @@ router.get("/user:userId/total-operation-data", getFullItemData);
  *              schema:
  *                $ref: "#/components/schemas/operation"
  * */
-router.get("/user:userId/month:month/year:year/month-operation", getMonthItemData);
+router.get(
+  "/user:userId/month:month/year:year/month-operation",
+  authRole,
+  getMonthItemData
+);
 
 /**
  * @openapi
@@ -86,6 +90,6 @@ router.get("/user:userId/month:month/year:year/month-operation", getMonthItemDat
  *              schema:
  *                $ref: "#/components/schemas/operation"
  * */
-router.get("/user:userId/user-total-balance", getFullClientBalance);
+router.get("/user:userId/user-total-balance", authRole, getFullClientBalance);
 
 export { router };

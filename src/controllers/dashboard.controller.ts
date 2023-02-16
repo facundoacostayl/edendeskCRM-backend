@@ -1,20 +1,28 @@
 import { Response } from "express";
 import { RequestExt } from "../interfaces/requestExt.interface";
 import { UserType } from "../interfaces/user.interface";
+import { getDashboard } from "../services/dashboard.service";
+import { ErrorWithStatus, throwErrorWithStatus } from "../utils/error.handle";
 
-export const getInfo = (req: RequestExt, res: Response) => {
+const getItem = (req: RequestExt, res: Response) => {
   try {
     const user = req.user as UserType;
     const userId = user.id;
     const userRole = user.role;
 
-    return res
-      .status(200)
-      .send(`Welcome user with id: ${userId}. Your role is: ${userRole}`);
+    const response = getDashboard(userId, userRole);
+
+    if (response.responseType === "Error") {
+      throwErrorWithStatus(response);
+    }
+
+    return res.status(response.statusCode).send(response.message);
   } catch (error) {
-    if (error instanceof Error) {
+    if (error instanceof ErrorWithStatus) {
       console.error(error.message);
-      res.status(500).json({ error: error.message });
+      res.status(error.statusCode).json(error.message);
     }
   }
 };
+
+export { getItem };
