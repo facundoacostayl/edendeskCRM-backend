@@ -1,6 +1,8 @@
 import { ResponseType } from "../interfaces/response.interface";
 
-export const responseHandler = (
+//This function is for handling services responses.
+
+const responseHandler = (
   type: ResponseType["responseType"],
   statusCode: ResponseType["statusCode"],
   message?: ResponseType["message"],
@@ -16,3 +18,5 @@ export const responseHandler = (
   };
   return response;
 };
+
+export { responseHandler };

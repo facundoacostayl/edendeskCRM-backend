@@ -5,7 +5,10 @@ import { responseHandler } from "../utils/response.handle";
 import { httpStatusCodes } from "../utils/httpStatusCodes";
 
 const authRole = (req: RequestExt, res: Response, next: NextFunction) => {
+  //Req user data from req.user
   const user = req.user as UserType;
+
+  //Verify if the role of the user is "admin", otherwise returning error
   if (user.role !== "admin") {
     return responseHandler(
       "Error",
