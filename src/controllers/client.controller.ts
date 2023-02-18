@@ -88,11 +88,11 @@ export const createItem = async (req: Request, res: Response) => {
     const { userId } = req.params;
 
     //Require Body
-    const { firstname, lastName, tel } = req.body;
+    const { firstName, lastName, tel } = req.body;
 
     //Data request
     const response = await createClient(
-      firstname,
+      firstName,
       lastName,
       tel,
       parseInt(userId)

@@ -11,7 +11,6 @@ import {
   substractFromItemBalance,
   searchItem,
 } from "../controllers/client.controller";
-import { authRole } from "../middleware/roleAuthorization";
 
 /**
  * @openapi
@@ -111,7 +110,7 @@ router.post("/user:userId/new-client", createItem);
  *              schema:
  *                $ref: "#/components/schemas/client"
  * */
-router.delete("/user:userId/client:clientId", authRole, deleteItem);
+router.delete("/user:userId/client:clientId", deleteItem);
 
 /**
  * @openapi

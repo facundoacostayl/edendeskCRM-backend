@@ -8,14 +8,16 @@ const authRole = (req: RequestExt, res: Response, next: NextFunction) => {
   //Req user data from req.user
   const user = req.user as UserType;
 
-  //Verify if the role of the user is "admin", otherwise returning error
-  if (user.role !== "admin") {
+  console.log(user);
+
+  /*Verify if the role of the user is "admin", otherwise returning error
+  if (user.role !== "basic") {
     return responseHandler(
       "Error",
       httpStatusCodes.UNAUTHORIZED,
       "Just users with Admin role allowed"
     );
-  }
+  }*/
   next();
 };
 

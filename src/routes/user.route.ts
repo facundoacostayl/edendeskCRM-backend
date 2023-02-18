@@ -12,7 +12,7 @@ import { authJwt } from "../middleware/jwtAuthorization";
 
 /**
  * @openapi
- * /user/registro:
+ * /user/register:
  *    post:
  *      tags:
  *        - users
@@ -24,7 +24,7 @@ import { authJwt } from "../middleware/jwtAuthorization";
  *              schema:
  *                $ref: "#/components/schemas/user"
  * */
-router.post("/registro", validInfo, createItem);
+router.post("/register", validInfo, createItem);
 
 /**
  * @openapi
@@ -44,7 +44,7 @@ router.post("/login", validInfo, loginItem);
 
 /**
  * @openapi
- * /user/verificar:
+ * /user/verify:
  *    get:
  *      tags:
  *        - users
@@ -56,7 +56,7 @@ router.post("/login", validInfo, loginItem);
  *              schema:
  *                $ref: "#/components/schemas/user"
  * */
-router.get("/verificar", authJwt, authorizeToken);
+router.get("/verify", authJwt, authorizeToken);
 
 /**
  * @openapi

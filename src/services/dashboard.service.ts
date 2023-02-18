@@ -3,7 +3,7 @@ import { responseHandler } from "../utils/response.handle";
 import { httpStatusCodes } from "../utils/httpStatusCodes";
 
 const getDashboard = (userId: UserType["id"], userRole: UserType["role"]) => {
-  if (!userId || userRole) {
+  if (!userId || !userRole) {
     return responseHandler(
       "Error",
       httpStatusCodes.INTERNAL_SERVER,
