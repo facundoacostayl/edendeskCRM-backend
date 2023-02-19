@@ -36,10 +36,10 @@ const getTodayOperationData = async (userId: UserType["id"]) => {
   let todayOperation = await dataSource
     .getRepository(Operation)
     .createQueryBuilder("o")
-    .innerJoinAndSelect(User, "u", "o.user = u.id")
-    .where("o.operationId = :userId", { userId })
-    .andWhere("o.creationDay = :creationDate", {
-      creationDate: new Date().getDate(),
+    .innerJoinAndSelect(User, "u", "u.id = o.user")
+    .where("o.user = :userId", { userId })
+    .andWhere("o.creationDay = :creationDay", {
+      creationDay: new Date().getDate(),
     })
     .andWhere("o.creationMonth = :creationMonth", {
       creationMonth: new Date().getMonth() + 1,
@@ -67,6 +67,7 @@ const getTodayOperationData = async (userId: UserType["id"]) => {
     todayOperation.creationYear = new Date().getFullYear();
     todayOperation.creationMonth = new Date().getMonth() + 1;
     todayOperation.creationDay = new Date().getDate();
+    todayOperation.dayTransactions = 0;
     todayOperation.user = userId;
     //If yesterdayOperation exists, get its totalSumOfBalances, otherwise get 0;
     todayOperation.totalSumOfBalances = yesterdayOperation
