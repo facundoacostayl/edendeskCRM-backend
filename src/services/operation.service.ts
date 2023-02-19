@@ -12,7 +12,7 @@ const getFullOperationData = async (userId: UserType["id"]) => {
     .getRepository(Operation)
     .createQueryBuilder("o")
     .innerJoinAndSelect(User, "u", "o.user = u.id")
-    .where("o.operationId = :userId", { userId })
+    .where("o.user = :userId", { userId })
     .getMany();
 
   if (!operationList) {
