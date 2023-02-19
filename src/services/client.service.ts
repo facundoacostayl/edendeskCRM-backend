@@ -183,18 +183,38 @@ const addToClientBalance = async (
     .andWhere("c.clientId = :clientId", { clientId })
     .getOne();
 
-  //Find operation
-  const operation = await Operation.findOneBy({
-    user: userId,
-    //creationDay: new Date().getDate(), ****<----- HERE */
-  });
-
   //Verify if client and operation exists, otherwise returning error
   if (!client) {
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,
       "Client not found"
+    );
+  }
+
+  //Find operation
+  const operation = await dataSource
+    .getRepository(Operation)
+    .createQueryBuilder("o")
+    .innerJoinAndSelect(User, "u", "u.id = o.user")
+    .where("o.user = :userId", { userId })
+    .andWhere("o.creationDay = :creationDay", {
+      creationDay: new Date().getDate(),
+    })
+    .andWhere("o.creationMonth = :creationMonth", {
+      creationMonth: new Date().getMonth() + 1,
+    })
+    .andWhere("o.creationYear = :creationYear", {
+      creationYear: new Date().getFullYear(),
+    })
+    .getOne();
+
+  //Verify if client and operation exists, otherwise returning error
+  if (!operation) {
+    return responseHandler(
+      "Error",
+      httpStatusCodes.NOT_FOUND,
+      "Operation data not found"
     );
   }
 
@@ -208,18 +228,16 @@ const addToClientBalance = async (
   client.lastAddDate = todayDate;
   client.lastAddAmount = client.balance;
 
-  if (operation) {
-    //Add operation
-    operation.userEarnings += amount;
-    operation.totalSumOfBalances += amount;
-    operation.dayTransactions++;
-    !operation.creationDay
-      ? (operation.creationDay = new Date().getDate())
-      : null;
+  //Add operation
+  operation.userEarnings += amount;
+  operation.totalSumOfBalances += amount;
+  operation.dayTransactions++;
+  !operation.creationDay
+    ? (operation.creationDay = new Date().getDate())
+    : null;
 
-    //Save operation
-    await operation.save();
-  }
+  //Save operation
+  await operation.save();
 
   //Save client
   await client.save();
@@ -247,18 +265,38 @@ const substractFromClientBalance = async (
     .andWhere("c.clientId = :clientId", { clientId })
     .getOne();
 
-  //Find operation
-  const operation = await Operation.findOneBy({
-    user: userId,
-    //creationDay: new Date().getDate(),
-  });
-
   //Verify if client and operation exists, otherwise returning error
   if (!client) {
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,
       "Client not found"
+    );
+  }
+
+  //Find operation
+  const operation = await dataSource
+    .getRepository(Operation)
+    .createQueryBuilder("o")
+    .innerJoinAndSelect(User, "u", "u.id = o.user")
+    .where("o.user = :userId", { userId })
+    .andWhere("o.creationDay = :creationDay", {
+      creationDay: new Date().getDate(),
+    })
+    .andWhere("o.creationMonth = :creationMonth", {
+      creationMonth: new Date().getMonth() + 1,
+    })
+    .andWhere("o.creationYear = :creationYear", {
+      creationYear: new Date().getFullYear(),
+    })
+    .getOne();
+
+  //Verify if client and operation exists, otherwise returning error
+  if (!operation) {
+    return responseHandler(
+      "Error",
+      httpStatusCodes.NOT_FOUND,
+      "Operation data not found"
     );
   }
 
@@ -274,18 +312,16 @@ const substractFromClientBalance = async (
     today.getDate() + "-" + (today.getMonth() + 1) + "-" + today.getFullYear();
   client.lastWithdrawDate = todayDate;
 
-  if (operation) {
-    //Add operation
-    operation.userLosses += amount;
-    operation.totalSumOfBalances = operation.totalSumOfBalances - amount;
-    operation.dayTransactions++;
-    !operation.creationDay
-      ? (operation.creationDay = new Date().getDate())
-      : null;
+  //Add operation
+  operation.userLosses += amount;
+  operation.totalSumOfBalances = operation.totalSumOfBalances - amount;
+  operation.dayTransactions++;
+  !operation.creationDay
+    ? (operation.creationDay = new Date().getDate())
+    : null;
 
-    //Save operation
-    await operation.save();
-  }
+  //Save operation
+  await operation.save();
 
   //Save client
   await client.save();
