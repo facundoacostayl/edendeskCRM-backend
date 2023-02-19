@@ -4,7 +4,7 @@ import {
   getTodayItemData,
   getFullItemData,
   getMonthItemData,
-  getFullClientBalance,
+  getFullItemBalance,
 } from "../controllers/operation.controller";
 import { authRole } from "../middleware/roleAuthorization";
 
@@ -90,6 +90,6 @@ router.get(
  *              schema:
  *                $ref: "#/components/schemas/operation"
  * */
-router.get("/user:userId/user-total-balance", getFullClientBalance);
+router.get("/user:userId/user-total-balance", getFullItemBalance);
 
 export { router };

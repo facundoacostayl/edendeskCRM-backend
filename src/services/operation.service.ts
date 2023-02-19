@@ -131,7 +131,7 @@ const getSumOfAllBalances = async (userId: User["id"]) => {
     .getRepository(Operation)
     .createQueryBuilder("o")
     .innerJoin(User, "u", "o.user = u.id")
-    .select("COUNT(o.gananciaUsuario)", "totalGananciasUsuario")
+    .select("SUM(o.totalSumOfBalances)")
     .where("o.user = :userId", { userId })
     .getRawOne();
 
@@ -147,7 +147,7 @@ const getSumOfAllBalances = async (userId: User["id"]) => {
     "Success",
     httpStatusCodes.OK,
     "Total of balances found succesfully",
-    balances
+    balances.sum
   );
 };
 

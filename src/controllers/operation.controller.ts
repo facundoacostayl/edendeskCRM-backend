@@ -73,7 +73,7 @@ export const getMonthItemData = async (req: Request, res: Response) => {
   }
 };
 
-export const getFullClientBalance = async (req: Request, res: Response) => {
+export const getFullItemBalance = async (req: Request, res: Response) => {
   try {
     //Require params
     const { userId } = req.params;
