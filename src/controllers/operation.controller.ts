@@ -40,8 +40,6 @@ export const getTodayItemData = async (req: Request, res: Response) => {
     if (response) {
       return res.status(response.statusCode).json(response);
     }
-
-    throw new Error();
   } catch (error) {
     error instanceof Error &&
       res.status(httpStatusCodes.INTERNAL_SERVER).send("Server internal error");

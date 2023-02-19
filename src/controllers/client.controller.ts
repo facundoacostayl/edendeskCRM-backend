@@ -100,13 +100,12 @@ export const createItem = async (req: Request, res: Response) => {
 
     //Checking if data type is "Error", otherwise throwing error
     if (response.responseType === "Error") {
-      throwErrorWithStatus(response);
+      throw new Error("Invalid");
     }
 
     return res.status(response.statusCode).json(response);
   } catch (error) {
-    error instanceof ErrorWithStatus &&
-      res.status(error.statusCode).json({ message: error.message });
+    error instanceof ErrorWithStatus && res.status(400).json(error.message);
   }
 };
 

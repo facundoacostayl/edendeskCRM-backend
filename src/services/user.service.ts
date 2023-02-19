@@ -66,6 +66,7 @@ const createUser = async (
   operation.user = newUser.id;
   operation.creationYear = new Date().getFullYear();
   operation.creationMonth = new Date().getMonth() + 1;
+  operation.creationDay = new Date().getDate();
 
   await operation.save();
 

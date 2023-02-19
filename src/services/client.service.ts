@@ -18,7 +18,7 @@ const getClients = async (userId: ClientType["user"]) => {
     .getMany();
 
   //Verify if client list exists, otherwise returning error
-  if (clientList.length <= 0) {
+  if (!clientList) {
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,

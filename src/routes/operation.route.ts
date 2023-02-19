@@ -26,7 +26,7 @@ import { authRole } from "../middleware/roleAuthorization";
  *              schema:
  *                $ref: "#/components/schemas/operation"
  * */
-router.get("/user:userId/today-operation-data", authRole, getTodayItemData);
+router.get("/user:userId/today-operation-data", getTodayItemData);
 
 /**
  * @openapi
@@ -46,7 +46,7 @@ router.get("/user:userId/today-operation-data", authRole, getTodayItemData);
  *              schema:
  *                $ref: "#/components/schemas/operation"
  * */
-router.get("/user:userId/total-operation-data", authRole, getFullItemData);
+router.get("/user:userId/total-operation-data", getFullItemData);
 
 /**
  * @openapi
@@ -68,7 +68,7 @@ router.get("/user:userId/total-operation-data", authRole, getFullItemData);
  * */
 router.get(
   "/user:userId/month:month/year:year/month-operation",
-  authRole,
+
   getMonthItemData
 );
 
@@ -90,6 +90,6 @@ router.get(
  *              schema:
  *                $ref: "#/components/schemas/operation"
  * */
-router.get("/user:userId/user-total-balance", authRole, getFullClientBalance);
+router.get("/user:userId/user-total-balance", getFullClientBalance);
 
 export { router };

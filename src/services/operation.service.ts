@@ -38,35 +38,35 @@ const getTodayOperationData = async (userId: UserType["id"]) => {
     .createQueryBuilder("o")
     .innerJoinAndSelect(User, "u", "o.user = u.id")
     .where("o.operationId = :userId", { userId })
-    .andWhere("o.creationYear = :creationDate", {
+    .andWhere("o.creationDay = :creationDate", {
       creationDate: new Date().getDate(),
     })
     .andWhere("o.creationMonth = :creationMonth", {
       creationMonth: new Date().getMonth() + 1,
     })
     .andWhere("o.creationYear = :creationYear", {
-      creationYear: new Date().getFullYear,
+      creationYear: new Date().getFullYear(),
     })
     .getOne();
 
-  //Find all operation list
-  const operationList = await dataSource
-    .getRepository(Operation)
-    .createQueryBuilder("o")
-    .innerJoinAndSelect(User, "u", "o.user = u.id")
-    .where("o.operationId = :userId", { userId })
-    .getMany();
-
-  //Find yesterday operation data
-  const operationListLength = operationList.length;
-  const yesterdayOperation = operationList[operationListLength - 1];
-
   //If todayOperation doesn't exist, create a new one;
   if (!todayOperation) {
+    //Find all operation list
+    const operationList = await dataSource
+      .getRepository(Operation)
+      .createQueryBuilder("o")
+      .innerJoinAndSelect(User, "u", "o.user = u.id")
+      .where("o.operationId = :userId", { userId })
+      .getMany();
+
+    //Find yesterday operation data
+    const operationListLength = operationList.length;
+    const yesterdayOperation = operationList[operationListLength - 1];
+
     todayOperation = new Operation();
     todayOperation.creationYear = new Date().getFullYear();
     todayOperation.creationMonth = new Date().getMonth() + 1;
-    todayOperation.creationYear = new Date().getDate();
+    todayOperation.creationDay = new Date().getDate();
     todayOperation.user = userId;
     //If yesterdayOperation exists, get its totalSumOfBalances, otherwise get 0;
     todayOperation.totalSumOfBalances = yesterdayOperation
@@ -82,6 +82,13 @@ const getTodayOperationData = async (userId: UserType["id"]) => {
       todayOperation
     );
   }
+
+  return responseHandler(
+    "Success",
+    httpStatusCodes.OK,
+    "Today's operation found succesfully",
+    todayOperation
+  );
 };
 
 const getMonthOperationData = async (
