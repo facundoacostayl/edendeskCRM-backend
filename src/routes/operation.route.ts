@@ -6,7 +6,6 @@ import {
   getMonthItemData,
   getFullItemBalance,
 } from "../controllers/operation.controller";
-import { authRole } from "../middleware/roleAuthorization";
 
 /**
  * @openapi

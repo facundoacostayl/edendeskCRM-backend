@@ -380,12 +380,6 @@ const deleteClient = async (
     .andWhere("c.clientId = :clientId", { clientId })
     .getOne();
 
-  //Find operation
-  const operation = await Operation.findOneBy({
-    user: userId,
-    creationDay: new Date().getDate(),
-  });
-
   //Verify if client exists, otherwise returning error
   if (!client) {
     return responseHandler(
@@ -395,14 +389,40 @@ const deleteClient = async (
     );
   }
 
-  //Save operation data
-  if (operation) {
-    operation.userLosses += client.balance;
-    operation.totalSumOfBalances =
-      operation.totalSumOfBalances - client.balance;
+  //Find operation
+  const operation = await dataSource
+    .getRepository(Operation)
+    .createQueryBuilder("o")
+    .innerJoinAndSelect(User, "u", "u.id = o.user")
+    .where("o.user = :userId", { userId })
+    .andWhere("o.creationDay = :creationDay", {
+      creationDay: new Date().getDate(),
+    })
+    .andWhere("o.creationMonth = :creationMonth", {
+      creationMonth: new Date().getMonth() + 1,
+    })
+    .andWhere("o.creationYear = :creationYear", {
+      creationYear: new Date().getFullYear(),
+    })
+    .getOne();
 
-    await operation.save();
+  //Verify if client and operation exists, otherwise returning error
+  if (!operation) {
+    return responseHandler(
+      "Error",
+      httpStatusCodes.NOT_FOUND,
+      "Operation data not found"
+    );
   }
+
+  //Add deleted client balance to the day's user losses
+  operation.userLosses += client.balance;
+
+  //Substract deleted client balance from the total sum of all balances
+  operation.totalSumOfBalances = operation.totalSumOfBalances - client.balance;
+
+  //Save operation data
+  await operation.save();
 
   //Save deleting client request
   await Client.delete({ clientId });

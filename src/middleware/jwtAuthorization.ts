@@ -28,6 +28,7 @@ const authJwt = async (req: RequestExt, res: Response, next: NextFunction) => {
     req.user = isVerified;
 
     if (isVerified) {
+      console.log(isVerified);
       next();
     } else {
       return res.status(httpStatusCodes.FORBIDDEN).send("req.user not found");

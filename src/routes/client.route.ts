@@ -11,6 +11,8 @@ import {
   substractFromItemBalance,
   searchItem,
 } from "../controllers/client.controller";
+import { authRole } from "../middleware/roleAuthorization";
+import { authJwt } from "../middleware/jwtAuthorization";
 
 /**
  * @openapi
@@ -110,7 +112,7 @@ router.post("/user:userId/new-client", createItem);
  *              schema:
  *                $ref: "#/components/schemas/client"
  * */
-router.delete("/user:userId/client:clientId", deleteItem);
+router.delete("/user:userId/client:clientId", authJwt, authRole, deleteItem);
 
 /**
  * @openapi
