@@ -2,6 +2,7 @@ import { Response, NextFunction } from "express";
 import { RequestExt } from "../interfaces/requestExt.interface";
 import { UserType } from "../interfaces/user.interface";
 import { httpStatusCodes } from "../utils/httpStatusCodes";
+import { ROLE } from "../utils/userRoles";
 
 const authRole = (req: RequestExt, res: Response, next: NextFunction) => {
   try {
@@ -9,7 +10,7 @@ const authRole = (req: RequestExt, res: Response, next: NextFunction) => {
     const user = req.user as UserType;
 
     //Verify if the role of the user is "admin", otherwise returning error
-    if (user.role !== "admin") {
+    if (user.role !== ROLE.ADMIN) {
       throw new Error("Admin role is needed for this request");
     }
     next();
