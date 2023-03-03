@@ -11,6 +11,7 @@ import {
   substractFromItemBalance,
   searchItem,
 } from "../controllers/client.controller";
+import { validClientInfo } from "../middleware/clientDataValidation";
 import { authRole } from "../middleware/roleAuthorization";
 import { authJwt } from "../middleware/jwtAuthorization";
 
@@ -92,7 +93,7 @@ router.get("/user:userId/client:clientId", getItem);
  *              schema:
  *                $ref: "#/components/schemas/client"
  * */
-router.post("/user:userId/new-client", createItem);
+router.post("/user:userId/new-client", validClientInfo, createItem);
 
 /**
  * @openapi
