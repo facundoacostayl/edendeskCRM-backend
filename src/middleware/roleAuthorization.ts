@@ -16,7 +16,7 @@ const authRole = (req: RequestExt, res: Response, next: NextFunction) => {
     next();
   } catch (error) {
     error instanceof Error &&
-      res.status(httpStatusCodes.UNAUTHORIZED).json(error.message);
+      res.status(httpStatusCodes.UNAUTHORIZED).json({ message: error.message });
   }
 };
 

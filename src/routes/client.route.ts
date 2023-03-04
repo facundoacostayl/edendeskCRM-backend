@@ -11,7 +11,10 @@ import {
   substractFromItemBalance,
   searchItem,
 } from "../controllers/client.controller";
-import { validClientInfo } from "../middleware/clientDataValidation";
+import {
+  validNewClientInfo,
+  validUpdateClientInfo,
+} from "../middleware/clientDataValidation";
 import { authRole } from "../middleware/roleAuthorization";
 import { authJwt } from "../middleware/jwtAuthorization";
 
@@ -93,7 +96,7 @@ router.get("/user:userId/client:clientId", getItem);
  *              schema:
  *                $ref: "#/components/schemas/client"
  * */
-router.post("/user:userId/new-client", validClientInfo, createItem);
+router.post("/user:userId/new-client", validNewClientInfo, createItem);
 
 /**
  * @openapi
@@ -133,7 +136,7 @@ router.delete("/user:userId/client:clientId", authJwt, authRole, deleteItem);
  *              schema:
  *                $ref: "#/components/schemas/client"
  * */
-router.put("/user:userId/client:clientId", updateItem);
+router.put("/user:userId/client:clientId", validUpdateClientInfo, updateItem);
 
 /**
  * @openapi
