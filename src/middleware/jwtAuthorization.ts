@@ -13,7 +13,7 @@ const authJwt = async (req: RequestExt, res: Response, next: NextFunction) => {
 
     //Verify if required jwt exists, otherwise returning error
     if (!jwt) {
-      return res.status(httpStatusCodes.FORBIDDEN).json(false);
+      return res.status(httpStatusCodes.FORBIDDEN).json("JWT not found");
     }
 
     //Verify required jwt and get data

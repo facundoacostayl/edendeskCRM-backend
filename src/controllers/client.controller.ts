@@ -160,7 +160,7 @@ export const substractFromItemBalance = async (req: Request, res: Response) => {
     return res.status(response.statusCode).json(response);
   } catch (error) {
     error instanceof ErrorWithStatus &&
-      res.status(error.statusCode).json({ error: error.message });
+      res.status(error.statusCode).json({ message: error.message });
   }
 };
 
@@ -189,7 +189,7 @@ export const searchItem = async (req: Request, res: Response) => {
     return res.status(response.statusCode).json(response);
   } catch (error) {
     error instanceof ErrorWithStatus &&
-      res.status(error.statusCode).json({ error: error.message });
+      res.status(error.statusCode).json({ message: error.message });
   }
 };
 

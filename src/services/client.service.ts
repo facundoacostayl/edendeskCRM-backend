@@ -427,7 +427,8 @@ const deleteClient = async (
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    `El cliente ${client.firstName} fue eliminado exitosamente`
+    `El cliente ${client.firstName} fue eliminado exitosamente`,
+    client
   );
 };
 
