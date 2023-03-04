@@ -13,7 +13,7 @@ const getDashboard = (userId: UserType["id"], userRole: UserType["role"]) => {
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    `Welcome user with id: ${userId}. Your role is: ${userRole}`
+    `Bienvenido usuario con id: ${userId}. Tu rol es: ${userRole}`
   );
 };
 

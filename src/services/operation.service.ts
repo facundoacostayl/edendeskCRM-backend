@@ -19,14 +19,14 @@ const getFullOperationData = async (userId: UserType["id"]) => {
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,
-      "Operations not found"
+      "Lista de operaciones no encontrada"
     );
   }
 
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    "Operations found succesfully",
+    "Lista de operaciones encontrada exitosamente",
     operationList
   );
 };
@@ -79,7 +79,7 @@ const getTodayOperationData = async (userId: UserType["id"]) => {
     return responseHandler(
       "Success",
       httpStatusCodes.OK,
-      "Today's operation found succesfully",
+      "Datos de operaciones del dia no encontrados",
       todayOperation
     );
   }
@@ -87,7 +87,7 @@ const getTodayOperationData = async (userId: UserType["id"]) => {
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    "Today's operation found succesfully",
+    "Datos de operaciones del dia encontrados exitosamente",
     todayOperation
   );
 };
@@ -113,14 +113,14 @@ const getMonthOperationData = async (
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,
-      "No month operations found"
+      "Datos de operaciones del mes no encontrados"
     );
   }
 
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    "Month operation data found succesfully",
+    "Datos de operaciones del mes encontrados exitosamente",
     monthOperation
   );
 };
@@ -139,14 +139,14 @@ const getSumOfAllBalances = async (userId: User["id"]) => {
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,
-      "Balance data not found"
+      "Informacion de saldos no encontrado"
     );
   }
 
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    "Total of balances found succesfully",
+    "Total de saldos encontrado exitosamente",
     balances.sum
   );
 };

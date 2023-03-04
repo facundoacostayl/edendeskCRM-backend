@@ -17,14 +17,14 @@ const getUser = async (id: UserType["id"]) => {
     return responseHandler(
       "Error",
       httpStatusCodes.BAD_REQUEST,
-      "User doesn't exist"
+      "El usuario no existe"
     );
   }
 
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    "User found succesfully",
+    "Usuario encontrado exitosamente",
     user
   );
 };
@@ -42,7 +42,7 @@ const createUser = async (
     return responseHandler(
       "Error",
       httpStatusCodes.BAD_REQUEST,
-      "User already exist"
+      "El usuario ya existe"
     );
   }
 
@@ -79,7 +79,7 @@ const createUser = async (
     return responseHandler(
       "Success",
       httpStatusCodes.CREATED,
-      "User created succesfully",
+      "Usuario creado exitosamente",
       createdUser,
       token
     );
@@ -104,7 +104,7 @@ const loginUser = async (
     return responseHandler(
       "Error",
       httpStatusCodes.BAD_REQUEST,
-      "User doesn't exist"
+      "El usuario no existe"
     );
   }
 
@@ -115,7 +115,7 @@ const loginUser = async (
     return responseHandler(
       "Error",
       httpStatusCodes.UNAUTHORIZED,
-      "Incorrect Password"
+      "Contraseña incorrecta"
     );
   }
 
@@ -125,7 +125,7 @@ const loginUser = async (
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    "Logged in succesfully",
+    "Inicio de sesión exitoso",
     user,
     token
   );
@@ -137,7 +137,7 @@ const updateUser = async (userid: UserType["id"], userData: UserType) => {
     return responseHandler(
       "Error",
       httpStatusCodes.BAD_REQUEST,
-      "There's no data to update"
+      "No hay datos para actualizar"
     );
   }
 
@@ -165,14 +165,14 @@ const updateUser = async (userid: UserType["id"], userData: UserType) => {
     return responseHandler(
       "Error",
       httpStatusCodes.BAD_REQUEST,
-      "User not found"
+      "Usuario no encontrado"
     );
   }
 
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    "User updated succesfully",
+    "Usuario actualizado exitosamente",
     user
   );
 };

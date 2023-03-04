@@ -22,14 +22,14 @@ const getClients = async (userId: ClientType["user"]) => {
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,
-      "Client list not found"
+      "Lista no encontrada"
     );
   }
 
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    "Client list found succesfully",
+    "Lista encontrada exitosamente",
     clientList
   );
 };
@@ -74,14 +74,14 @@ const getPaginationClientList = async (
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,
-      "Clients not found"
+      "Clientes no encontrados"
     );
   }
 
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    "Clients found succesfully",
+    "Clientes encontrados exitosamente",
     {
       allValues: allClients,
       paginatedValues: clientsRequired,
@@ -107,14 +107,14 @@ const getClient = async (
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,
-      "Client doesn't exist"
+      "El cliente no existe"
     );
   }
 
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    "Client found succesfully",
+    "Cliente encontrado exitosamente",
     client
   );
 };
@@ -139,7 +139,7 @@ const createClient = async (
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,
-      "Client already exists"
+      "El cliente ya existe"
     );
   }
 
@@ -163,7 +163,7 @@ const createClient = async (
   return responseHandler(
     "Success",
     httpStatusCodes.CREATED,
-    "Client added succesfully",
+    "Cliente añadido exitosamente",
     newClient
   );
 };
@@ -188,7 +188,7 @@ const addToClientBalance = async (
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,
-      "Client not found"
+      "Cliente no encontrado"
     );
   }
 
@@ -214,7 +214,7 @@ const addToClientBalance = async (
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,
-      "Operation data not found"
+      "Datos de operacion no encontrados"
     );
   }
 
@@ -245,9 +245,9 @@ const addToClientBalance = async (
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    `Balance updated succesfully. Client ${
+    `Saldo actualizado exitosamente. El saldo del cliente ${
       client.firstName + " " + client.lastName
-    } balance is $${client.balance}`
+    } es $${client.balance}`
   );
 };
 
@@ -270,7 +270,7 @@ const substractFromClientBalance = async (
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,
-      "Client not found"
+      "Cliente no encontrado"
     );
   }
 
@@ -296,7 +296,7 @@ const substractFromClientBalance = async (
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,
-      "Operation data not found"
+      "Datos de operacion no encontrados"
     );
   }
 
@@ -329,9 +329,9 @@ const substractFromClientBalance = async (
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    `Balance updated succesfully. Client ${
+    `Saldo actualizado exitosamente. El saldo del cliente ${
       client.firstName + " " + client.lastName
-    } balance is $${client.balance}`,
+    } es $${client.balance}`,
     client
   );
 };
@@ -355,14 +355,14 @@ const searchClient = async (
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,
-      "Client/s not found"
+      "Cliente/s no encontrado"
     );
   }
 
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    "Client/s found",
+    "Cliente/s encontrado exitosamente",
     clients
   );
 };
@@ -385,7 +385,7 @@ const deleteClient = async (
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,
-      "Client not found"
+      "Cliente encontrado"
     );
   }
 
@@ -411,7 +411,7 @@ const deleteClient = async (
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,
-      "Operation data not found"
+      "Datos de operacion no encontrados"
     );
   }
 
@@ -430,7 +430,7 @@ const deleteClient = async (
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    `Client ${client.firstName} deleted succesfully`
+    `El cliente ${client.firstName} fue eliminado exitosamente`
   );
 };
 
@@ -441,7 +441,7 @@ const updateClient = async (
 ) => {
   //Verify if data exists, otherwise returning error
   if (!Object.keys(clientData).length) {
-    return responseHandler("Error", 404, "There's no data to update");
+    return responseHandler("Error", 404, "No hay datos para actualizar");
   }
 
   //Execute update query
@@ -461,14 +461,14 @@ const updateClient = async (
     return responseHandler(
       "Error",
       httpStatusCodes.NOT_FOUND,
-      "User not found"
+      "Usuario no encontrado"
     );
   }
 
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    "Client updated succesfully",
+    "Cliente actualizado correctamente",
     client
   );
 };

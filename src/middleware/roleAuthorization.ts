@@ -11,7 +11,7 @@ const authRole = (req: RequestExt, res: Response, next: NextFunction) => {
 
     //Verify if the role of the user is "admin", otherwise returning error
     if (user.role !== ROLE.ADMIN) {
-      throw new Error("Admin role is needed for this request");
+      throw new Error("Acceso denegado. Contacta a un administrador");
     }
     next();
   } catch (error) {
