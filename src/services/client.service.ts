@@ -245,9 +245,8 @@ const addToClientBalance = async (
   return responseHandler(
     "Success",
     httpStatusCodes.OK,
-    `Saldo actualizado exitosamente. El saldo del cliente ${
-      client.firstName + " " + client.lastName
-    } es $${client.balance}`
+    "Saldo actualizado exitosamente",
+    client
   );
 };
 
