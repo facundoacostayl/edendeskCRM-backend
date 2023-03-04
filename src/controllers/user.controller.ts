@@ -23,7 +23,7 @@ export const getItem = async (req: Request, res: Response) => {
     return res.status(response.statusCode).json(response);
   } catch (error) {
     error instanceof ErrorWithStatus &&
-      res.status(error.statusCode).json(error.message);
+      res.status(error.statusCode).json({ message: error.message });
   }
 };
 
@@ -44,7 +44,7 @@ export const createItem = async (req: Request, res: Response) => {
   } catch (error) {
     if (error instanceof Error) {
       error instanceof ErrorWithStatus &&
-        res.status(error.statusCode).json(error.message);
+        res.status(error.statusCode).json({ message: error.message });
     }
   }
 };
@@ -66,7 +66,7 @@ export const loginItem = async (req: Request, res: Response) => {
   } catch (error) {
     if (error instanceof Error) {
       error instanceof ErrorWithStatus &&
-        res.status(error.statusCode).json(error.message);
+        res.status(error.statusCode).json({ message: error.message });
     }
   }
 };
@@ -88,7 +88,7 @@ export const updateItem = async (req: Request, res: Response) => {
     return res.status(response.statusCode).json(response);
   } catch (error) {
     error instanceof ErrorWithStatus &&
-      res.status(error.statusCode).json(error.message);
+      res.status(error.statusCode).json({ message: error.message });
   }
 };
 
@@ -97,7 +97,7 @@ export const authorizeToken = (req: Request, res: Response) => {
     res.json(true);
   } catch (error) {
     if (error instanceof Error) {
-      return res.status(500).json(error.message);
+      return res.status(500).json({ message: error.message });
     }
   }
 };

@@ -106,7 +106,7 @@ export const createItem = async (req: Request, res: Response) => {
     return res.status(response.statusCode).json(response);
   } catch (error) {
     error instanceof ErrorWithStatus &&
-      res.status(error.statusCode).json(error.message);
+      res.status(error.statusCode).json({ message: error.message });
   }
 };
 
@@ -209,7 +209,7 @@ export const deleteItem = async (req: Request, res: Response) => {
     return res.status(response.statusCode).json(response);
   } catch (error) {
     error instanceof ErrorWithStatus &&
-      res.status(error.statusCode).json(error.message);
+      res.status(error.statusCode).json({ message: error.message });
   }
 };
 

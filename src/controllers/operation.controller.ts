@@ -24,7 +24,7 @@ export const getFullItemData = async (req: Request, res: Response) => {
     return res.status(response.statusCode).json(response);
   } catch (error) {
     error instanceof ErrorWithStatus &&
-      res.status(error.statusCode).json(error.message);
+      res.status(error.statusCode).json({ message: error.message });
   }
 };
 
@@ -69,7 +69,7 @@ export const getMonthItemData = async (req: Request, res: Response) => {
     return res.status(response.statusCode).json(response);
   } catch (error) {
     error instanceof ErrorWithStatus &&
-      res.status(error.statusCode).send(error.message);
+      res.status(error.statusCode).send({ message: error.message });
   }
 };
 
@@ -89,6 +89,6 @@ export const getFullItemBalance = async (req: Request, res: Response) => {
     return res.status(response.statusCode).json(response);
   } catch (error) {
     error instanceof ErrorWithStatus &&
-      res.status(error.statusCode).json(error.message);
+      res.status(error.statusCode).json({ message: error.message });
   }
 };

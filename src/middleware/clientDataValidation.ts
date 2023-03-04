@@ -11,12 +11,10 @@ const validClientInfo = (req: Request, res: Response, next: NextFunction) => {
   };
 
   //Requiring paths and validating body data
-  if (req.path === "/user:userId/new-client") {
-    if (![firstName, lastName, tel].every(Boolean)) {
-      return res.json("Completa los campos");
-    } else if (validName(firstName) && validName(lastName)) {
-      return res.status(401).json("Nombre o Apellido inválido");
-    }
+  if (![firstName, lastName, tel].every(Boolean)) {
+    return res.json("Completa los campos");
+  } else if (validName(firstName) || validName(lastName)) {
+    return res.status(401).json({ message: "Nombre o apellido inválido" });
   }
 
   next();
