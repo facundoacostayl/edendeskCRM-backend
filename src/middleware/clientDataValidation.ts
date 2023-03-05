@@ -30,14 +30,7 @@ const validUpdateClientInfo = (
   next: NextFunction
 ) => {
   //Req body
-  const {
-    firstName,
-    lastName,
-    lastAddDate,
-    lastWithdrawDate,
-    addType,
-    branch,
-  } = req.body;
+  const { firstName, lastName, addType } = req.body;
 
   //Function for validating firstName and lastName with regex
   const validName = (name: string) => {
@@ -45,14 +38,7 @@ const validUpdateClientInfo = (
     return /[^a-zA-Z\s]/g.test(name);
   };
 
-  if (
-    validName(firstName) ||
-    validName(lastName) ||
-    validName(lastAddDate) ||
-    validName(lastWithdrawDate) ||
-    validName(addType) ||
-    validName(branch)
-  ) {
+  if (validName(firstName) || validName(lastName) || validName(addType)) {
     return res.status(401).json({ message: "Datos no validos" });
   }
 
