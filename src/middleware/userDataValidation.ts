@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-const validUserInfo = (req: Request, res: Response, next: NextFunction) => {
+const validAuthUserInfo = (req: Request, res: Response, next: NextFunction) => {
   //Req body
   const { firstName, loginEmail, password } = req.body;
 
@@ -38,4 +38,28 @@ const validUserInfo = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-export { validUserInfo };
+const validUpdateUserInfo = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  //Req body
+  const { loginEmail } = req.body;
+
+  //Function for validating loginEmail with regex
+  const validEmail = (loginemail: string) => {
+    // eslint-disable-next-line
+    return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(loginemail);
+  };
+
+  //Requiring paths and validating body data
+  if (loginEmail) {
+    if (validEmail(loginEmail)) {
+      return res.status(401).json("Email invalido");
+    }
+  }
+
+  next();
+};
+
+export { validAuthUserInfo, validUpdateUserInfo };

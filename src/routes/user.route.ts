@@ -7,7 +7,10 @@ import {
   updateItem,
 } from "../controllers/user.controller";
 const router = Router();
-import { validUserInfo } from "../middleware/userDataValidation";
+import {
+  validAuthUserInfo,
+  validUpdateUserInfo,
+} from "../middleware/userDataValidation";
 import { authJwt } from "../middleware/jwtAuthorization";
 
 /**
@@ -24,7 +27,7 @@ import { authJwt } from "../middleware/jwtAuthorization";
  *              schema:
  *                $ref: "#/components/schemas/user"
  * */
-router.post("/register", validUserInfo, createItem);
+router.post("/register", validAuthUserInfo, createItem);
 
 /**
  * @openapi
@@ -40,7 +43,7 @@ router.post("/register", validUserInfo, createItem);
  *              schema:
  *                $ref: "#/components/schemas/user"
  * */
-router.post("/login", validUserInfo, loginItem);
+router.post("/login", validAuthUserInfo, loginItem);
 
 /**
  * @openapi
@@ -96,6 +99,6 @@ router.get("/:userId", getItem);
  *              schema:
  *                $ref: "#/components/schemas/user"
  * */
-router.put("/:userId", updateItem);
+router.put("/:userId", validUpdateUserInfo, updateItem);
 
 export { router };
