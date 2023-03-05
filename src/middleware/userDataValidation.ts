@@ -19,19 +19,19 @@ const validAuthUserInfo = (req: Request, res: Response, next: NextFunction) => {
   //Requiring paths and validating body data
   if (req.path === "/register") {
     if (![firstName, loginEmail, password].every(Boolean)) {
-      return res.json("Completa los campos");
+      return res.json({ message: "Completa los campos" });
     } else if (validName(firstName)) {
-      return res.status(401).json("Nombre invalido");
+      return res.status(401).json({ message: "Nombre invalido" });
     } else if (!validEmail(loginEmail)) {
-      return res.status(401).json("Email invalido");
+      return res.status(401).json({ message: "Email invalido" });
     }
   }
 
   if (req.path === "/login") {
     if (![loginEmail, password].every(Boolean)) {
-      return res.status(401).json("Completa los campos");
+      return res.status(401).json({ message: "Completa los campos" });
     } else if (!validEmail(loginEmail)) {
-      return res.status(401).json("Email invalido");
+      return res.status(401).json({ message: "Email invalido" });
     }
   }
 
@@ -54,8 +54,8 @@ const validUpdateUserInfo = (
 
   //Requiring paths and validating body data
   if (loginEmail) {
-    if (validEmail(loginEmail)) {
-      return res.status(401).json("Email invalido");
+    if (!validEmail(loginEmail)) {
+      return res.status(401).json({ message: "Email invalido" });
     }
   }
 

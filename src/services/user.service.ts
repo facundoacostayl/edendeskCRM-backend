@@ -141,6 +141,19 @@ const updateUser = async (userid: UserType["id"], userData: UserType) => {
     );
   }
 
+  if (userData.loginEmail) {
+    const user = await User.findOneBy({ id: userid });
+    if (user) {
+      if (user.loginEmail === userData.loginEmail) {
+        return responseHandler(
+          "Error",
+          httpStatusCodes.BAD_REQUEST,
+          "No puedes modificar tu Email por el mismo"
+        );
+      }
+    }
+  }
+
   //Bcrypt password
   if (userData.password) {
     const saltRound = 10;
