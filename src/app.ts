@@ -5,7 +5,7 @@ import { router } from "./routes/index.route";
 import swaggerUi from "swagger-ui-express";
 import swaggerSetup from "./docs/swagger";
 const app = express();
-const port = 4000;
+const port = process.env.PORT || 4000;
 
 //Middlewares
 app.use(cors());
