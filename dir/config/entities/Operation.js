@@ -11,55 +11,56 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Operation = void 0;
 const typeorm_1 = require("typeorm");
+const User_1 = require("./User");
 let Operation = class Operation extends typeorm_1.BaseEntity {
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
-], Operation.prototype, "id", void 0);
+], Operation.prototype, "operationId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        nullable: true,
+    }),
+    __metadata("design:type", Number)
+], Operation.prototype, "creationDay", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
-], Operation.prototype, "year", void 0);
+], Operation.prototype, "creationMonth", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
-], Operation.prototype, "month", void 0);
+], Operation.prototype, "creationYear", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        nullable: true
+        nullable: true,
     }),
     __metadata("design:type", Number)
-], Operation.prototype, "userGain", void 0);
+], Operation.prototype, "userEarnings", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        nullable: true
+        nullable: true,
     }),
     __metadata("design:type", Number)
-], Operation.prototype, "userLost", void 0);
+], Operation.prototype, "userLosses", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        nullable: true
+        nullable: true,
     }),
     __metadata("design:type", Number)
-], Operation.prototype, "userTotalBalance", void 0);
+], Operation.prototype, "totalSumOfBalances", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        nullable: true
+        nullable: true,
     }),
     __metadata("design:type", Number)
 ], Operation.prototype, "dayTransactions", void 0);
 __decorate([
-    (0, typeorm_1.Column)({
-        nullable: true
-    }),
-    __metadata("design:type", Number)
-], Operation.prototype, "createdAt", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", Number)
-], Operation.prototype, "userId", void 0);
+    (0, typeorm_1.ManyToOne)((type) => User_1.User, (user) => user.id),
+    __metadata("design:type", Object)
+], Operation.prototype, "user", void 0);
 Operation = __decorate([
-    (0, typeorm_1.Entity)('operation')
+    (0, typeorm_1.Entity)("operation")
 ], Operation);
 exports.Operation = Operation;

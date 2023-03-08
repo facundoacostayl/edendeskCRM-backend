@@ -26,22 +26,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.router = void 0;
-const fs_1 = __importDefault(require("fs"));
-const express_1 = __importDefault(require("express"));
-const router = (0, express_1.default)();
-exports.router = router;
-const currentPath = `${__dirname}`;
-const removeExtension = (file) => {
-    const cleanFile = file.split(".").shift();
-    return cleanFile;
+exports.jwtVerify = exports.jwtGenerator = exports.jwtSecret = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const dotenv = __importStar(require("dotenv"));
+dotenv.config();
+//Gettins jwt secret key from environment variables
+const jwtSecret = `${process.env.JWT_SECRET}`;
+exports.jwtSecret = jwtSecret;
+//Function for generating a jwt
+const jwtGenerator = (id, role) => {
+    //Payload to be encrypted
+    const payload = {
+        id,
+        role,
+    };
+    //Returning token
+    return jsonwebtoken_1.default.sign(payload, jwtSecret, {
+        expiresIn: "2hr",
+    });
 };
-fs_1.default.readdirSync(currentPath).filter((file) => {
-    var _a;
-    const cleanFile = removeExtension(file);
-    if (cleanFile !== "index") {
-        (_a = `./${cleanFile}.route`, Promise.resolve().then(() => __importStar(require(_a)))).then((route) => {
-            router.use(`/${cleanFile}`, route.router);
-        });
-    }
-});
+exports.jwtGenerator = jwtGenerator;
+//Function for verifying a jwt
+const jwtVerify = (jwtToken) => {
+    const isValidated = jsonwebtoken_1.default.verify(jwtToken, jwtSecret);
+    return isValidated;
+};
+exports.jwtVerify = jwtVerify;

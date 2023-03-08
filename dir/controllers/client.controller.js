@@ -9,78 +9,82 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateItem = exports.deleteItem = exports.orderByClientBalanceDesc = exports.orderByClientBalanceAsc = exports.orderByClientNameDesc = exports.orderByClientNameAsc = exports.searchItem = exports.substractFromItemBalance = exports.addToItemBalance = exports.createItem = exports.getPaginationItemList = exports.getItems = exports.getItem = void 0;
-const Client_1 = require("../config/entities/Client");
+exports.updateItem = exports.deleteItem = exports.searchItem = exports.substractFromItemBalance = exports.addToItemBalance = exports.createItem = exports.getItem = exports.getPaginationItemList = exports.getItems = void 0;
 const client_service_1 = require("../services/client.service");
-const getItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        //Require params
-        const { userid, clientid } = req.params;
-        //Data request
-        const response = yield (0, client_service_1.getClient)(parseInt(userid), parseInt(clientid));
-        //Checking if data type is "Error", otherwise throwing error
-        if (response.responseType === "Error") {
-            throw new Error(response.message);
-        }
-        return res.json(response);
-    }
-    catch (error) {
-        error instanceof Error && res.status(500).json({ message: error.message });
-    }
-});
-exports.getItem = getItem;
+const error_handle_1 = require("../utils/error.handle");
 const getItems = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //Require params
-        const { userid } = req.params;
+        const { userId } = req.params;
         //Data request
-        const response = yield (0, client_service_1.getClients)(parseInt(userid));
+        const response = yield (0, client_service_1.getClients)(parseInt(userId));
         //Checking if data type is "Error", otherwise throwing error
         if (response.responseType === "Error") {
-            throw new Error(response.message);
+            (0, error_handle_1.throwErrorWithStatus)(response);
         }
-        return res.json(response);
+        return res.status(response.statusCode).json(response);
     }
     catch (error) {
-        error instanceof Error && res.status(500).json({ message: error.message });
+        error instanceof error_handle_1.ErrorWithStatus &&
+            res.status(error.statusCode).json({ message: error.message });
     }
 });
 exports.getItems = getItems;
 const getPaginationItemList = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //Require params
-        const { userid } = req.params;
+        const { userId } = req.params;
         //Require query (page number and limit of clients to be returned)
-        const { page, size } = req.query;
-        return (page + "" + size);
+        const { page, size, sortBy, orderBy } = req.query;
         //Data request
-        /*const response = await getPaginationClientList(parseInt(userid), parseInt(page as string), parseInt(size as string));
-    
+        const response = yield (0, client_service_1.getPaginationClientList)(parseInt(userId), parseInt(page), parseInt(size), sortBy, orderBy);
         //Checking if data type is "Error", otherwise throwing error
         if (response.responseType === "Error") {
-          throw new Error(response.message);
-        }*/
-        return res.json();
+            (0, error_handle_1.throwErrorWithStatus)(response);
+        }
+        return res.status(response.statusCode).json(response);
     }
     catch (error) {
-        error instanceof Error && res.status(500).json({ error });
+        error instanceof error_handle_1.ErrorWithStatus &&
+            res.status(error.statusCode).json({ message: error.message });
     }
 });
 exports.getPaginationItemList = getPaginationItemList;
-const createItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        //Require Body
-        const { nombre, apellido, telefono, userId } = req.body;
+        //Require params
+        const { userId, clientId } = req.params;
         //Data request
-        const response = yield (0, client_service_1.createClient)(nombre, apellido, telefono, userId);
+        const response = yield (0, client_service_1.getClient)(parseInt(userId), parseInt(clientId));
         //Checking if data type is "Error", otherwise throwing error
         if (response.responseType === "Error") {
-            throw new Error(response.message);
+            (0, error_handle_1.throwErrorWithStatus)(response);
         }
-        return res.json(response);
+        return res.status(response.statusCode).json(response);
     }
     catch (error) {
-        error instanceof Error && res.status(500).json({ message: error.message });
+        error instanceof error_handle_1.ErrorWithStatus &&
+            res.status(error.statusCode).json({ message: error.message });
+    }
+});
+exports.getItem = getItem;
+const createItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        //Require params
+        const { userId } = req.params;
+        //Require Body
+        const { firstName, lastName, tel } = req.body;
+        //Data request
+        const response = yield (0, client_service_1.createClient)(firstName, lastName, tel, parseInt(userId));
+        //Checking if data type is "Error", otherwise throwing error
+        if (response.responseType === "Error") {
+            (0, error_handle_1.throwErrorWithStatus)(response);
+        }
+        return res.status(response.statusCode).json(response);
+    }
+    catch (error) {
+        error instanceof error_handle_1.ErrorWithStatus &&
+            res.status(error.statusCode).json({ message: error.message });
     }
 });
 exports.createItem = createItem;
@@ -94,12 +98,13 @@ const addToItemBalance = (req, res) => __awaiter(void 0, void 0, void 0, functio
         const response = yield (0, client_service_1.addToClientBalance)(parseInt(userId), parseInt(clientId), parseInt(amount));
         //Checking if data type is "Error", otherwise throwing error
         if (response.responseType === "Error") {
-            throw new Error(response.message);
+            (0, error_handle_1.throwErrorWithStatus)(response);
         }
-        return res.json(response);
+        return res.status(response.statusCode).json(response);
     }
     catch (error) {
-        error instanceof Error && res.status(500).json({ message: error.message });
+        error instanceof error_handle_1.ErrorWithStatus &&
+            res.status(error.statusCode).json({ message: error.message });
     }
 });
 exports.addToItemBalance = addToItemBalance;
@@ -113,111 +118,75 @@ const substractFromItemBalance = (req, res) => __awaiter(void 0, void 0, void 0,
         const response = yield (0, client_service_1.substractFromClientBalance)(parseInt(userId), parseInt(clientId), parseInt(amount));
         //Checking if data type is "Error", otherwise throwing error
         if (response.responseType === "Error") {
-            throw new Error(response.message);
+            (0, error_handle_1.throwErrorWithStatus)(response);
         }
-        return res.json(response);
+        return res.status(response.statusCode).json(response);
     }
     catch (error) {
-        error instanceof Error && res.status(500).json({ error: error.message });
+        error instanceof error_handle_1.ErrorWithStatus &&
+            res.status(error.statusCode).json({ message: error.message });
     }
 });
 exports.substractFromItemBalance = substractFromItemBalance;
 const searchItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //Req params
-        const { userid } = req.params;
+        const { userId } = req.params;
         //Req query
         const { nameSearch } = req.query;
         //Early return if search input is empty.
-        if (nameSearch.toString().length <= 0)
+        if (!nameSearch || nameSearch.toString().length <= 0)
             return;
         //Data request
-        const response = yield (0, client_service_1.searchClient)(parseInt(userid), nameSearch.toString());
+        const response = yield (0, client_service_1.searchClient)(parseInt(userId), nameSearch.toString());
         //Checking if data type is "Error", otherwise throwing error
         if (response.responseType === "Error") {
-            throw new Error(response.message);
+            (0, error_handle_1.throwErrorWithStatus)(response);
         }
-        return res.json(response);
+        return res.status(response.statusCode).json(response);
     }
     catch (error) {
-        error instanceof Error && res.status(500).json({ error: error.message });
+        error instanceof error_handle_1.ErrorWithStatus &&
+            res.status(error.statusCode).json({ message: error.message });
     }
 });
 exports.searchItem = searchItem;
-const orderByClientNameAsc = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { id } = req.params;
-        const clientsSorted = yield Client_1.Client.query('SELECT * FROM clients WHERE "userId" = $1 ORDER BY nombre ASC', [id]);
-        return res.json(clientsSorted);
-    }
-    catch (error) {
-        error instanceof Error && res.status(500).json("Server internal error");
-    }
-});
-exports.orderByClientNameAsc = orderByClientNameAsc;
-const orderByClientNameDesc = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { id } = req.params;
-        const clients = yield Client_1.Client.query('SELECT * FROM clients WHERE "userId" = $1 ORDER BY nombre DESC', [id]);
-        return res.json(clients);
-    }
-    catch (error) {
-        error instanceof Error && res.status(500).json("Server internal error");
-    }
-});
-exports.orderByClientNameDesc = orderByClientNameDesc;
-const orderByClientBalanceAsc = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { id } = req.params;
-        const clients = yield Client_1.Client.query('SELECT * FROM clients WHERE "userId" = $1 ORDER BY saldo ASC', [id]);
-        return res.json(clients);
-    }
-    catch (error) {
-        error instanceof Error && res.status(500).json("Server internal error");
-    }
-});
-exports.orderByClientBalanceAsc = orderByClientBalanceAsc;
-const orderByClientBalanceDesc = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { id } = req.params;
-        const clients = yield Client_1.Client.query('SELECT * FROM clients WHERE "userId" = $1 ORDER BY saldo DESC', [id]);
-        return res.json(clients);
-    }
-    catch (error) {
-        error instanceof Error && res.status(500).json("Server internal error");
-    }
-});
-exports.orderByClientBalanceDesc = orderByClientBalanceDesc;
 const deleteItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //Req params
-        const { userid, clientid } = req.params;
+        const { userId, clientId } = req.params;
         //Data request
-        const response = yield (0, client_service_1.deleteClient)(parseInt(userid), parseInt(clientid));
+        const response = yield (0, client_service_1.deleteClient)(parseInt(userId), parseInt(clientId));
         //Checking if data type is "Error", otherwise throwing error
         if (response.responseType === "Error") {
-            throw new Error(response.message);
+            (0, error_handle_1.throwErrorWithStatus)(response);
         }
-        return res.json(response);
+        return res.status(response.statusCode).json(response);
     }
     catch (error) {
-        error instanceof Error && res.status(500).json(error.message);
+        error instanceof error_handle_1.ErrorWithStatus &&
+            res.status(error.statusCode).json({ message: error.message });
     }
 });
 exports.deleteItem = deleteItem;
 const updateItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //Req params
-        const { userid, clientid } = req.params;
+        const { userId, clientId } = req.params;
         //Req body
         const { body } = req;
         //Data request
-        const response = yield (0, client_service_1.updateClient)(parseInt(userid), parseInt(clientid), body);
+        const response = yield (0, client_service_1.updateClient)(parseInt(userId), parseInt(clientId), body);
+        //Checking if data type is "Error", otherwise throwing error
+        if (response.responseType === "Error") {
+            (0, error_handle_1.throwErrorWithStatus)(response);
+        }
         return res.status(response.statusCode).json(response);
     }
     catch (error) {
         console.error(error);
-        error instanceof Error && res.status(500).json("Internal server error");
+        error instanceof error_handle_1.ErrorWithStatus &&
+            res.status(error.statusCode).json("Internal server error");
     }
 });
 exports.updateItem = updateItem;

@@ -22,26 +22,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.router = void 0;
-const fs_1 = __importDefault(require("fs"));
-const express_1 = __importDefault(require("express"));
-const router = (0, express_1.default)();
-exports.router = router;
-const currentPath = `${__dirname}`;
-const removeExtension = (file) => {
-    const cleanFile = file.split(".").shift();
-    return cleanFile;
-};
-fs_1.default.readdirSync(currentPath).filter((file) => {
-    var _a;
-    const cleanFile = removeExtension(file);
-    if (cleanFile !== "index") {
-        (_a = `./${cleanFile}.route`, Promise.resolve().then(() => __importStar(require(_a)))).then((route) => {
-            router.use(`/${cleanFile}`, route.router);
-        });
-    }
-});
+exports.DB_PORT = exports.DB_NAME = exports.DB_PASSWORD = exports.DB_USER = exports.DB_HOST = void 0;
+const dotenv = __importStar(require("dotenv"));
+dotenv.config();
+const DB_HOST = process.env.PROD_DB_HOST || process.env.DEV_DB_HOST;
+exports.DB_HOST = DB_HOST;
+const DB_USER = process.env.PROD_DB_USER || process.env.DEV_DB_USERNAME;
+exports.DB_USER = DB_USER;
+const DB_PASSWORD = process.env.PROD_DB_PASSWORD || process.env.DEV_DB_PASSWORD;
+exports.DB_PASSWORD = DB_PASSWORD;
+const DB_NAME = process.env.PROD_DB_DATABASE || process.env.DEV_DB_DATABASE;
+exports.DB_NAME = DB_NAME;
+const DB_PORT = process.env.PROD_DB_PORT || process.env.DEV_DB_PORT;
+exports.DB_PORT = DB_PORT;

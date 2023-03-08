@@ -9,87 +9,80 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFullClientBalance = exports.getMonthOperationData = exports.getTodayOperationData = exports.getFullOperationData = void 0;
-const Operation_1 = require("../config/entities/Operation");
-const getFullOperationData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getFullItemBalance = exports.getMonthItemData = exports.getTodayItemData = exports.getFullItemData = void 0;
+const operation_service_1 = require("../services/operation.service");
+const error_handle_1 = require("../utils/error.handle");
+const httpStatusCodes_1 = require("../utils/httpStatusCodes");
+const getFullItemData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { id } = req.params;
-        const response = yield Operation_1.Operation.findBy({ userId: parseInt(id) });
-        return res.json(response);
-    }
-    catch (error) {
-        error instanceof Error && res.status(500).json("Internal server error");
-    }
-});
-exports.getFullOperationData = getFullOperationData;
-const getTodayOperationData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { id } = req.params;
-        let operation = yield Operation_1.Operation.findOneBy({
-            userId: parseInt(id),
-            createdAt: new Date().getDate(),
-            month: new Date().getMonth() + 1,
-            year: new Date().getFullYear(),
-        });
-        let yesterdayOperation = yield Operation_1.Operation.findOneBy({
-            userId: parseInt(id),
-            createdAt: new Date().getDate() - 1,
-            month: new Date().getMonth() + 1,
-            year: new Date().getFullYear(),
-        });
-        if (!operation) {
-            operation = new Operation_1.Operation();
-            operation.year = new Date().getFullYear();
-            operation.month = new Date().getMonth() + 1;
-            operation.createdAt = new Date().getDate();
-            operation.userId = parseInt(id);
-            operation.userTotalBalance = yesterdayOperation
-                ? yesterdayOperation.userTotalBalance
-                : 0;
-            yield operation.save();
-            return res.json(operation);
+        //Require params
+        const { userId } = req.params;
+        //Data request
+        const response = yield (0, operation_service_1.getFullOperationData)(parseInt(userId));
+        //Checking if data type is "Error", otherwise throwing error
+        if (response.responseType === "Error") {
+            (0, error_handle_1.throwErrorWithStatus)(response);
         }
-        return res.json(operation);
+        return res.status(response.statusCode).json(response);
     }
     catch (error) {
-        error instanceof Error && res.status(500).send("Server internal error");
+        error instanceof error_handle_1.ErrorWithStatus &&
+            res.status(error.statusCode).json({ message: error.message });
     }
 });
-exports.getTodayOperationData = getTodayOperationData;
-const getMonthOperationData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getFullItemData = getFullItemData;
+const getTodayItemData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { id } = req.params;
-        const { year } = req.body;
-        const operation = yield Operation_1.Operation.findBy({
-            userId: parseInt(id),
-            year: year,
-        });
-        let incomes = 0;
-        operation.forEach((op) => (incomes += op.userGain));
-        let outcomes = 0;
-        operation.forEach((op) => (outcomes += op.userLost));
-        return res.json({
-            userGain: incomes,
-            userLost: outcomes,
-        });
+        //Require params
+        const { userId } = req.params;
+        //Data request
+        const response = yield (0, operation_service_1.getTodayOperationData)(parseInt(userId));
+        //Checking if data exists and returning success response
+        if (response) {
+            return res.status(response.statusCode).json(response);
+        }
     }
     catch (error) {
-        error instanceof Error && res.status(500).send("Server internal error");
+        error instanceof Error &&
+            res.status(httpStatusCodes_1.httpStatusCodes.INTERNAL_SERVER).send("Server internal error");
     }
 });
-exports.getMonthOperationData = getMonthOperationData;
-const getFullClientBalance = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getTodayItemData = getTodayItemData;
+const getMonthItemData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { id } = req.params;
-        const operation = yield Operation_1.Operation.findBy({ userId: parseInt(id) });
-        let totalBalance = 0;
-        operation.forEach((op) => {
-            totalBalance += op.userTotalBalance;
-        });
-        return res.json({ total: totalBalance });
+        //Require params
+        const { userId } = req.params;
+        //Require body
+        const { creationMonth, creationYear } = req.params;
+        //Data request
+        const response = yield (0, operation_service_1.getMonthOperationData)(parseInt(userId), parseInt(creationMonth), parseInt(creationYear));
+        //Checking if data type is "Error", otherwise throwing error
+        if (response.responseType === "Error") {
+            (0, error_handle_1.throwErrorWithStatus)(response);
+        }
+        return res.status(response.statusCode).json(response);
     }
     catch (error) {
-        error instanceof Error && res.status(500).json("Internal server error");
+        error instanceof error_handle_1.ErrorWithStatus &&
+            res.status(error.statusCode).send({ message: error.message });
     }
 });
-exports.getFullClientBalance = getFullClientBalance;
+exports.getMonthItemData = getMonthItemData;
+const getFullItemBalance = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        //Require params
+        const { userId } = req.params;
+        //Data request
+        const response = yield (0, operation_service_1.getSumOfAllBalances)(parseInt(userId));
+        //Checking if data type is "Error", otherwise throwing error
+        if (response.responseType === "Error") {
+            (0, error_handle_1.throwErrorWithStatus)(response);
+        }
+        return res.status(response.statusCode).json(response);
+    }
+    catch (error) {
+        error instanceof error_handle_1.ErrorWithStatus &&
+            res.status(error.statusCode).json({ message: error.message });
+    }
+});
+exports.getFullItemBalance = getFullItemBalance;

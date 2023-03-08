@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const Client_1 = require("./Client");
+const Operation_1 = require("./Operation");
 let User = class User extends typeorm_1.BaseEntity {
 };
 __decorate([
@@ -20,23 +21,37 @@ __decorate([
 ], User.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        unique: true
+        unique: true,
     }),
     __metadata("design:type", String)
-], User.prototype, "loginemail", void 0);
+], User.prototype, "loginEmail", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], User.prototype, "firstname", void 0);
+], User.prototype, "firstName", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        nullable: true,
+    }),
+    __metadata("design:type", String)
+], User.prototype, "lastName", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(type => Client_1.Client, clients => clients.user),
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], User.prototype, "role", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)((type) => Client_1.Client, (clients) => clients.user),
     __metadata("design:type", Array)
 ], User.prototype, "clients", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)((type) => Operation_1.Operation, (operations) => operations.operationId),
+    __metadata("design:type", Array)
+], User.prototype, "operations", void 0);
 User = __decorate([
-    (0, typeorm_1.Entity)('users')
+    (0, typeorm_1.Entity)("users")
 ], User);
 exports.User = User;

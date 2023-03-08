@@ -12,42 +12,40 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authorizeToken = exports.updateItem = exports.loginItem = exports.createItem = exports.getItem = void 0;
 const user_service_1 = require("../services/user.service");
 const error_handle_1 = require("../utils/error.handle");
-const bcrypt = require("bcrypt");
-const jwtGenerator = require("../utils/jwtGenerator");
 const getItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //Require params
-        const { id } = req.params;
+        const { userId } = req.params;
         //Data request
-        const response = yield (0, user_service_1.getUser)(parseInt(id));
+        const response = yield (0, user_service_1.getUser)(parseInt(userId));
         //Checking if data type is "Error", otherwise throwing error
         if (response.responseType === "Error") {
-            throw new Error(response.message);
+            (0, error_handle_1.throwErrorWithStatus)(response);
         }
-        return res.json(response.data);
+        return res.status(response.statusCode).json(response);
     }
     catch (error) {
-        if (error instanceof Error) {
-            (0, error_handle_1.errorHandler)(res, error.message, 400);
-        }
+        error instanceof error_handle_1.ErrorWithStatus &&
+            res.status(error.statusCode).json({ message: error.message });
     }
 });
 exports.getItem = getItem;
 const createItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //Require body
-        const { firstname, loginemail, password } = req.body;
+        const { firstName, loginEmail, password } = req.body;
         //Data request
-        const response = yield (0, user_service_1.createUser)(firstname, loginemail, password);
+        const response = yield (0, user_service_1.createUser)(firstName, loginEmail, password);
         //Checking if data type is "Error", otherwise throwing error
         if (response.responseType === "Error") {
-            throw new Error(response.message);
+            (0, error_handle_1.throwErrorWithStatus)(response);
         }
-        return res.json(response);
+        return res.status(response.statusCode).json(response);
     }
     catch (error) {
         if (error instanceof Error) {
-            (0, error_handle_1.errorHandler)(res, error.message, 400);
+            error instanceof error_handle_1.ErrorWithStatus &&
+                res.status(error.statusCode).json({ message: error.message });
         }
     }
 });
@@ -55,18 +53,19 @@ exports.createItem = createItem;
 const loginItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //Require body
-        const { loginemail, password } = req.body;
+        const { loginEmail, password } = req.body;
         //Data request
-        const response = yield (0, user_service_1.loginUser)(loginemail, password);
+        const response = yield (0, user_service_1.loginUser)(loginEmail, password);
         //Checking if data type is "Error", otherwise throwing error
         if (response.responseType === "Error") {
-            throw new Error(response.message);
+            (0, error_handle_1.throwErrorWithStatus)(response);
         }
-        res.json(response.data);
+        return res.status(response.statusCode).json(response);
     }
     catch (error) {
         if (error instanceof Error) {
-            (0, error_handle_1.errorHandler)(res, error.message, 400);
+            error instanceof error_handle_1.ErrorWithStatus &&
+                res.status(error.statusCode).json({ message: error.message });
         }
     }
 });
@@ -74,18 +73,19 @@ exports.loginItem = loginItem;
 const updateItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //Require params and body
-        const { id } = req.params;
+        const { userId } = req.params;
         const { body } = req;
         //Data request
-        const response = yield (0, user_service_1.updateUser)(parseInt(id), body);
+        const response = yield (0, user_service_1.updateUser)(parseInt(userId), body);
         //Checking if data type is "Error", otherwise throwing error
         if (response.responseType === "Error") {
-            throw new Error(response.message);
+            (0, error_handle_1.throwErrorWithStatus)(response);
         }
-        return res.json(response);
+        return res.status(response.statusCode).json(response);
     }
     catch (error) {
-        error instanceof Error && res.status(500).json(error.message);
+        error instanceof error_handle_1.ErrorWithStatus &&
+            res.status(error.statusCode).json({ message: error.message });
     }
 });
 exports.updateItem = updateItem;
@@ -95,7 +95,7 @@ const authorizeToken = (req, res) => {
     }
     catch (error) {
         if (error instanceof Error) {
-            return res.status(500).json(error.message);
+            return res.status(500).json({ message: error.message });
         }
     }
 };

@@ -1,15 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getInfo = void 0;
-const getInfo = (req, res) => {
+exports.getItem = void 0;
+const dashboard_service_1 = require("../services/dashboard.service");
+const error_handle_1 = require("../utils/error.handle");
+const getItem = (req, res) => {
     try {
-        res.json(req.user);
+        const user = req.user;
+        const userId = user.id;
+        const userRole = user.role;
+        const response = (0, dashboard_service_1.getDashboard)(userId, userRole);
+        if (response.responseType === "Error") {
+            (0, error_handle_1.throwErrorWithStatus)(response);
+        }
+        return res.status(response.statusCode).send(response.message);
     }
     catch (error) {
-        if (error instanceof Error) {
+        if (error instanceof error_handle_1.ErrorWithStatus) {
             console.error(error.message);
-            res.status(500).json({ error: error.message });
+            res.status(error.statusCode).json(error.message);
         }
     }
 };
-exports.getInfo = getInfo;
+exports.getItem = getItem;

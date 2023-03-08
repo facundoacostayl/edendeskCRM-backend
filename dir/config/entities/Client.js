@@ -12,71 +12,76 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Client = void 0;
 const typeorm_1 = require("typeorm");
 const User_1 = require("./User");
+const Operation_1 = require("./Operation");
 let Client = class Client extends typeorm_1.BaseEntity {
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
-], Client.prototype, "clientid", void 0);
+], Client.prototype, "clientId", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Client.prototype, "nombre", void 0);
+], Client.prototype, "firstName", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Client.prototype, "apellido", void 0);
+], Client.prototype, "lastName", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        nullable: true
+        nullable: true,
     }),
     __metadata("design:type", Number)
-], Client.prototype, "saldo", void 0);
+], Client.prototype, "balance", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Client.prototype, "telefono", void 0);
+], Client.prototype, "tel", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        nullable: true
+        nullable: true,
     }),
     __metadata("design:type", String)
-], Client.prototype, "fechaultcarga", void 0);
+], Client.prototype, "lastAddDate", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        nullable: true
+        nullable: true,
     }),
     __metadata("design:type", Number)
-], Client.prototype, "montoultcarga", void 0);
+], Client.prototype, "lastAddAmount", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        nullable: true
+        nullable: true,
     }),
     __metadata("design:type", String)
-], Client.prototype, "tipodecarga", void 0);
+], Client.prototype, "addType", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        nullable: true
+        nullable: true,
     }),
     __metadata("design:type", String)
-], Client.prototype, "fechaultretiro", void 0);
+], Client.prototype, "lastWithdrawDate", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        nullable: true
+        nullable: true,
     }),
     __metadata("design:type", Number)
-], Client.prototype, "montoultretiro", void 0);
+], Client.prototype, "lastWithdrawAmount", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        nullable: true
+        nullable: true,
     }),
     __metadata("design:type", String)
-], Client.prototype, "sucursal", void 0);
+], Client.prototype, "branch", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(type => User_1.User, users => users.id),
+    (0, typeorm_1.OneToMany)((type) => Operation_1.Operation, (operation) => operation.operationId),
+    __metadata("design:type", Object)
+], Client.prototype, "operation", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)((type) => User_1.User, (users) => users.id),
     __metadata("design:type", Object)
 ], Client.prototype, "user", void 0);
 Client = __decorate([
-    (0, typeorm_1.Entity)('clients')
+    (0, typeorm_1.Entity)("clients")
 ], Client);
 exports.Client = Client;

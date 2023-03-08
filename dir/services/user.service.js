@@ -8,103 +8,114 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateUser = exports.loginUser = exports.createUser = exports.getUser = void 0;
 const User_1 = require("../config/entities/User");
 const Operation_1 = require("../config/entities/Operation");
 const response_handle_1 = require("../utils/response.handle");
-const bcrypt = require("bcrypt");
-const jwtGenerator = require("../utils/jwtGenerator");
+const httpStatusCodes_1 = require("../utils/httpStatusCodes");
+const userRoles_1 = require("../utils/userRoles");
+const db_1 = require("../config/db/db");
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const jwt_handle_1 = require("../utils/jwt.handle");
 const getUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
     //Find User
-    const userRequest = yield User_1.User.findOneBy({ id });
+    const user = yield User_1.User.findOneBy({ id });
     //Verify if user exists, otherwise returning error
-    if (userRequest === null) {
-        return (0, response_handle_1.responseHandler)("Error", 404, "User doesn't exist");
+    if (user === null) {
+        return (0, response_handle_1.responseHandler)("Error", httpStatusCodes_1.httpStatusCodes.BAD_REQUEST, "El usuario no existe");
     }
-    return (0, response_handle_1.responseHandler)("Success", 200, "User found succesfully", userRequest);
+    return (0, response_handle_1.responseHandler)("Success", httpStatusCodes_1.httpStatusCodes.OK, "Usuario encontrado exitosamente", user);
 });
 exports.getUser = getUser;
-const createUser = (firstname, loginemail, password) => __awaiter(void 0, void 0, void 0, function* () {
+const createUser = (firstName, loginEmail, password) => __awaiter(void 0, void 0, void 0, function* () {
     //Verify if user is already authenticated
-    const userRequest = yield User_1.User.findOneBy({ loginemail });
+    const user = yield User_1.User.findOneBy({ loginEmail });
     //Verify if user doesn't exist, otherwise returning error
-    if (userRequest !== null) {
-        return (0, response_handle_1.responseHandler)("Error", 409, "User already exist");
+    if (user !== null) {
+        return (0, response_handle_1.responseHandler)("Error", httpStatusCodes_1.httpStatusCodes.BAD_REQUEST, "El usuario ya existe");
     }
     //Creating a new user
-    const user = new User_1.User();
-    user.firstname = firstname;
-    user.loginemail = loginemail;
+    const newUser = new User_1.User();
+    newUser.firstName = firstName;
+    newUser.loginEmail = loginEmail;
+    newUser.role = userRoles_1.ROLE.BASIC;
     //Bcrypt password
     const saltRound = 10;
-    const salt = yield bcrypt.genSalt(saltRound);
-    const bcryptPassword = yield bcrypt.hash(password, salt);
-    user.password = bcryptPassword;
+    const salt = yield bcryptjs_1.default.genSalt(saltRound);
+    const bcryptPassword = yield bcryptjs_1.default.hash(password, salt);
+    newUser.password = bcryptPassword;
     //Saving User in database
-    yield user.save();
+    yield newUser.save();
     //Creating and saving operation column
     const operation = new Operation_1.Operation();
-    operation.userId = user.id;
-    operation.year = new Date().getFullYear();
-    operation.month = new Date().getMonth() + 1;
+    operation.user = newUser.id;
+    operation.creationYear = new Date().getFullYear();
+    operation.creationMonth = new Date().getMonth() + 1;
+    operation.creationDay = new Date().getDate();
     yield operation.save();
     //Generating JWT Token
-    const response = yield User_1.User.findOneBy({ loginemail });
-    const token = jwtGenerator(user, user.id);
-    return (0, response_handle_1.responseHandler)("Success", 201, "User created succesfully", response, token);
+    const createdUser = yield User_1.User.findOneBy({ loginEmail });
+    if (createdUser) {
+        const token = (0, jwt_handle_1.jwtGenerator)(createdUser.id, createdUser.role);
+        return (0, response_handle_1.responseHandler)("Success", httpStatusCodes_1.httpStatusCodes.CREATED, "Usuario creado exitosamente", createdUser, token);
+    }
+    return (0, response_handle_1.responseHandler)("Error", httpStatusCodes_1.httpStatusCodes.INTERNAL_SERVER, "Internal Server Error");
 });
 exports.createUser = createUser;
-const loginUser = (loginemail, password) => __awaiter(void 0, void 0, void 0, function* () {
+const loginUser = (loginEmail, password) => __awaiter(void 0, void 0, void 0, function* () {
     //Check if user exists
-    const userRequest = yield User_1.User.findOneBy({ loginemail: loginemail });
+    const user = yield User_1.User.findOneBy({ loginEmail: loginEmail });
     //Verify if user exists, otherwise returning error
-    if (userRequest === null) {
-        return (0, response_handle_1.responseHandler)("Error", 404, "User doesn't exist");
+    if (user === null) {
+        return (0, response_handle_1.responseHandler)("Error", httpStatusCodes_1.httpStatusCodes.BAD_REQUEST, "El usuario no existe");
     }
     //Check if incomming password is the same the database password
-    const validPassword = yield bcrypt.compare(password, userRequest.password);
+    const validPassword = yield bcryptjs_1.default.compare(password, user.password);
     if (!validPassword) {
-        return (0, response_handle_1.responseHandler)("Error", 404, "Incorrect Password");
+        return (0, response_handle_1.responseHandler)("Error", httpStatusCodes_1.httpStatusCodes.UNAUTHORIZED, "Contraseña incorrecta");
     }
     //Give the jwt token to the user
-    const token = jwtGenerator(userRequest.id);
-    const user = yield User_1.User.findOneBy({ loginemail: loginemail });
-    const userId = user && user.id;
-    //Response
-    const response = { token, userId: user && user.id };
-    return (0, response_handle_1.responseHandler)("Success", 200, "Logged in succesfully");
+    const token = (0, jwt_handle_1.jwtGenerator)(user.id, user.role);
+    return (0, response_handle_1.responseHandler)("Success", httpStatusCodes_1.httpStatusCodes.OK, "Inicio de sesión exitoso", user, token);
 });
 exports.loginUser = loginUser;
-const updateUser = (id, body) => __awaiter(void 0, void 0, void 0, function* () {
+const updateUser = (userid, userData) => __awaiter(void 0, void 0, void 0, function* () {
     //Verify if data exists, otherwise returning error
-    if (!Object.keys(body).length) {
-        return (0, response_handle_1.responseHandler)("Error", 404, "There's no data to update");
+    if (!Object.keys(userData).length) {
+        return (0, response_handle_1.responseHandler)("Error", httpStatusCodes_1.httpStatusCodes.BAD_REQUEST, "No hay datos para actualizar");
+    }
+    if (userData.loginEmail) {
+        const user = yield User_1.User.findOneBy({ id: userid });
+        if (user) {
+            if (user.loginEmail === userData.loginEmail) {
+                return (0, response_handle_1.responseHandler)("Error", httpStatusCodes_1.httpStatusCodes.BAD_REQUEST, "No puedes modificar tu Email por el mismo");
+            }
+        }
     }
     //Bcrypt password
-    if (body.password) {
+    if (userData.password) {
         const saltRound = 10;
-        const salt = yield bcrypt.genSalt(saltRound);
-        const bcryptPassword = yield bcrypt.hash(body.password, salt);
-        body.password = bcryptPassword;
+        const salt = yield bcryptjs_1.default.genSalt(saltRound);
+        const bcryptPassword = yield bcryptjs_1.default.hash(userData.password, salt);
+        userData.password = bcryptPassword;
     }
-    //Generating query and parsing data if necessary
-    const queryBuilder = () => {
-        let query = `UPDATE users SET `;
-        query += Object.keys(body)
-            .map((key) => {
-            const valueToSet = typeof body[key] === "string"
-                ? `'${body[key]}'`
-                : parseInt(body[key]);
-            return `${key} = ${valueToSet}`;
-        })
-            .join(", ");
-        return query + ` WHERE id = ${id};`;
-    };
-    //Sending query
-    yield User_1.User.query(queryBuilder());
-    //Response
-    const response = yield User_1.User.findOneBy({ id });
-    return (0, response_handle_1.responseHandler)("Success", 200, "User updated succesfully", response);
+    //Execute update query
+    const updateUser = yield db_1.AppDataSource
+        .createQueryBuilder()
+        .update(User_1.User)
+        .set(userData)
+        .where("id = :userid", { userid })
+        .execute();
+    //Find user
+    const user = yield User_1.User.findOneBy({ id: userid });
+    //Verify if user exists, otherwise returning error
+    if (!updateUser || !user) {
+        return (0, response_handle_1.responseHandler)("Error", httpStatusCodes_1.httpStatusCodes.BAD_REQUEST, "Usuario no encontrado");
+    }
+    return (0, response_handle_1.responseHandler)("Success", httpStatusCodes_1.httpStatusCodes.OK, "Usuario actualizado exitosamente", user);
 });
 exports.updateUser = updateUser;

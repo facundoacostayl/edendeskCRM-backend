@@ -2,14 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.router = void 0;
 const express_1 = require("express");
+const user_controller_1 = require("../controllers/user.controller");
 const router = (0, express_1.Router)();
 exports.router = router;
-const user_controller_1 = require("../controllers/user.controller");
-const validInfo = require("../middleware/validInfo");
-const authorization = require("../middleware/authorization");
+const userDataValidation_1 = require("../middleware/userDataValidation");
+const jwtAuthorization_1 = require("../middleware/jwtAuthorization");
 /**
  * @openapi
- * /user/registro:
+ * /user/register:
  *    post:
  *      tags:
  *        - users
@@ -21,7 +21,7 @@ const authorization = require("../middleware/authorization");
  *              schema:
  *                $ref: "#/components/schemas/user"
  * */
-router.post("/registro", validInfo, user_controller_1.createItem);
+router.post("/register", userDataValidation_1.validAuthUserInfo, user_controller_1.createItem);
 /**
  * @openapi
  * /user/login:
@@ -36,10 +36,10 @@ router.post("/registro", validInfo, user_controller_1.createItem);
  *              schema:
  *                $ref: "#/components/schemas/user"
  * */
-router.post("/login", validInfo, user_controller_1.loginItem);
+router.post("/login", userDataValidation_1.validAuthUserInfo, user_controller_1.loginItem);
 /**
  * @openapi
- * /user/verificar:
+ * /user/verify:
  *    get:
  *      tags:
  *        - users
@@ -51,10 +51,10 @@ router.post("/login", validInfo, user_controller_1.loginItem);
  *              schema:
  *                $ref: "#/components/schemas/user"
  * */
-router.get("/verificar", authorization, user_controller_1.authorizeToken);
+router.get("/verify", jwtAuthorization_1.authJwt, user_controller_1.authorizeToken);
 /**
  * @openapi
- * /user/{:id}:
+ * /user/{:userId}:
  *    get:
  *      tags:
  *        - users
@@ -62,7 +62,7 @@ router.get("/verificar", authorization, user_controller_1.authorizeToken);
  *      description: This endpoint finds a user and returns its information
  *      parameters:
  *      - in: path
- *        name: id
+ *        name: userId
  *        required: true
  *      requestBody:
  *          content:
@@ -70,18 +70,18 @@ router.get("/verificar", authorization, user_controller_1.authorizeToken);
  *              schema:
  *                $ref: "#/components/schemas/user"
  * */
-router.get("/:id", user_controller_1.getItem);
+router.get("/:userId", user_controller_1.getItem);
 /**
  * @openapi
- * /user/{:id}:
- *    patch:
+ * /user/{:userId}:
+ *    put:
  *      tags:
  *        - users
  *      summary: "Update User Info"
  *      description: This endpoint finds a user, updates its information and returns it
  *      parameters:
  *      - in: path
- *        name: id
+ *        name: userId
  *        required: true
  *      requestBody:
  *          content:
@@ -89,4 +89,4 @@ router.get("/:id", user_controller_1.getItem);
  *              schema:
  *                $ref: "#/components/schemas/user"
  * */
-router.patch("/:id", user_controller_1.updateItem);
+router.put("/:userId", userDataValidation_1.validUpdateUserInfo, user_controller_1.updateItem);

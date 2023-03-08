@@ -25,12 +25,15 @@ const swaggerDefinition = {
         schemas: {
             user: {
                 type: "object",
-                required: ["firstname", "loginemail", "password"],
+                required: ["firstName", "loginEmail", "password"],
                 properties: {
-                    firstname: {
+                    firstName: {
                         type: "string",
                     },
-                    email: {
+                    lastName: {
+                        type: "string"
+                    },
+                    loginEmail: {
                         type: "string",
                     },
                     password: {
@@ -40,42 +43,69 @@ const swaggerDefinition = {
             },
             client: {
                 type: "object",
-                required: ["clientid", "nombre", "telefono", "userid"],
+                required: ["firstName", "tel", "user"],
                 properties: {
-                    clientid: {
+                    firstName: {
                         type: "string",
                     },
-                    nombre: {
+                    lastName: {
                         type: "string",
                     },
-                    apellido: {
-                        type: "string",
-                    },
-                    saldo: {
+                    balance: {
                         type: "number"
                     },
-                    telefono: {
+                    tel: {
                         type: "string"
                     },
-                    fechaultcarga: {
+                    lastAddDate: {
                         type: "string"
                     },
-                    montoultcarga: {
+                    lastAddAmount: {
                         type: "number"
                     },
-                    tipodecarga: {
+                    addType: {
                         type: "string"
                     },
-                    fechaultretiro: {
+                    lastWithdrawDate: {
                         type: "string"
                     },
-                    montoultretiro: {
+                    lastWithdrawAmount: {
                         type: "number"
                     },
-                    sucursal: {
+                    branch: {
                         type: "string"
                     },
-                    userid: {
+                    user: {
+                        type: "number"
+                    }
+                },
+            },
+            operation: {
+                type: "object",
+                required: ["creationMonth", "creationYear"],
+                properties: {
+                    creationDay: {
+                        type: "number",
+                    },
+                    creationMonth: {
+                        type: "number"
+                    },
+                    creationYear: {
+                        type: "number",
+                    },
+                    userEarnings: {
+                        type: "number"
+                    },
+                    userLosses: {
+                        type: "number"
+                    },
+                    totalSumOfBalances: {
+                        type: "number"
+                    },
+                    dayTransactions: {
+                        type: "number"
+                    },
+                    user: {
                         type: "number"
                     }
                 },

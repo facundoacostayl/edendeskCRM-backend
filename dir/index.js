@@ -8,17 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
-const app_1 = __importDefault(require("./app"));
+const app_1 = require("./app");
 const db_1 = require("./config/db/db");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield db_1.AppDataSource.initialize();
-        app_1.default.listen(process.env.PORT || 4000);
+        app_1.app.listen(app_1.port);
         console.log("Server is online");
     }
     catch (err) {
