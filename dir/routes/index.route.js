@@ -37,10 +37,9 @@ const removeExtension = (file) => {
     return cleanFile;
 };
 fs_1.default.readdirSync(currentPath).filter((file) => {
-    var _a;
     const cleanFile = removeExtension(file);
     if (cleanFile !== "index") {
-        (_a = `./${cleanFile}.route`, Promise.resolve().then(() => __importStar(require(_a)))).then((route) => {
+        Promise.resolve().then(() => __importStar(require(`./${cleanFile}.route`))).then((route) => {
             router.use(`/${cleanFile}`, route.router);
         });
     }
